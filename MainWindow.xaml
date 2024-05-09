@@ -15,17 +15,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Window.Resources>
         <ResourceDictionary>
-            <Style TargetType="{x:Type Button}" x:Key="AppleButtonStyle">
-                <Setter Property="Margin" Value="5" />
-                <Setter Property="Cursor" Value="Hand" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="tinyStyle.xaml" />
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
     <Border Background="#EFD6F3" CornerRadius="20">

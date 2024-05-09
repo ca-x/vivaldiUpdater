@@ -41,10 +41,10 @@ using System.Windows;
 )]
 
 
-// Version information for an assembly consists of the following four values:
+// Semver information for an assembly consists of the following four values:
 //
-//      Major Version
-//      Minor Version
+//      Major Semver
+//      Minor Semver
 //      Build Number
 //      Revision
 //
