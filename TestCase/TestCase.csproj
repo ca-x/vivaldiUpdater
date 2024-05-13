@@ -43,8 +43,8 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Helpers\VivaldiDownloaderTest.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
-        <Compile Include="TestVivaldiDownloadAPI.cs" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\VivaldiUpdater.csproj">
