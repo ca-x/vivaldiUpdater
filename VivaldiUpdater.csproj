@@ -75,6 +75,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Model\VivaldiDistUrlInfo.cs" />
+        <Compile Include="Model\VivaldiPlusPlusRelease.cs" />
         <Compile Include="Model\VivaldiVersionInfo.cs" />
         <Compile Include="Properties\AssemblyInfo.cs">
             <SubType>Code</SubType>

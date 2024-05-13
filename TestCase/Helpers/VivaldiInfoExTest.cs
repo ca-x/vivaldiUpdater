@@ -26,5 +26,12 @@ namespace TestCase.Helpers
             var vivaldiInfo = await VivaldiInfoEx.GetVivaldiVersionInfo();
             Assert.IsNotNull(vivaldiInfo);
         }
+
+        [Test]
+        public async Task TestGetVivaldiPlusPlusRelease()
+        {
+            var vivaldiPlusPlusInfos = await VivaldiInfoEx.GetVivaldiPlusPlusRelease(8);
+            Assert.IsNotNull(vivaldiPlusPlusInfos);
+        }
     }
 }

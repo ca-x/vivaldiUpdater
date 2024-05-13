@@ -8,10 +8,13 @@ namespace VivaldiUpdater.Helpers
 {
     public static class VivaldiInfoEx
     {
-        private const int httpClientTimeoutSeconds = 5;
+        private const int HttpClientTimeoutSeconds = 5;
 
-        private const string vivaldiDistUrlsEndPoint = "https://vivaldi.czyt.tech/api/dist_urls";
-        private const string vivaldiVersionEndPoint = "https://vivaldi.czyt.tech/api/vivaldi_versions";
+        private const string VivaldiDistUrlsEndPoint = "https://vivaldi.czyt.tech/api/dist_urls";
+        private const string VivaldiVersionEndPoint = "https://vivaldi.czyt.tech/api/vivaldi_versions";
+
+        private const string VivaldiPlusPlusReleaseEndpoint =
+            "https://vivaldi.czyt.tech/api/vivaldiplusplus";
 
         /// <summary>
         /// Get the vivaldi dist download urls
@@ -20,7 +23,7 @@ namespace VivaldiUpdater.Helpers
         /// <param name="platforms"></param>
         /// <returns></returns>
         public static async Task<List<VivaldiDistUrlInfo>> GetVivaldiDistUrls(string platforms,
-            int timeoutSeconds = httpClientTimeoutSeconds)
+            int timeoutSeconds = HttpClientTimeoutSeconds)
         {
             using (
                 var hc = new HttpClient
@@ -33,11 +36,11 @@ namespace VivaldiUpdater.Helpers
                     if (string.IsNullOrEmpty(platforms))
                     {
                         return SimpleJson.SimpleJson.DeserializeObject<List<VivaldiDistUrlInfo>>(
-                            await hc.GetStringAsync(vivaldiDistUrlsEndPoint));
+                            await hc.GetStringAsync(VivaldiDistUrlsEndPoint));
                     }
 
                     return SimpleJson.SimpleJson.DeserializeObject<List<VivaldiDistUrlInfo>>(
-                        await hc.GetStringAsync($"{vivaldiDistUrlsEndPoint}?platforms={platforms}"));
+                        await hc.GetStringAsync($"{VivaldiDistUrlsEndPoint}?platforms={platforms}"));
                 }
                 catch (Exception e)
                 {
@@ -54,7 +57,7 @@ namespace VivaldiUpdater.Helpers
         /// <param name="timeoutSeconds"></param>
         /// <returns></returns>
         public static async Task<VivaldiVersionInfo> GetVivaldiVersionInfo(
-            int timeoutSeconds = httpClientTimeoutSeconds)
+            int timeoutSeconds = HttpClientTimeoutSeconds)
         {
             using (
                 var hc = new HttpClient
@@ -65,7 +68,35 @@ namespace VivaldiUpdater.Helpers
                 try
                 {
                     return SimpleJson.SimpleJson.DeserializeObject<VivaldiVersionInfo>(
-                        await hc.GetStringAsync(vivaldiVersionEndPoint));
+                        await hc.GetStringAsync(VivaldiVersionEndPoint));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Get vivaldi++ latest version
+        /// </summary>
+        /// <param name="timeoutSeconds"></param>
+        /// <returns></returns>
+        public static async Task<List<VivaldiPlusPlusRelease>> GetVivaldiPlusPlusRelease(
+            int timeoutSeconds = HttpClientTimeoutSeconds)
+        {
+            using (
+                var hc = new HttpClient
+                {
+                    Timeout = TimeSpan.FromSeconds(timeoutSeconds)
+                })
+            {
+                try
+                {
+                    return SimpleJson.SimpleJson.DeserializeObject<List<VivaldiPlusPlusRelease>>(
+                        await hc.GetStringAsync(VivaldiPlusPlusReleaseEndpoint));
                 }
                 catch (Exception e)
                 {
