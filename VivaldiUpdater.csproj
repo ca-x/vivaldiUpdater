@@ -65,7 +65,7 @@
         <Compile Include="Helpers\BinaryDetection.cs" />
         <Compile Include="Helpers\Semver.cs" />
         <Compile Include="Helpers\SimpleJson.cs" />
-        <Compile Include="Helpers\VivaldiDownloader.cs" />
+        <Compile Include="Helpers\VivaldiInfoEx.cs" />
         <Compile Include="Helpers\Win32Api.cs" />
         <Compile Include="MainWindow.xaml.cs">
             <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -74,6 +74,8 @@
         <Page Include="tinyStyle.xaml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Model\VivaldiDistUrlInfo.cs" />
+        <Compile Include="Model\VivaldiVersionInfo.cs" />
         <Compile Include="Properties\AssemblyInfo.cs">
             <SubType>Code</SubType>
         </Compile>
