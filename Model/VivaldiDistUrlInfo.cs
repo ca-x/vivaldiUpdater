@@ -1,16 +1,57 @@
-﻿using System.Runtime.Serialization;
+﻿using System.ComponentModel;
+using System.Runtime.Serialization;
 
 namespace VivaldiUpdater.Model
 {
     [DataContract]
-    public class VivaldiDistUrlInfo
+    public class VivaldiDistUrlInfo : INotifyPropertyChanged
     {
-        [DataMember(Name = "platform")] public string Platform { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
 
-        [DataMember(Name = "url")] public string Url { get; set; }
+        private string _platform;
+
+        [DataMember(Name = "platform")]
+        public string Platform
+        {
+            get => _platform;
+            set
+            {
+                _platform = value;
+                OnPropertyChanged();
+            }
+        }
 
 
-        [DataMember(Name = "url_mirror")] public string UrlMirror { get; set; }
+        [DataMember(Name = "url")] private string _url;
+
+        public string Url
+        {
+            get => _url;
+            set
+            {
+                _url = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        private string _urlMirror;
+
+        [DataMember(Name = "url_mirror")]
+        public string UrlMirror
+        {
+            get => _urlMirror;
+            set
+            {
+                _urlMirror = value;
+                OnPropertyChanged();
+            }
+        }
     }
 }
