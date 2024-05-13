@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VivaldiUpdater", "VivaldiUpdater.csproj", "{C15461B9-E0CE-4A4E-8A3A-EB0E2C61A493}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCase", "TestCase\TestCase.csproj", "{D9DCBB39-5B80-48E1-99BA-8EE1E070B6C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{C15461B9-E0CE-4A4E-8A3A-EB0E2C61A493}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C15461B9-E0CE-4A4E-8A3A-EB0E2C61A493}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C15461B9-E0CE-4A4E-8A3A-EB0E2C61A493}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9DCBB39-5B80-48E1-99BA-8EE1E070B6C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9DCBB39-5B80-48E1-99BA-8EE1E070B6C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9DCBB39-5B80-48E1-99BA-8EE1E070B6C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9DCBB39-5B80-48E1-99BA-8EE1E070B6C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
