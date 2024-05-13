@@ -63,6 +63,7 @@
             <SubType>Code</SubType>
         </Compile>
         <Compile Include="Helpers\BinaryDetection.cs" />
+        <Compile Include="Helpers\ResumeableDownloader.cs" />
         <Compile Include="Helpers\Semver.cs" />
         <Compile Include="Helpers\SimpleJson.cs" />
         <Compile Include="Helpers\VivaldiInfoEx.cs" />
