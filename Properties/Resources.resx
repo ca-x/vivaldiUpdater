@@ -114,4 +114,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Semver=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="text_vivaldi_latest_version" xml:space="preserve">
+    <value>Vivaldi最新版本</value>
+  </data>
+  <data name="text_vivaldi_plus_latest_version" xml:space="preserve">
+    <value>Vivaldi++最新版本</value>
+  </data>
+  <data name="text_auto_update_vivaldi_plus" xml:space="preserve">
+    <value>自动更新vivaldi++</value>
+  </data>
+  <data name="text_patch_with_vivaldi_plus" xml:space="preserve">
+    <value>自动注入Vivaldi++</value>
+  </data>
 </root>

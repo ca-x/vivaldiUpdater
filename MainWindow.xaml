@@ -12,6 +12,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:VivaldiUpdater"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:properties="clr-namespace:VivaldiUpdater.Properties"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Window.Resources>
         <ResourceDictionary>
@@ -85,8 +86,10 @@
             </Grid>
             <Grid Grid.Row="1" Margin="20">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="35" />
+                    <RowDefinition Height="35" />
+                    <RowDefinition Height="35" />
+                    <RowDefinition Height="35" />
                     <RowDefinition Height="70" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
@@ -100,7 +103,7 @@
                     Grid.Column="0"
                     Grid.Row="0"
                     HorizontalAlignment="Center"
-                    Text="vivaldi latest version"
+                    Text="{Binding Source={x:Static properties:Resources.text_vivaldi_latest_version}}"
                     VerticalAlignment="Center" />
                 <TextBlock
                     Foreground="Green"
@@ -115,7 +118,7 @@
                     Grid.Column="0"
                     Grid.Row="1"
                     HorizontalAlignment="Center"
-                    Text="vivaldi++ latest version"
+                    Text="{Binding Source={x:Static properties:Resources.text_vivaldi_plus_latest_version}}"
                     VerticalAlignment="Center" />
                 <TextBlock
                     Foreground="Green"
@@ -125,13 +128,36 @@
                     Text="1.7.55"
                     VerticalAlignment="Center" />
                 <!--  Options  -->
+                <TextBlock
+                    Foreground="PaleVioletRed"
+                    Grid.Column="0"
+                    Grid.Row="2"
+                    HorizontalAlignment="Center"
+                    Text="{Binding Source={x:Static properties:Resources.text_patch_with_vivaldi_plus}}"
+                    VerticalAlignment="Center" />
                 <ToggleButton
+                    Grid.Column="1"
                     Grid.Row="2"
                     Height="35"
-                    HorizontalAlignment="Center"
+                    HorizontalAlignment="Left"
                     Style="{StaticResource AppleToggleButtonStyle}"
                     VerticalAlignment="Center"
-                    Width="150" />
+                    Width="100" />
+                <TextBlock
+                    Foreground="PaleVioletRed"
+                    Grid.Column="0"
+                    Grid.Row="3"
+                    HorizontalAlignment="Center"
+                    Text="{Binding Source={x:Static properties:Resources.text_auto_update_vivaldi_plus}}"
+                    VerticalAlignment="Center" />
+                <ToggleButton
+                    Grid.Column="1"
+                    Grid.Row="3"
+                    Height="35"
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource AppleToggleButtonStyle}"
+                    VerticalAlignment="Center"
+                    Width="100" />
             </Grid>
         </Grid>
     </Border>

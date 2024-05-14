@@ -58,5 +58,41 @@ namespace VivaldiUpdater.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 自动更新vivaldi++.
+        /// </summary>
+        public static string text_auto_update_vivaldi_plus {
+            get {
+                return ResourceManager.GetString("text_auto_update_vivaldi_plus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 自动注入Vivaldi++.
+        /// </summary>
+        public static string text_patch_with_vivaldi_plus {
+            get {
+                return ResourceManager.GetString("text_patch_with_vivaldi_plus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vivaldi最新版本.
+        /// </summary>
+        public static string text_vivaldi_latest_version {
+            get {
+                return ResourceManager.GetString("text_vivaldi_latest_version", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vivaldi++最新版本.
+        /// </summary>
+        public static string text_vivaldi_plus_latest_version {
+            get {
+                return ResourceManager.GetString("text_vivaldi_plus_latest_version", resourceCulture);
+            }
+        }
     }
 }
