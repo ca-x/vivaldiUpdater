@@ -69,7 +69,7 @@ namespace VivaldiUpdater.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 安装Vivaldi++版本.
+        ///   Looks up a localized string similar to 已安装Vivaldi++版本.
         /// </summary>
         public static string text_installed_vivaldi_plus_version {
             get {

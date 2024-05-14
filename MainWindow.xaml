@@ -150,7 +150,7 @@
                     Grid.Column="0"
                     Grid.Row="3"
                     HorizontalAlignment="Center"
-                    Text="{Binding Source={x:Static properties:Resources.text_vivaldi_plus_latest_version}}"
+                    Text="{Binding Source={x:Static properties:Resources.text_installed_vivaldi_plus_version}}"
                     VerticalAlignment="Center" />
                 <TextBlock
                     Foreground="Green"
