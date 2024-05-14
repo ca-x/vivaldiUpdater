@@ -84,47 +84,54 @@
                 </Grid>
             </Grid>
             <Grid Grid.Row="1" Margin="20">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30" />
-                        <RowDefinition Height="30" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <!--  vivaldi version  -->
-                    <TextBlock
-                        Foreground="PaleVioletRed"
-                        Grid.Column="0"
-                        Grid.Row="0"
-                        HorizontalAlignment="Center"
-                        Text="vivaldi latest version"
-                        VerticalAlignment="Center" />
-                    <TextBlock
-                        Foreground="Green"
-                        Grid.Column="1"
-                        Grid.Row="0"
-                        HorizontalAlignment="Left"
-                        Text="6.7.55"
-                        VerticalAlignment="Center" />
-                    <!--  vivaldi++ version  -->
-                    <TextBlock
-                        Foreground="PaleVioletRed"
-                        Grid.Column="0"
-                        Grid.Row="1"
-                        HorizontalAlignment="Center"
-                        Text="vivaldi++ latest version"
-                        VerticalAlignment="Center" />
-                    <TextBlock
-                        Foreground="Green"
-                        Grid.Column="1"
-                        Grid.Row="1"
-                        HorizontalAlignment="Left"
-                        Text="1.7.55"
-                        VerticalAlignment="Center" />
-                </Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="70" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <!--  vivaldi version  -->
+                <TextBlock
+                    Foreground="PaleVioletRed"
+                    Grid.Column="0"
+                    Grid.Row="0"
+                    HorizontalAlignment="Center"
+                    Text="vivaldi latest version"
+                    VerticalAlignment="Center" />
+                <TextBlock
+                    Foreground="Green"
+                    Grid.Column="1"
+                    Grid.Row="0"
+                    HorizontalAlignment="Left"
+                    Text="6.7.55"
+                    VerticalAlignment="Center" />
+                <!--  vivaldi++ version  -->
+                <TextBlock
+                    Foreground="PaleVioletRed"
+                    Grid.Column="0"
+                    Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    Text="vivaldi++ latest version"
+                    VerticalAlignment="Center" />
+                <TextBlock
+                    Foreground="Green"
+                    Grid.Column="1"
+                    Grid.Row="1"
+                    HorizontalAlignment="Left"
+                    Text="1.7.55"
+                    VerticalAlignment="Center" />
+                <!--  Options  -->
+                <ToggleButton
+                    Grid.Row="2"
+                    Height="35"
+                    HorizontalAlignment="Center"
+                    Style="{StaticResource AppleToggleButtonStyle}"
+                    VerticalAlignment="Center"
+                    Width="150" />
             </Grid>
         </Grid>
     </Border>

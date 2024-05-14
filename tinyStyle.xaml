@@ -10,4 +10,77 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style TargetType="ToggleButton" x:Key="AppleToggleButtonStyle">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid Height="30" Width="60">
+                        <!--  Background  -->
+                        <Border
+                            Background="#E57373"
+                            CornerRadius="15"
+                            x:Name="BackgroundBorder" />
+
+                        <!--  Thumb  -->
+                        <Ellipse
+                            Height="26"
+                            Margin="2"
+                            Width="26"
+                            x:Name="Thumb">
+                            <Ellipse.Fill>
+                                <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
+                                    <GradientStop Color="White" Offset="0.0" />
+                                    <GradientStop Color="#CCCCCC" Offset="1.0" />
+                                </LinearGradientBrush>
+                            </Ellipse.Fill>
+                            <Ellipse.Effect>
+                                <DropShadowEffect
+                                    BlurRadius="5"
+                                    Color="Black"
+                                    ShadowDepth="3" />
+                            </Ellipse.Effect>
+                        </Ellipse>
+                        <!--  On/Off Text  -->
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CheckStates">
+                                <VisualState x:Name="Checked">
+                                    <Storyboard>
+                                        <ColorAnimation
+                                            Duration="0:0:0.2"
+                                            Storyboard.TargetName="BackgroundBorder"
+                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                            To="#F06292" />
+                                        <ThicknessAnimation
+                                            Duration="0:0:0.2"
+                                            Storyboard.TargetName="Thumb"
+                                            Storyboard.TargetProperty="Margin"
+                                            To="32,2,2,2" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Unchecked">
+                                    <Storyboard>
+                                        <ColorAnimation
+                                            Duration="0:0:0.2"
+                                            Storyboard.TargetName="BackgroundBorder"
+                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                            To="#E57373" />
+                                        <ThicknessAnimation
+                                            Duration="0:0:0.2"
+                                            Storyboard.TargetName="Thumb"
+                                            Storyboard.TargetProperty="Margin"
+                                            To="2,2,32,2" />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
