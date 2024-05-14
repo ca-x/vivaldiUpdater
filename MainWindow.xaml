@@ -90,6 +90,8 @@
                     <RowDefinition Height="35" />
                     <RowDefinition Height="35" />
                     <RowDefinition Height="35" />
+                    <RowDefinition Height="35" />
+                    <RowDefinition Height="35" />
                     <RowDefinition Height="70" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
@@ -97,7 +99,7 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <!--  vivaldi version  -->
+                <!--  latest vivaldi version  -->
                 <TextBlock
                     Foreground="PaleVioletRed"
                     Grid.Column="0"
@@ -112,18 +114,48 @@
                     HorizontalAlignment="Left"
                     Text="6.7.55"
                     VerticalAlignment="Center" />
-                <!--  vivaldi++ version  -->
+                <!--  installed vivaldi version  -->
                 <TextBlock
                     Foreground="PaleVioletRed"
                     Grid.Column="0"
                     Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    Text="{Binding Source={x:Static properties:Resources.text_installed_vivaldi_version}}"
+                    VerticalAlignment="Center" />
+                <TextBlock
+                    Foreground="Green"
+                    Grid.Column="1"
+                    Grid.Row="1"
+                    HorizontalAlignment="Left"
+                    Text="6.7.55"
+                    VerticalAlignment="Center" />
+                <!--  latest vivaldi++ version  -->
+                <TextBlock
+                    Foreground="PaleVioletRed"
+                    Grid.Column="0"
+                    Grid.Row="2"
                     HorizontalAlignment="Center"
                     Text="{Binding Source={x:Static properties:Resources.text_vivaldi_plus_latest_version}}"
                     VerticalAlignment="Center" />
                 <TextBlock
                     Foreground="Green"
                     Grid.Column="1"
-                    Grid.Row="1"
+                    Grid.Row="2"
+                    HorizontalAlignment="Left"
+                    Text="1.7.55"
+                    VerticalAlignment="Center" />
+                <!--  installed vivaldi++ version  -->
+                <TextBlock
+                    Foreground="PaleVioletRed"
+                    Grid.Column="0"
+                    Grid.Row="3"
+                    HorizontalAlignment="Center"
+                    Text="{Binding Source={x:Static properties:Resources.text_vivaldi_plus_latest_version}}"
+                    VerticalAlignment="Center" />
+                <TextBlock
+                    Foreground="Green"
+                    Grid.Column="1"
+                    Grid.Row="3"
                     HorizontalAlignment="Left"
                     Text="1.7.55"
                     VerticalAlignment="Center" />
@@ -131,13 +163,13 @@
                 <TextBlock
                     Foreground="PaleVioletRed"
                     Grid.Column="0"
-                    Grid.Row="2"
+                    Grid.Row="4"
                     HorizontalAlignment="Center"
                     Text="{Binding Source={x:Static properties:Resources.text_patch_with_vivaldi_plus}}"
                     VerticalAlignment="Center" />
                 <ToggleButton
                     Grid.Column="1"
-                    Grid.Row="2"
+                    Grid.Row="4"
                     Height="35"
                     HorizontalAlignment="Left"
                     Style="{StaticResource AppleToggleButtonStyle}"
@@ -146,13 +178,13 @@
                 <TextBlock
                     Foreground="PaleVioletRed"
                     Grid.Column="0"
-                    Grid.Row="3"
+                    Grid.Row="5"
                     HorizontalAlignment="Center"
                     Text="{Binding Source={x:Static properties:Resources.text_auto_update_vivaldi_plus}}"
                     VerticalAlignment="Center" />
                 <ToggleButton
                     Grid.Column="1"
-                    Grid.Row="3"
+                    Grid.Row="5"
                     Height="35"
                     HorizontalAlignment="Left"
                     Style="{StaticResource AppleToggleButtonStyle}"
