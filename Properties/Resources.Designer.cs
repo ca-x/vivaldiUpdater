@@ -60,7 +60,34 @@ namespace VivaldiUpdater.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 自动更新vivaldi++.
+        ///   Looks up a localized string similar to 已是最新版.
+        /// </summary>
+        public static string text_already_latest_version {
+            get {
+                return ResourceManager.GetString("text_already_latest_version", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 应用.
+        /// </summary>
+        public static string text_apply_option {
+            get {
+                return ResourceManager.GetString("text_apply_option", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 自动更新Vivaldi.
+        /// </summary>
+        public static string text_auto_update_vivaldi {
+            get {
+                return ResourceManager.GetString("text_auto_update_vivaldi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 自动更新Vivaldi++.
         /// </summary>
         public static string text_auto_update_vivaldi_plus {
             get {
@@ -69,47 +96,38 @@ namespace VivaldiUpdater.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 已安装Vivaldi++版本.
+        ///   Looks up a localized string similar to 启用vivaldi++.
         /// </summary>
-        public static string text_installed_vivaldi_plus_version {
+        public static string text_enable_vivaldi_plus {
             get {
-                return ResourceManager.GetString("text_installed_vivaldi_plus_version", resourceCulture);
+                return ResourceManager.GetString("text_enable_vivaldi_plus", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 已安装Vivaldi版本.
+        ///   Looks up a localized string similar to 有可用更新.
         /// </summary>
-        public static string text_installed_vivaldi_version {
+        public static string text_update_available {
             get {
-                return ResourceManager.GetString("text_installed_vivaldi_version", resourceCulture);
+                return ResourceManager.GetString("text_update_available", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 自动注入Vivaldi++.
+        ///   Looks up a localized string similar to Vivaldi浏览器.
         /// </summary>
-        public static string text_patch_with_vivaldi_plus {
+        public static string text_vivaldi_browser {
             get {
-                return ResourceManager.GetString("text_patch_with_vivaldi_plus", resourceCulture);
+                return ResourceManager.GetString("text_vivaldi_browser", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Vivaldi最新版本.
+        ///   Looks up a localized string similar to Vivaldi++插件.
         /// </summary>
-        public static string text_vivaldi_latest_version {
+        public static string text_vivaldi_plus_plugin {
             get {
-                return ResourceManager.GetString("text_vivaldi_latest_version", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Vivaldi++最新版本.
-        /// </summary>
-        public static string text_vivaldi_plus_latest_version {
-            get {
-                return ResourceManager.GetString("text_vivaldi_plus_latest_version", resourceCulture);
+                return ResourceManager.GetString("text_vivaldi_plus_plugin", resourceCulture);
             }
         }
     }

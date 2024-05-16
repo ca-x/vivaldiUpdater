@@ -114,22 +114,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Semver=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="text_vivaldi_latest_version" >
-    <value>Vivaldi最新版本</value>
+  <data name="text_apply_option" >
+    <value>应用</value>
   </data>
-  <data name="text_vivaldi_plus_latest_version" xml:space="preserve">
-    <value>Vivaldi++最新版本</value>
+  <data name="text_vivaldi_browser" xml:space="preserve">
+    <value>Vivaldi浏览器</value>
+  </data>
+  <data name="text_enable_vivaldi_plus" xml:space="preserve">
+    <value>启用vivaldi++</value>
   </data>
   <data name="text_auto_update_vivaldi_plus" xml:space="preserve">
-    <value>自动更新vivaldi++</value>
+    <value>自动更新Vivaldi++</value>
   </data>
-  <data name="text_patch_with_vivaldi_plus" xml:space="preserve">
-    <value>自动注入Vivaldi++</value>
+  <data name="text_auto_update_vivaldi" xml:space="preserve">
+    <value>自动更新Vivaldi</value>
   </data>
-  <data name="text_installed_vivaldi_version" xml:space="preserve">
-    <value>已安装Vivaldi版本</value>
+  <data name="text_vivaldi_plus_plugin" xml:space="preserve">
+    <value>Vivaldi++插件</value>
   </data>
-  <data name="text_installed_vivaldi_plus_version" xml:space="preserve">
-    <value>已安装Vivaldi++版本</value>
+  <data name="text_already_latest_version" xml:space="preserve">
+    <value>已是最新版</value>
+  </data>
+  <data name="text_update_available" xml:space="preserve">
+    <value>有可用更新</value>
   </data>
 </root>

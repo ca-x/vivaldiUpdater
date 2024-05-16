@@ -86,110 +86,116 @@
             </Grid>
             <Grid Grid.Row="1" Margin="20">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="35" />
-                    <RowDefinition Height="35" />
-                    <RowDefinition Height="35" />
-                    <RowDefinition Height="35" />
-                    <RowDefinition Height="35" />
-                    <RowDefinition Height="35" />
-                    <RowDefinition Height="70" />
-                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="80" />
                 </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <!--  latest vivaldi version  -->
-                <TextBlock
-                    Foreground="PaleVioletRed"
-                    Grid.Column="0"
-                    Grid.Row="0"
-                    HorizontalAlignment="Center"
-                    Text="{Binding Source={x:Static properties:Resources.text_vivaldi_latest_version}}"
-                    VerticalAlignment="Center" />
-                <TextBlock
-                    Foreground="Green"
-                    Grid.Column="1"
-                    Grid.Row="0"
-                    HorizontalAlignment="Left"
-                    Text="6.7.55"
-                    VerticalAlignment="Center" />
-                <!--  installed vivaldi version  -->
-                <TextBlock
-                    Foreground="PaleVioletRed"
-                    Grid.Column="0"
-                    Grid.Row="1"
-                    HorizontalAlignment="Center"
-                    Text="{Binding Source={x:Static properties:Resources.text_installed_vivaldi_version}}"
-                    VerticalAlignment="Center" />
-                <TextBlock
-                    Foreground="Green"
-                    Grid.Column="1"
-                    Grid.Row="1"
-                    HorizontalAlignment="Left"
-                    Text="6.7.55"
-                    VerticalAlignment="Center" />
-                <!--  latest vivaldi++ version  -->
-                <TextBlock
-                    Foreground="PaleVioletRed"
-                    Grid.Column="0"
-                    Grid.Row="2"
-                    HorizontalAlignment="Center"
-                    Text="{Binding Source={x:Static properties:Resources.text_vivaldi_plus_latest_version}}"
-                    VerticalAlignment="Center" />
-                <TextBlock
-                    Foreground="Green"
-                    Grid.Column="1"
-                    Grid.Row="2"
-                    HorizontalAlignment="Left"
-                    Text="1.7.55"
-                    VerticalAlignment="Center" />
-                <!--  installed vivaldi++ version  -->
-                <TextBlock
-                    Foreground="PaleVioletRed"
-                    Grid.Column="0"
-                    Grid.Row="3"
-                    HorizontalAlignment="Center"
-                    Text="{Binding Source={x:Static properties:Resources.text_installed_vivaldi_plus_version}}"
-                    VerticalAlignment="Center" />
-                <TextBlock
-                    Foreground="Green"
-                    Grid.Column="1"
-                    Grid.Row="3"
-                    HorizontalAlignment="Left"
-                    Text="1.7.55"
-                    VerticalAlignment="Center" />
+                <!--  display info  -->
+                <StackPanel>
+                    <!--  vivaldi info  -->
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                        <TextBlock
+                            Foreground="PaleVioletRed"
+                            HorizontalAlignment="Left"
+                            Text="{Binding Source={x:Static properties:Resources.text_vivaldi_browser}}"
+                            VerticalAlignment="Center"
+                            Width="120" />
+                        <TextBlock
+                            Foreground="Green"
+                            HorizontalAlignment="Left"
+                            Margin="20,0,0,0"
+                            Text="1.7.55"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <!--  vivaldi++ info  -->
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                        <TextBlock
+                            Foreground="PaleVioletRed"
+                            HorizontalAlignment="Left"
+                            Margin="0,10,0,0"
+                            Text="{Binding Source={x:Static properties:Resources.text_vivaldi_plus_plugin}}"
+                            VerticalAlignment="Center"
+                            Width="120" />
+                        <TextBlock
+                            Foreground="Green"
+                            HorizontalAlignment="Left"
+                            Margin="20,0,0,0"
+                            Text="1.7.55"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+
+                </StackPanel>
                 <!--  Options  -->
-                <TextBlock
-                    Foreground="PaleVioletRed"
-                    Grid.Column="0"
-                    Grid.Row="4"
+                <StackPanel Grid.Row="1" Margin="0,10,0,0">
+                    <!--  auto patch with vivaldi++  -->
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                        <TextBlock
+                            Foreground="PaleVioletRed"
+                            HorizontalAlignment="Left"
+                            Text="{Binding Source={x:Static properties:Resources.text_auto_update_vivaldi}}"
+                            VerticalAlignment="Center"
+                            Width="120" />
+                        <ToggleButton
+                            Height="35"
+                            HorizontalAlignment="Left"
+                            IsChecked="True"
+                            Style="{StaticResource AppleToggleButtonStyle}"
+                            VerticalAlignment="Center"
+                            Width="100" />
+                    </StackPanel>
+                    <!--  auto patch with vivaldi++  -->
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                        <TextBlock
+                            Foreground="PaleVioletRed"
+                            HorizontalAlignment="Left"
+                            Text="{Binding Source={x:Static properties:Resources.text_enable_vivaldi_plus}}"
+                            VerticalAlignment="Center"
+                            Width="120" />
+                        <ToggleButton
+                            Height="35"
+                            HorizontalAlignment="Left"
+                            IsChecked="True"
+                            Style="{StaticResource AppleToggleButtonStyle}"
+                            VerticalAlignment="Center"
+                            Width="100" />
+                    </StackPanel>
+                    <!--  update vivaldi++  -->
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                        <TextBlock
+                            Foreground="PaleVioletRed"
+                            HorizontalAlignment="Left"
+                            Text="{Binding Source={x:Static properties:Resources.text_auto_update_vivaldi_plus}}"
+                            VerticalAlignment="Center"
+                            Width="120" />
+                        <ToggleButton
+                            Height="35"
+                            HorizontalAlignment="Left"
+                            IsChecked="True"
+                            Style="{StaticResource AppleToggleButtonStyle}"
+                            VerticalAlignment="Center"
+                            Width="100" />
+                    </StackPanel>
+
+                </StackPanel>
+                <!--  update process  -->
+                <StackPanel Grid.Row="2" Margin="0,10,0,0">
+                    <ProgressBar
+                        Height="20"
+                        Maximum="100"
+                        Style="{StaticResource MacOSProgressBarStyle}"
+                        Value="71"
+                        Width="200" />
+                </StackPanel>
+                <Button
+                    Content="{Binding Source={x:Static properties:Resources.text_apply_option}}"
+                    Grid.Row="3"
+                    Height="60"
                     HorizontalAlignment="Center"
-                    Text="{Binding Source={x:Static properties:Resources.text_patch_with_vivaldi_plus}}"
-                    VerticalAlignment="Center" />
-                <ToggleButton
-                    Grid.Column="1"
-                    Grid.Row="4"
-                    Height="35"
-                    HorizontalAlignment="Left"
-                    Style="{StaticResource AppleToggleButtonStyle}"
+                    Style="{StaticResource ApplePriButtonStyle}"
                     VerticalAlignment="Center"
-                    Width="100" />
-                <TextBlock
-                    Foreground="PaleVioletRed"
-                    Grid.Column="0"
-                    Grid.Row="5"
-                    HorizontalAlignment="Center"
-                    Text="{Binding Source={x:Static properties:Resources.text_auto_update_vivaldi_plus}}"
-                    VerticalAlignment="Center" />
-                <ToggleButton
-                    Grid.Column="1"
-                    Grid.Row="5"
-                    Height="35"
-                    HorizontalAlignment="Left"
-                    Style="{StaticResource AppleToggleButtonStyle}"
-                    VerticalAlignment="Center"
-                    Width="100" />
+                    Width="200" />
             </Grid>
         </Grid>
     </Border>
