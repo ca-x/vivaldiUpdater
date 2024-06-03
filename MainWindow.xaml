@@ -2,6 +2,7 @@
     AllowsTransparency="True"
     Background="Transparent"
     Height="350"
+    Loaded="MainWindow_OnLoaded"
     Title="MainWindow"
     Width="525"
     WindowStartupLocation="CenterScreen"
@@ -105,7 +106,7 @@
                             Foreground="Green"
                             HorizontalAlignment="Left"
                             Margin="20,0,0,0"
-                            Text="1.7.55"
+                            Text="{Binding VivaldiLatestVersion}"
                             VerticalAlignment="Center" />
                     </StackPanel>
 
@@ -122,7 +123,7 @@
                             Foreground="Green"
                             HorizontalAlignment="Left"
                             Margin="20,0,0,0"
-                            Text="1.7.55"
+                            Text="{Binding VivaldiPlusLatestVersion}"
                             VerticalAlignment="Center" />
                     </StackPanel>
 
@@ -140,7 +141,7 @@
                         <ToggleButton
                             Height="35"
                             HorizontalAlignment="Left"
-                            IsChecked="True"
+                            IsChecked="{Binding EnableVivaldiUpdate, Mode=TwoWay}"
                             Style="{StaticResource AppleToggleButtonStyle}"
                             VerticalAlignment="Center"
                             Width="100" />
@@ -156,7 +157,7 @@
                         <ToggleButton
                             Height="35"
                             HorizontalAlignment="Left"
-                            IsChecked="True"
+                            IsChecked="{Binding EnableVivaldiPlus, Mode=TwoWay}"
                             Style="{StaticResource AppleToggleButtonStyle}"
                             VerticalAlignment="Center"
                             Width="100" />
@@ -172,7 +173,7 @@
                         <ToggleButton
                             Height="35"
                             HorizontalAlignment="Left"
-                            IsChecked="True"
+                            IsChecked="{Binding EnableVivaldiPlusUpdate, Mode=TwoWay}"
                             Style="{StaticResource AppleToggleButtonStyle}"
                             VerticalAlignment="Center"
                             Width="100" />
@@ -187,6 +188,10 @@
                         Style="{StaticResource MacOSProgressBarStyle}"
                         Value="71"
                         Width="200" />
+                    <TextBlock
+                        Foreground="Sienna"
+                        HorizontalAlignment="Center"
+                        Text="{Binding Source={x:Static properties:Resources.text_downloading_vivaldi}}" />
                 </StackPanel>
                 <Button
                     Content="{Binding Source={x:Static properties:Resources.text_apply_option}}"

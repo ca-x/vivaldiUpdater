@@ -41,7 +41,7 @@ namespace TestCase.Helpers
 
             if (System.IO.File.Exists(outputPath))
             {
-                System.IO.File.Delete(outputPath);
+               // System.IO.File.Delete(outputPath);
             }
 
             Assert.Pass();

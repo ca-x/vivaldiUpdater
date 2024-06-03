@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace VivaldiUpdater.ViewModel
 {
@@ -9,6 +11,24 @@ namespace VivaldiUpdater.ViewModel
         private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public async Task<MainViewModel> Prepare()
+        {
+            var vivaldiVersionInfo = await Helpers.VivaldiInfoEx.GetVivaldiVersionInfo();
+            VivaldiLatestVersion = vivaldiVersionInfo.Version;
+
+            var vivaldiPlusInfo = await Helpers.VivaldiInfoEx.GetVivaldiPlusPlusRelease();
+            VivaldiPlusLatestVersion = vivaldiPlusInfo.FirstOrDefault().Version;
+            
+            return new MainViewModel
+            {
+                VivaldiLatestVersion = VivaldiLatestVersion,
+                VivaldiPlusLatestVersion = VivaldiPlusLatestVersion,
+                EnableVivaldiPlus = true,
+                EnableVivaldiPlusUpdate = true,
+                EnableVivaldiUpdate = true,
+            };
         }
 
         #region flag display
@@ -59,6 +79,7 @@ namespace VivaldiUpdater.ViewModel
         }
 
         private bool _vivaldiUpdateAvailable;
+
         /// <summary>
         /// Vivaldi update available
         /// </summary>
@@ -73,6 +94,7 @@ namespace VivaldiUpdater.ViewModel
         }
 
         private bool _vivaldiPlusUpdateAvailable;
+
         /// <summary>
         /// Vivaldi++ update available
         /// </summary>
@@ -168,8 +190,6 @@ namespace VivaldiUpdater.ViewModel
         #endregion
 
         #region command
-
-        
 
         #endregion
     }

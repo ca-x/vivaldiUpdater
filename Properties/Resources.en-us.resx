@@ -35,4 +35,10 @@
     <data name="text_update_available" xml:space="preserve">
         <value>Update available</value>
     </data>
+    <data name="text_downloading_vivaldi_plus" xml:space="preserve">
+        <value>Downloading Vivaldi++</value>
+    </data>
+    <data name="text_downloading_vivaldi" xml:space="preserve">
+        <value>Downloading Vivaldi</value>
+    </data>
 </root>

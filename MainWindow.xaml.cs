@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using VivaldiUpdater.ViewModel;
 
 namespace VivaldiUpdater
 {
@@ -21,6 +22,12 @@ namespace VivaldiUpdater
         private void CloseButton_OnClick(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
+        }
+
+        private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var model =  await  new MainViewModel().Prepare();
+            DataContext = model;
         }
     }
 }

@@ -96,6 +96,24 @@ namespace VivaldiUpdater.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 正在下载vivaldi.
+        /// </summary>
+        public static string text_downloading_vivaldi {
+            get {
+                return ResourceManager.GetString("text_downloading_vivaldi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 正在下载vivaldi++.
+        /// </summary>
+        public static string text_downloading_vivaldi_plus {
+            get {
+                return ResourceManager.GetString("text_downloading_vivaldi_plus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 启用vivaldi++.
         /// </summary>
         public static string text_enable_vivaldi_plus {

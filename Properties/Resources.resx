@@ -138,4 +138,10 @@
   <data name="text_update_available" xml:space="preserve">
     <value>有可用更新</value>
   </data>
+  <data name="text_downloading_vivaldi_plus" xml:space="preserve">
+    <value>正在下载vivaldi++</value>
+  </data>
+  <data name="text_downloading_vivaldi" xml:space="preserve">
+    <value>正在下载vivaldi</value>
+  </data>
 </root>

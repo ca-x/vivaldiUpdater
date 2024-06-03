@@ -45,6 +45,7 @@
     <ItemGroup>
         <Compile Include="Helpers\ResumeableDownloaderTest.cs" />
         <Compile Include="Helpers\VivaldiInfoExTest.cs" />
+        <Compile Include="Helpers\VivaldiInstallerTest.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
     </ItemGroup>
     <ItemGroup>
