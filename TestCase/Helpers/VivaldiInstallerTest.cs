@@ -16,10 +16,10 @@ namespace TestCase.Helpers
         }
 
         [Test]
-        public void TestGetVivaldiVersionFromDir()
+        public void TestGetVivaldiInfoFromDir()
         {
-            var version = VivaldiInstaller.GetVivaldiVersionFromInstallDir("vivaldi");
-            Console.WriteLine(version);
+            var info = VivaldiInstaller.GetVivaldiInfoFromInstallDir("vivaldi");
+            Console.WriteLine($"Architecture: {info.arch}, Version: {info.version}");
             Assert.Pass();
         }
     }

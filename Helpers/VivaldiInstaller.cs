@@ -14,7 +14,7 @@ namespace VivaldiUpdater.Helpers
         /// </summary>
         /// <param name="installDir"></param>
         /// <returns></returns>
-        public static string GetVivaldiVersionFromInstallDir(string installDir)
+        public static (string arch, string version) GetVivaldiInfoFromInstallDir(string installDir)
         {
             try
             {
@@ -23,11 +23,14 @@ namespace VivaldiUpdater.Helpers
                     SearchOption.AllDirectories);
                 var vivaldiExeFile = AllFiles.First();
                 var fileVersionInfo = FileVersionInfo.GetVersionInfo(vivaldiExeFile);
-                return fileVersionInfo.FileVersion;
+                var arch = BinaryDetection.IsX64Image(vivaldiExeFile) ? "x64" : "x86";
+                return (
+                    arch,
+                    fileVersionInfo.FileVersion);
             }
             catch (Exception ex)
             {
-                return null;
+                return (null, null);
             }
         }
 
