@@ -1,6 +1,11 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 
 namespace VivaldiUpdater.ViewModel
 {
@@ -191,6 +196,115 @@ namespace VivaldiUpdater.ViewModel
 
         #region command
 
+        private ICommand _applyCommand;
+        public ICommand ApplyCommand
+        {
+            get
+            {
+                return _applyCommand ?? (_applyCommand = new RelayCommand(ApplyChanges));
+            }
+        }
+
+        private async void ApplyChanges()
+        {
+            ShowUpdateProcessBar = true;
+            
+            if (EnableVivaldiUpdate)
+            {
+                await CheckAndUpdateVivaldi();
+            }
+            
+            if (EnableVivaldiPlus && EnableVivaldiPlusUpdate)
+            {
+                await CheckAndUpdateVivaldiPlus();
+            }
+            
+            ShowUpdateProcessBar = false;
+        }
+
+        private async Task CheckAndUpdateVivaldi()
+        {
+            var latestVersion = await Helpers.VivaldiInfoEx.GetVivaldiVersionInfo();
+            if (VivaldiInstalledVersion==null || Helpers.Semver.IsBigger(latestVersion.Version, VivaldiInstalledVersion) > 0  )
+            {
+                // Update Vivaldi
+                var urls = await Helpers.VivaldiInfoEx.GetVivaldiDistUrls("win64");
+                if (urls != null && urls.Count > 0)
+                {
+                    var downloader = new Helpers.ResumeableDownloader();
+                    downloader.DownloadProgressChanged += (sender, args) => 
+                    {
+                        // Update progress bar
+                        DownloadProgress = args.ProgressPercentage;
+                    };
+
+                    var fullPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                        "VivaldiInstaller.exe");
+                    await downloader.DownloadFileAsync(urls[0].UrlMirror, fullPath);
+                    
+                    // Install Vivaldi
+                    var installResult = Helpers.VivaldiInstaller.ExtractVivaldi(fullPath, Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),"App"));
+                    if (installResult == 0)
+                    {
+                        VivaldiInstalledVersion = latestVersion.Version;
+                    }
+                }
+            }
+        }
+
+        private async Task CheckAndUpdateVivaldiPlus()
+        {
+            var latestRelease = (await Helpers.VivaldiInfoEx.GetVivaldiPlusPlusRelease()).FirstOrDefault();
+            if (VivaldiPlusInstalledVersion==null ||(latestRelease != null && Helpers.Semver.IsBigger(latestRelease.Version, VivaldiPlusInstalledVersion) > 0))
+            {
+                // Update Vivaldi++
+                var downloader = new Helpers.ResumeableDownloader();
+                downloader.DownloadProgressChanged += (sender, args) => 
+                {
+                    // Update progress bar
+                    DownloadProgress = args.ProgressPercentage;
+                };
+                
+                await downloader.DownloadFileAsync(latestRelease.FastgitMirrorUrl, "VivaldiPlusInstaller.zip");
+                
+                // Install Vivaldi++
+                // You'll need to implement the installation logic for Vivaldi++
+                // After successful installation, update the installed version
+                VivaldiPlusInstalledVersion = latestRelease.Version;
+            }
+        }
+
+        private int _downloadProgress;
+        public int DownloadProgress
+        {
+            get => _downloadProgress;
+            set
+            {
+                _downloadProgress = value;
+                OnPropertyChanged();
+            }
+        }
+
         #endregion
+    }
+
+    public class RelayCommand : ICommand
+    {
+        private readonly Action _execute;
+        private readonly Func<bool> _canExecute;
+
+        public RelayCommand(Action execute, Func<bool> canExecute = null)
+        {
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            _canExecute = canExecute;
+        }
+
+        public bool CanExecute(object parameter) => _canExecute == null || _canExecute();
+        public void Execute(object parameter) => _execute();
+        public event EventHandler CanExecuteChanged
+        {
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
+        }
     }
 }

@@ -186,7 +186,7 @@
                         Height="20"
                         Maximum="100"
                         Style="{StaticResource MacOSProgressBarStyle}"
-                        Value="71"
+                        Value="{Binding DownloadProgress}"
                         Width="200" />
                     <TextBlock
                         Foreground="Sienna"
@@ -200,7 +200,9 @@
                     HorizontalAlignment="Center"
                     Style="{StaticResource ApplePriButtonStyle}"
                     VerticalAlignment="Center"
-                    Width="200" />
+                    Width="200"
+                    Command="{Binding ApplyCommand}"
+                    />
             </Grid>
         </Grid>
     </Border>

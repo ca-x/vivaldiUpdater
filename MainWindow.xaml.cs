@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using VivaldiUpdater.ViewModel;
+using System.Threading.Tasks;
 
 namespace VivaldiUpdater
 {
