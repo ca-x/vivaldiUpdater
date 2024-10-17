@@ -96,6 +96,15 @@ namespace VivaldiUpdater.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 下载完成.
+        /// </summary>
+        public static string text_download_completed {
+            get {
+                return ResourceManager.GetString("text_download_completed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 正在下载vivaldi.
         /// </summary>
         public static string text_downloading_vivaldi {
@@ -123,11 +132,38 @@ namespace VivaldiUpdater.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 有可用更新.
+        ///   Looks up a localized string similar to 安装.
         /// </summary>
-        public static string text_update_available {
+        public static string text_install {
             get {
-                return ResourceManager.GetString("text_update_available", resourceCulture);
+                return ResourceManager.GetString("text_install", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 🎉.
+        /// </summary>
+        public static string text_no_update_avaliable {
+            get {
+                return ResourceManager.GetString("text_no_update_avaliable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 更新.
+        /// </summary>
+        public static string text_update {
+            get {
+                return ResourceManager.GetString("text_update", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ⬆️ .
+        /// </summary>
+        public static string text_update_avaliable {
+            get {
+                return ResourceManager.GetString("text_update_avaliable", resourceCulture);
             }
         }
         
@@ -146,6 +182,15 @@ namespace VivaldiUpdater.Properties {
         public static string text_vivaldi_plus_plugin {
             get {
                 return ResourceManager.GetString("text_vivaldi_plus_plugin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 正在解压Vivaldi程序.
+        /// </summary>
+        public static string txt_extrating_vivaldi_installer {
+            get {
+                return ResourceManager.GetString("txt_extrating_vivaldi_installer", resourceCulture);
             }
         }
     }

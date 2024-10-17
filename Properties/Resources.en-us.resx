@@ -32,13 +32,28 @@
     <data name="text_already_latest_version" xml:space="preserve">
         <value>Already  latest version</value>
     </data>
-    <data name="text_update_available" xml:space="preserve">
-        <value>Update available</value>
-    </data>
     <data name="text_downloading_vivaldi_plus" xml:space="preserve">
         <value>Downloading Vivaldi++</value>
     </data>
     <data name="text_downloading_vivaldi" xml:space="preserve">
         <value>Downloading Vivaldi</value>
+    </data>
+    <data name="txt_extrating_vivaldi_installer" xml:space="preserve">
+        <value>Extracting Vivaldi</value>
+    </data>
+    <data name="text_download_completed" xml:space="preserve">
+        <value>Download Completed</value>
+    </data>
+    <data name="text_update" xml:space="preserve">
+        <value>Update</value>
+    </data>
+    <data name="text_install" xml:space="preserve">
+        <value>Install</value>
+    </data>
+    <data name="text_update_avaliable" xml:space="preserve">
+        <value>⬆️ </value>
+    </data>
+    <data name="text_no_update_avaliable" xml:space="preserve">
+        <value>🎉</value>
     </data>
 </root>

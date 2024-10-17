@@ -108,6 +108,12 @@
                             Margin="20,0,0,0"
                             Text="{Binding VivaldiLatestVersion}"
                             VerticalAlignment="Center" />
+                        <TextBlock
+                            Foreground="BlueViolet"
+                            HorizontalAlignment="Left"
+                            Margin="20,0,0,0"
+                            Text="{Binding VivaldiUpdateNotifyText}"
+                            VerticalAlignment="Center" />
                     </StackPanel>
 
                     <!--  vivaldi++ info  -->
@@ -124,6 +130,12 @@
                             HorizontalAlignment="Left"
                             Margin="20,0,0,0"
                             Text="{Binding VivaldiPlusLatestVersion}"
+                            VerticalAlignment="Center" />
+                        <TextBlock
+                            Foreground="BlueViolet"
+                            HorizontalAlignment="Left"
+                            Margin="20,0,0,0"
+                            Text="{Binding VivaldiPlusUpdateNotifyText}"
                             VerticalAlignment="Center" />
                     </StackPanel>
 
@@ -187,14 +199,15 @@
                         Maximum="100"
                         Style="{StaticResource MacOSProgressBarStyle}"
                         Value="{Binding DownloadProgress}"
+                        Visibility="{Binding ShowUpdateProcessBar}"
                         Width="200" />
                     <TextBlock
                         Foreground="Sienna"
                         HorizontalAlignment="Center"
-                        Text="{Binding Source={x:Static properties:Resources.text_downloading_vivaldi}}" />
+                        Text="{Binding ProcessBarNotifyText}" />
                 </StackPanel>
                 <Button
-                    Content="{Binding Source={x:Static properties:Resources.text_apply_option}}"
+                    Content="{Binding Operation}"
                     Grid.Row="3"
                     Height="60"
                     HorizontalAlignment="Center"

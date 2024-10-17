@@ -3,12 +3,37 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.Windows.Documents;
 
 namespace VivaldiUpdater.Helpers
 {
     public static class VivaldiInstaller
     {
+        /// <summary>
+        /// GetVivaldiPlusInfoFromInstallDir
+        /// </summary>
+        /// <param name="installDir"></param>
+        /// <returns></returns>
+        public static (string arch, string version) GetVivaldiPlusInfoFromInstallDir(string installDir)
+        {
+            try
+            {
+                var AllFiles = Directory.GetFiles(
+                    installDir, "version.dll",
+                    SearchOption.AllDirectories);
+                var vivaldiExeFile = AllFiles.First();
+                var fileVersionInfo = FileVersionInfo.GetVersionInfo(vivaldiExeFile);
+                var arch = BinaryDetection.IsX64Image(vivaldiExeFile) ? "x64" : "x86";
+                return (
+                    arch,
+                    fileVersionInfo.FileVersion);
+            }
+            catch (Exception ex)
+            {
+                return (null, null);
+            }
+        }
         /// <summary>
         /// Get vivaldi version from an install dir
         /// </summary>
@@ -23,7 +48,7 @@ namespace VivaldiUpdater.Helpers
                     SearchOption.AllDirectories);
                 var vivaldiExeFile = AllFiles.First();
                 var fileVersionInfo = FileVersionInfo.GetVersionInfo(vivaldiExeFile);
-                var arch = BinaryDetection.IsX64Image(vivaldiExeFile) ? "x64" : "x86";
+                var arch = BinaryDetection.IsX64Image(vivaldiExeFile) ? "win64" : "win32";
                 return (
                     arch,
                     fileVersionInfo.FileVersion);

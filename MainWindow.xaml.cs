@@ -13,6 +13,15 @@ namespace VivaldiUpdater
         public MainWindow()
         {
             InitializeComponent();
+            var model =  new MainViewModel
+            {
+                Operation = Properties.Resources.text_install,
+                EnableVivaldiPlus = true,
+                EnableVivaldiPlusUpdate = true,
+                EnableVivaldiUpdate = true,
+                ShowUpdateProcessBar = Visibility.Hidden,
+            };
+            DataContext = model;
         }
 
         private void HandleDrag(object sender, MouseButtonEventArgs e)
@@ -27,8 +36,10 @@ namespace VivaldiUpdater
 
         private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
-            var model =  await  new MainViewModel().Prepare();
-            DataContext = model;
+            if (DataContext is MainViewModel mm)
+            {
+                await  mm.UpdateContext();
+            }
         }
     }
 }
