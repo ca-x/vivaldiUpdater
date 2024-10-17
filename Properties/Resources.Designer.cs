@@ -150,6 +150,15 @@ namespace VivaldiUpdater.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 💔.
+        /// </summary>
+        public static string text_service_not_avaliable {
+            get {
+                return ResourceManager.GetString("text_service_not_avaliable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 更新.
         /// </summary>
         public static string text_update {

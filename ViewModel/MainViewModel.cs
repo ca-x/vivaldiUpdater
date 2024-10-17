@@ -84,7 +84,7 @@ namespace VivaldiUpdater.ViewModel
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                MessageBox.Show($"{Properties.Resources.text_service_not_avaliable}:{e.Message}");
             }
         }
 
@@ -289,36 +289,43 @@ namespace VivaldiUpdater.ViewModel
 
         private async void ApplyChanges()
         {
-            var AppDir = Path.Combine(
-                Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                "App"
-            );
-
-            var installed = CheckInstalledInfo(AppDir);
-
-            if (installed.VivaldiArch == null)
+            try
             {
-                installed.VivaldiArch = Win32Api.Is64BitOperatingSystem ? "win64" : "win32";
-            }
+                var AppDir = Path.Combine(
+                    Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                    "App"
+                );
 
-            if (installed.VivaldiPlusArch == null)
+                var installed = CheckInstalledInfo(AppDir);
+
+                if (installed.VivaldiArch == null)
+                {
+                    installed.VivaldiArch = Win32Api.Is64BitOperatingSystem ? "win64" : "win32";
+                }
+
+                if (installed.VivaldiPlusArch == null)
+                {
+                    installed.VivaldiPlusArch = Win32Api.Is64BitOperatingSystem ? "x64" : "x86";
+                }
+
+                if (EnableVivaldiUpdate)
+                {
+                    await CheckAndUpdateVivaldi(AppDir, installed.InstalledVivaldi, installed.VivaldiArch);
+                }
+
+                if (EnableVivaldiPlus && EnableVivaldiPlusUpdate)
+                {
+                    await CheckAndUpdateVivaldiPlus(AppDir, installed.InstalledVivaldiPlus, installed.VivaldiPlusArch);
+                }
+
+                ProcessBarNotifyText = String.Empty;
+                ShowUpdateProcessBar = Visibility.Hidden;
+                DownloadProgress = 0;
+            }
+            catch (Exception e)
             {
-                installed.VivaldiPlusArch = Win32Api.Is64BitOperatingSystem ? "x64" : "x86";
+                MessageBox.Show($"{Properties.Resources.text_service_not_avaliable}:{e.Message}");
             }
-
-            if (EnableVivaldiUpdate)
-            {
-                await CheckAndUpdateVivaldi(AppDir, installed.InstalledVivaldi, installed.VivaldiArch);
-            }
-
-            if (EnableVivaldiPlus && EnableVivaldiPlusUpdate)
-            {
-                await CheckAndUpdateVivaldiPlus(AppDir, installed.InstalledVivaldiPlus, installed.VivaldiPlusArch);
-            }
-
-            ProcessBarNotifyText = String.Empty;
-            ShowUpdateProcessBar = Visibility.Hidden;
-            DownloadProgress = 0;
         }
 
 
