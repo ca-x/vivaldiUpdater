@@ -34,6 +34,7 @@ namespace VivaldiUpdater.Helpers
                 return (null, null);
             }
         }
+
         /// <summary>
         /// Get vivaldi version from an install dir
         /// </summary>
@@ -125,6 +126,16 @@ namespace VivaldiUpdater.Helpers
 
                 var newAppPath = Path.Combine(installDir, "App");
                 Directory.Move(applicationPath, newAppPath);
+
+                var appInfo = GetVivaldiInfoFromInstallDir(newAppPath);
+                if (appInfo.version != null)
+                {
+                    var InstallerDir = Path.Combine(newAppPath, appInfo.version, "Installer");
+                    if (Directory.Exists(InstallerDir))
+                    {
+                        Directory.Delete(InstallerDir, true);
+                    }
+                }
 
                 return process.ExitCode;
             }

@@ -38,6 +38,8 @@ namespace VivaldiUpdater.ViewModel
                 if (installedInfo.InstalledVivaldi == null && installedInfo.InstalledVivaldiPlus == null)
                 {
                     Operation = Properties.Resources.text_install;
+                    VivaldiPlusUpdateNotifyText = Properties.Resources.text_not_installed;
+                    VivaldiUpdateNotifyText = Properties.Resources.text_not_installed;
                 }
                 else
                 {

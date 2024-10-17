@@ -150,6 +150,15 @@ namespace VivaldiUpdater.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ❎.
+        /// </summary>
+        public static string text_not_installed {
+            get {
+                return ResourceManager.GetString("text_not_installed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 💔.
         /// </summary>
         public static string text_service_not_avaliable {
