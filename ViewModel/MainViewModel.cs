@@ -24,70 +24,105 @@ namespace VivaldiUpdater.ViewModel
         {
             try
             {
-                var vivaldiVersionInfo = await Helpers.VivaldiInfoEx.GetVivaldiVersionInfo();
-                VivaldiLatestVersion = vivaldiVersionInfo.Version;
-
-                var vivaldiPlusInfo = await Helpers.VivaldiInfoEx.GetVivaldiPlusPlusRelease();
-                VivaldiPlusLatestVersion = vivaldiPlusInfo.FirstOrDefault().Version.TrimStart('v');
-
-                var AppDir = Path.Combine(
-                    Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                    "App"
-                );
-                var installedInfo = CheckInstalledInfo(AppDir);
-                if (installedInfo.InstalledVivaldi == null && installedInfo.InstalledVivaldiPlus == null)
-                {
-                    Operation = Properties.Resources.text_install;
-                    VivaldiPlusUpdateNotifyText = Properties.Resources.text_not_installed;
-                    VivaldiUpdateNotifyText = Properties.Resources.text_not_installed;
-                }
-                else
-                {
-                    Operation = Properties.Resources.text_update;
-
-                    // vivaldi version less than latest stable
-                    if (installedInfo.InstalledVivaldi != null &&
-                        Semver.IsBigger(vivaldiVersionInfo.Version, installedInfo.InstalledVivaldi) > 0)
-                    {
-                        VivaldiUpdateNotifyText = Properties.Resources.text_update_avaliable;
-                    }
-
-                    // vivaldi  plus version less than latest stable
-                    if (installedInfo.InstalledVivaldiPlus != null &&
-                        Semver.IsBigger(VivaldiPlusLatestVersion, installedInfo.InstalledVivaldiPlus) > 0)
-                    {
-                        VivaldiPlusUpdateNotifyText = Properties.Resources.text_update_avaliable;
-                    }
-                }
-
-                bool vivaldiHasNoUpdate = false;
-                // vivaldi version same
-                if (installedInfo.InstalledVivaldi != null &&
-                    Semver.IsBigger(vivaldiVersionInfo.Version, installedInfo.InstalledVivaldi) == 0)
-                {
-                    VivaldiUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
-                    vivaldiHasNoUpdate = true;
-                }
-
-                bool vivaldiPlusHasNoUpdate = false;
-                // vivaldi plus version same
-                if (installedInfo.InstalledVivaldiPlus != null &&
-                    Semver.IsBigger(VivaldiPlusLatestVersion, installedInfo.InstalledVivaldiPlus) == 0)
-                {
-                    VivaldiPlusUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
-                    vivaldiPlusHasNoUpdate = true;
-                }
-
-                if (vivaldiHasNoUpdate && vivaldiPlusHasNoUpdate)
-                {
-                    Operation = Properties.Resources.text_already_latest_version;
-                    ApplyCommand.CanExecute(false);
-                }
+                await UpdateVersionInfo();
+                var installedInfo = GetInstalledInfo();
+                UpdateUIBasedOnInstalledInfo(installedInfo);
+                UpdateUIBasedOnVersionComparison(installedInfo);
             }
             catch (Exception e)
             {
-                MessageBox.Show($"{Properties.Resources.text_service_not_avaliable}:{e.Message}");
+                ProcessBarNotifyText = $"{Properties.Resources.text_service_not_avaliable}:{e.Message}";
             }
+        }
+
+        private async Task UpdateVersionInfo()
+        {
+            var vivaldiVersionInfo = await Helpers.VivaldiInfoEx.GetVivaldiVersionInfo();
+            VivaldiLatestVersion = vivaldiVersionInfo.Version;
+
+            var vivaldiPlusInfo = await Helpers.VivaldiInfoEx.GetVivaldiPlusPlusRelease();
+            VivaldiPlusLatestVersion = vivaldiPlusInfo.FirstOrDefault().Version.TrimStart('v');
+        }
+
+        private (string InstalledVivaldi, string VivaldiArch, string InstalledVivaldiPlus, string VivaldiPlusArch)
+            GetInstalledInfo()
+        {
+            var AppDir = Path.Combine(
+                Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                "App"
+            );
+            return CheckInstalledInfo(AppDir);
+        }
+
+        private void UpdateUIBasedOnInstalledInfo(
+            (string InstalledVivaldi, string VivaldiArch, string InstalledVivaldiPlus, string VivaldiPlusArch)
+                installedInfo)
+        {
+            if (installedInfo.InstalledVivaldi == null && installedInfo.InstalledVivaldiPlus == null)
+            {
+                Operation = Properties.Resources.text_install;
+                VivaldiPlusUpdateNotifyText = Properties.Resources.text_not_installed;
+                VivaldiUpdateNotifyText = Properties.Resources.text_not_installed;
+            }
+            else
+            {
+                Operation = Properties.Resources.text_update;
+            }
+        }
+
+        private void UpdateUIBasedOnVersionComparison(
+            (string InstalledVivaldi, string VivaldiArch, string InstalledVivaldiPlus, string VivaldiPlusArch)
+                installedInfo)
+        {
+            bool vivaldiHasNoUpdate = UpdateVivaldiUI(installedInfo.InstalledVivaldi);
+            bool vivaldiPlusHasNoUpdate = UpdateVivaldiPlusUI(installedInfo.InstalledVivaldiPlus);
+
+            if (vivaldiHasNoUpdate && vivaldiPlusHasNoUpdate)
+            {
+                Operation = Properties.Resources.text_already_latest_version;
+                CanApplyChanges = false;
+            }
+        }
+
+        private bool UpdateVivaldiUI(string installedVersion)
+        {
+            if (installedVersion == null) return false;
+
+            int comparison = Semver.IsBigger(VivaldiLatestVersion, installedVersion);
+
+            if (comparison > 0)
+            {
+                VivaldiUpdateNotifyText = Properties.Resources.text_update_avaliable;
+                return false;
+            }
+
+            if (comparison == 0)
+            {
+                VivaldiUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool UpdateVivaldiPlusUI(string installedVersion)
+        {
+            if (installedVersion == null) return false;
+
+            int comparison = Semver.IsBigger(VivaldiPlusLatestVersion, installedVersion);
+            if (comparison > 0)
+            {
+                VivaldiPlusUpdateNotifyText = Properties.Resources.text_update_avaliable;
+                return false;
+            }
+
+            if (comparison == 0)
+            {
+                VivaldiPlusUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
+                return true;
+            }
+
+            return false;
         }
 
         #region flag display
@@ -282,17 +317,32 @@ namespace VivaldiUpdater.ViewModel
 
         #region command
 
+        private bool _canApplyChanges = true;
+
+        public bool CanApplyChanges
+        {
+            get => _canApplyChanges;
+            set
+            {
+                _canApplyChanges = value;
+                OnPropertyChanged();
+                ((RelayCommand)ApplyCommand).RaiseCanExecuteChanged();
+            }
+        }
+
         private ICommand _applyCommand;
 
         public ICommand ApplyCommand
         {
-            get { return _applyCommand ?? (_applyCommand = new RelayCommand(ApplyChanges)); }
+            get { return _applyCommand ?? (_applyCommand = new RelayCommand(ApplyChanges, () => CanApplyChanges)); }
         }
 
         private async void ApplyChanges()
         {
             try
             {
+                CanApplyChanges = false; // 禁用按钮
+
                 var AppDir = Path.Combine(
                     Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                     "App"
@@ -312,21 +362,25 @@ namespace VivaldiUpdater.ViewModel
 
                 if (EnableVivaldiUpdate)
                 {
+                    ShowUpdateProcessBar = Visibility.Visible;
                     await CheckAndUpdateVivaldi(AppDir, installed.InstalledVivaldi, installed.VivaldiArch);
+                    ShowUpdateProcessBar = Visibility.Hidden;
                 }
 
                 if (EnableVivaldiPlus && EnableVivaldiPlusUpdate)
                 {
+                    ShowUpdateProcessBar = Visibility.Visible;
                     await CheckAndUpdateVivaldiPlus(AppDir, installed.InstalledVivaldiPlus, installed.VivaldiPlusArch);
+                    ShowUpdateProcessBar = Visibility.Hidden;
                 }
 
-                ProcessBarNotifyText = String.Empty;
-                ShowUpdateProcessBar = Visibility.Hidden;
-                DownloadProgress = 0;
+                ProcessBarNotifyText = Properties.Resources.text_already_latest_version;
+                
             }
             catch (Exception e)
             {
-                MessageBox.Show($"{Properties.Resources.text_service_not_avaliable}:{e.Message}");
+                ProcessBarNotifyText = $"{Properties.Resources.text_service_not_avaliable}:{e.Message}";
+                CanApplyChanges = true;
             }
         }
 
@@ -362,6 +416,7 @@ namespace VivaldiUpdater.ViewModel
             if (installedVersion == null ||
                 Semver.IsBigger(latestVersion.Version, installedVersion) > 0)
             {
+                ProcessBarNotifyText = $"{Properties.Resources.text_downloading_vivaldi}";
                 // Update Vivaldi
                 var urls = await VivaldiInfoEx.GetVivaldiDistUrls(installArch);
                 if (urls != null && urls.Count > 0)
@@ -388,7 +443,6 @@ namespace VivaldiUpdater.ViewModel
                     );
                     if (ExtractResult == 0)
                     {
-                        VivaldiInstalledVersion = latestVersion.Version;
                         // copy to origin App Dir
                         if (Directory.Exists(AppDir))
                         {
@@ -405,6 +459,8 @@ namespace VivaldiUpdater.ViewModel
                             {
                                 Copier.CopyDirectory(ExtractAppPath, AppDir);
                             }
+                            VivaldiInstalledVersion = latestVersion.Version;
+                            VivaldiUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
                         }
                     }
 
@@ -439,16 +495,15 @@ namespace VivaldiUpdater.ViewModel
 
                 await downloader.DownloadFileAsync(latestRelease.FastgitMirrorUrl, latestRelease.AssetName);
 
-                // Install Vivaldi++
-                // You'll need to implement the installation logic for Vivaldi++
-                // After successful installation, update the installed version
-                VivaldiPlusInstalledVersion = latestRelease.Version;
+               
                 if (Directory.Exists(AppDir))
                 {
                     Copier.ExtractToDirectory(latestRelease.AssetName, AppDir);
                 }
 
                 File.Delete(latestRelease.AssetName);
+                VivaldiPlusInstalledVersion = latestRelease.Version;
+                VivaldiPlusUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
             }
         }
 
@@ -481,10 +536,11 @@ namespace VivaldiUpdater.ViewModel
         public bool CanExecute(object parameter) => _canExecute == null || _canExecute();
         public void Execute(object parameter) => _execute();
 
-        public event EventHandler CanExecuteChanged
+        public event EventHandler CanExecuteChanged;
+
+        public void RaiseCanExecuteChanged()
         {
-            add => CommandManager.RequerySuggested += value;
-            remove => CommandManager.RequerySuggested -= value;
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }
