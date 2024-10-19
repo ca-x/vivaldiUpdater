@@ -157,12 +157,12 @@
     <value>⬆️ </value>
   </data>
   <data name="text_no_update_avaliable" xml:space="preserve">
-    <value>🎉</value>
+    <value>🎉已是最新版本</value>
   </data>
   <data name="text_service_not_avaliable" xml:space="preserve">
     <value>💔</value>
   </data>
   <data name="text_not_installed" xml:space="preserve">
-    <value>❎</value>
+    <value>❎未安装</value>
   </data>
 </root>

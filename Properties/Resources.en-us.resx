@@ -54,12 +54,12 @@
         <value>⬆️ </value>
     </data>
     <data name="text_no_update_avaliable" xml:space="preserve">
-        <value>🎉</value>
+        <value>🎉Already Latest</value>
     </data>
     <data name="text_service_not_avaliable" xml:space="preserve">
         <value>💔</value>
     </data>
     <data name="text_not_installed" xml:space="preserve">
-        <value>❎</value>
+        <value>❎Not Installed</value>
     </data>
 </root>

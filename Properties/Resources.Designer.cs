@@ -141,7 +141,7 @@ namespace VivaldiUpdater.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 🎉.
+        ///   Looks up a localized string similar to 🎉已是最新版本.
         /// </summary>
         public static string text_no_update_avaliable {
             get {
@@ -150,7 +150,7 @@ namespace VivaldiUpdater.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ❎.
+        ///   Looks up a localized string similar to ❎未安装.
         /// </summary>
         public static string text_not_installed {
             get {
