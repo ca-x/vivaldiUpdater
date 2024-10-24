@@ -375,7 +375,6 @@ namespace VivaldiUpdater.ViewModel
                 }
 
                 ProcessBarNotifyText = Properties.Resources.text_already_latest_version;
-                
             }
             catch (Exception e)
             {
@@ -410,6 +409,7 @@ namespace VivaldiUpdater.ViewModel
             if (!Directory.Exists(AppDir))
             {
                 Directory.CreateDirectory(AppDir);
+                installedVersion = null;
             }
 
             var latestVersion = await VivaldiInfoEx.GetVivaldiVersionInfo();
@@ -459,6 +459,7 @@ namespace VivaldiUpdater.ViewModel
                             {
                                 Copier.CopyDirectory(ExtractAppPath, AppDir);
                             }
+
                             VivaldiInstalledVersion = latestVersion.Version;
                             VivaldiUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
                         }
@@ -476,6 +477,12 @@ namespace VivaldiUpdater.ViewModel
 
         private async Task CheckAndUpdateVivaldiPlus(string AppDir, string installedVersion, string installArch)
         {
+            var vivaldiPlusFile = Path.Combine(AppDir, "version.dll");
+            if (!File.Exists(vivaldiPlusFile))
+            {
+                installedVersion = null;
+            }
+
             var latestRelease = (await VivaldiInfoEx.GetVivaldiPlusPlusRelease())
                 .First(r => r.AssetName.Contains(installArch));
             if (installedVersion == null ||
@@ -495,7 +502,7 @@ namespace VivaldiUpdater.ViewModel
 
                 await downloader.DownloadFileAsync(latestRelease.FastgitMirrorUrl, latestRelease.AssetName);
 
-               
+
                 if (Directory.Exists(AppDir))
                 {
                     Copier.ExtractToDirectory(latestRelease.AssetName, AppDir);
