@@ -41,6 +41,11 @@
                         Margin="5"
                         Text="Vivaldi Updater by czyt"
                         VerticalAlignment="Center" />
+                    <TextBlock   Text="{Binding AppVersion,StringFormat=v{0}}" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <TextBlock.Effect>
+                            <DropShadowEffect ShadowDepth="2" Direction="30" Color="OrangeRed" Opacity="0.5" BlurRadius="1"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
                 </Grid>
                 <Grid Grid.Column="1">
                     <Grid.ColumnDefinitions>

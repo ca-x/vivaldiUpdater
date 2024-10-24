@@ -24,6 +24,7 @@ namespace VivaldiUpdater.ViewModel
         {
             try
             {
+                AppVersion =  Assembly.GetExecutingAssembly().GetName().Version.ToString();
                 await UpdateVersionInfo();
                 var installedInfo = GetInstalledInfo();
                 UpdateUIBasedOnInstalledInfo(installedInfo);
@@ -143,6 +144,20 @@ namespace VivaldiUpdater.ViewModel
         }
 
         private bool _enableVivaldiPlus;
+
+
+        private string _appVersion;
+
+        public string AppVersion
+        {
+            get => _appVersion;
+            set
+            {
+                _appVersion = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         /// <summary>
         /// enable vivaldi++ 
