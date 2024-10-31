@@ -4,6 +4,7 @@
 
 ## roadmap
  - [ ] self update
+ - [ ] mod [ref](https://github.com/luetage/vivaldi_modding)
  - [x] vivaldi install and update
  - [x] vivaldi++ install and update
 ## refered projects
