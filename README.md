@@ -4,9 +4,13 @@
 
 ## roadmap
  - [ ] self update
- - [ ] mod [ref](https://github.com/luetage/vivaldi_modding)
+ - [ ] auto install mod scripts
  - [x] vivaldi install and update
  - [x] vivaldi++ install and update
 ## refered projects
 + [ChromeUpdater](https://github.com/TkYu/ChromeUpdater)
 + [VivaldiCustomLauncher](https://github.com/Aldaviva/VivaldiCustomLauncher/)
+
+## mod scripts
++ https://github.com/luetage/vivaldi_modding
++ https://github.com/benzBrake/VivaldiMods
