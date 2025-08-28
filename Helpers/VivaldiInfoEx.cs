@@ -12,6 +12,8 @@ namespace VivaldiUpdater.Helpers
 
         private const string VivaldiDistUrlsEndPoint = "https://vivaldi.czyt.tech/api/dist_urls";
         private const string VivaldiVersionEndPoint = "https://vivaldi.czyt.tech/api/vivaldi_versions";
+        private const string VivaldiOfficialVersionEndPoint = "https://update.vivaldi.com/update/1.0/public/appcast-win.xml";
+        private const string VivaldiOfficialDownloadUrlBase = "https://downloads.vivaldi.com/stable/";
 
         private const string VivaldiPlusPlusReleaseEndpoint =
             "https://vivaldi.czyt.tech/api/vivaldiplusplus";
@@ -19,8 +21,8 @@ namespace VivaldiUpdater.Helpers
         /// <summary>
         /// Get the vivaldi dist download urls
         /// </summary>
-        /// <param name="timeout"></param>
         /// <param name="platforms"></param>
+        /// <param name="timeoutSeconds"></param>
         /// <returns></returns>
         public static async Task<List<VivaldiDistUrlInfo>> GetVivaldiDistUrls(string platforms,
             int timeoutSeconds = HttpClientTimeoutSeconds)

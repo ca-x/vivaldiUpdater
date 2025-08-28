@@ -62,4 +62,52 @@
     <data name="text_not_installed" xml:space="preserve">
         <value>❎Not Installed</value>
     </data>
+    <data name="text_use_mirror_address" xml:space="preserve">
+        <value>Use Mirror Address</value>
+    </data>
+    <data name="text_proxy_settings" xml:space="preserve">
+        <value>Proxy Settings</value>
+    </data>
+    <data name="text_configure" xml:space="preserve">
+        <value>Configure</value>
+    </data>
+    <data name="text_language" xml:space="preserve">
+        <value>Language</value>
+    </data>
+    <data name="text_auto" xml:space="preserve">
+        <value>Auto</value>
+    </data>
+    <data name="text_chinese" xml:space="preserve">
+        <value>中文</value>
+    </data>
+    <data name="text_english" xml:space="preserve">
+        <value>English</value>
+    </data>
+    <data name="text_proxy_config_title" xml:space="preserve">
+        <value>Proxy Configuration</value>
+    </data>
+    <data name="text_enable_proxy" xml:space="preserve">
+        <value>Enable Proxy</value>
+    </data>
+    <data name="text_proxy_type" xml:space="preserve">
+        <value>Proxy Type:</value>
+    </data>
+    <data name="text_host" xml:space="preserve">
+        <value>Host:</value>
+    </data>
+    <data name="text_port" xml:space="preserve">
+        <value>Port:</value>
+    </data>
+    <data name="text_username" xml:space="preserve">
+        <value>Username:</value>
+    </data>
+    <data name="text_password" xml:space="preserve">
+        <value>Password:</value>
+    </data>
+    <data name="text_ok" xml:space="preserve">
+        <value>OK</value>
+    </data>
+    <data name="text_cancel" xml:space="preserve">
+        <value>Cancel</value>
+    </data>
 </root>

@@ -53,5 +53,18 @@ namespace VivaldiUpdater.Model
                 OnPropertyChanged();
             }
         }
+        
+        private string _version;
+
+        [DataMember(Name = "version")]
+        public string Version
+        {
+            get => _version;
+            set
+            {
+                _version = value;
+                OnPropertyChanged();
+            }
+        }
     }
 }

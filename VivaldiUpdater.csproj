@@ -78,11 +78,23 @@
             <SubType>Code</SubType>
         </Compile>
         <Page Include="tinyStyle.xaml" />
+        <Page Include="ProxyConfigWindow.xaml">
+            <Generator>MSBuild:Compile</Generator>
+            <SubType>Designer</SubType>
+        </Page>
+        <Compile Include="ProxyConfigWindow.xaml.cs">
+            <DependentUpon>ProxyConfigWindow.xaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Model\AppSettings.cs" />
+        <Compile Include="Model\LanguageManager.cs" />
+        <Compile Include="Model\ProxySettings.cs" />
         <Compile Include="Model\VivaldiDistUrlInfo.cs" />
         <Compile Include="Model\VivaldiPlusPlusRelease.cs" />
         <Compile Include="Model\VivaldiVersionInfo.cs" />
+        <Compile Include="ViewModel\ProxyConfigViewModel.cs" />
         <Compile Include="Properties\AssemblyInfo.cs">
             <SubType>Code</SubType>
         </Compile>

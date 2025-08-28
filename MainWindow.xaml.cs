@@ -12,6 +12,10 @@ namespace VivaldiUpdater
     {
         public MainWindow()
         {
+            // Apply language settings early
+            var appSettings = Model.AppSettings.Load();
+            appSettings.ApplyLanguage();
+            
             InitializeComponent();
             var model =  new MainViewModel
             {
@@ -38,7 +42,25 @@ namespace VivaldiUpdater
         {
             if (DataContext is MainViewModel mm)
             {
-                await  mm.UpdateContext();
+                // Show progress bar during initial loading
+                mm.ShowUpdateProcessBar = Visibility.Visible;
+                mm.ProcessBarNotifyText = "正在初始化... / Initializing...";
+                
+                try
+                {
+                    await mm.UpdateContext();
+                    // Clear the initialization message after successful loading
+                    mm.ProcessBarNotifyText = "";
+                }
+                catch (System.Exception ex)
+                {
+                    mm.ProcessBarNotifyText = $"初始化失败 / Initialization failed: {ex.Message}";
+                }
+                finally
+                {
+                    // Hide progress bar after loading is complete
+                    mm.ShowUpdateProcessBar = Visibility.Hidden;
+                }
             }
         }
     }

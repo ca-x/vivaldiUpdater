@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -8,16 +9,160 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using VivaldiUpdater.Helpers;
+using VivaldiUpdater.Model;
 
 namespace VivaldiUpdater.ViewModel
 {
+    public class LanguageOption : INotifyPropertyChanged
+    {
+        private string _displayName;
+        public string DisplayName
+        {
+            get => _displayName;
+            set
+            {
+                _displayName = value;
+                OnPropertyChanged();
+            }
+        }
+        
+        public string Tag { get; set; }
+        
+        public event PropertyChangedEventHandler PropertyChanged;
+        
+        private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
     public class MainViewModel : INotifyPropertyChanged
     {
+        private readonly AppSettings _appSettings;
+        
+        public MainViewModel()
+        {
+            _appSettings = AppSettings.Load();
+            UseMirrorAddress = _appSettings.UseMirrorAddress;
+            SelectedLanguage = _appSettings.Language;
+            
+            // Initialize language options - this is the key fix
+            InitializeLanguageOptions();
+        }
+        
+        private ObservableCollection<LanguageOption> _languageOptions;
+        public ObservableCollection<LanguageOption> LanguageOptions
+        {
+            get => _languageOptions;
+            set
+            {
+                _languageOptions = value;
+                OnPropertyChanged();
+            }
+        }
+        
+        private void InitializeLanguageOptions()
+        {
+            // Create the options immediately, not in RefreshLanguageOptions
+            _languageOptions = new ObservableCollection<LanguageOption>
+            {
+                new LanguageOption { DisplayName = "自动", Tag = "auto" },
+                new LanguageOption { DisplayName = "中文", Tag = "zh-cn" },
+                new LanguageOption { DisplayName = "English", Tag = "en-us" }
+            };
+            OnPropertyChanged(nameof(LanguageOptions));
+        }
+        
+        private void RefreshLanguageOptions()
+        {
+            // Update existing items instead of creating new collection
+            if (_languageOptions != null)
+            {
+                _languageOptions[0].DisplayName = Properties.Resources.text_auto;
+                _languageOptions[1].DisplayName = Properties.Resources.text_chinese;
+                _languageOptions[2].DisplayName = Properties.Resources.text_english;
+                
+                // Force ComboBox to refresh by temporarily storing and resetting the selected value
+                var selectedValue = _selectedLanguage;
+                _selectedLanguage = null;
+                OnPropertyChanged(nameof(SelectedLanguage));
+                
+                // Force UI refresh of the collection
+                OnPropertyChanged(nameof(LanguageOptions));
+                
+                // Restore the selected value to force ComboBox to re-evaluate display
+                _selectedLanguage = selectedValue;
+                OnPropertyChanged(nameof(SelectedLanguage));
+            }
+        }
+        
+        // Dynamic resource properties that will update when language changes
+        public string LocalizedLanguageLabel => Properties.Resources.text_language;
+        public string LocalizedVivaldiBrowserLabel => Properties.Resources.text_vivaldi_browser;
+        public string LocalizedVivaldiPlusPluginLabel => Properties.Resources.text_vivaldi_plus_plugin;
+        public string LocalizedAutoUpdateVivaldiLabel => Properties.Resources.text_auto_update_vivaldi;
+        public string LocalizedEnableVivaldiPlusLabel => Properties.Resources.text_enable_vivaldi_plus;
+        public string LocalizedAutoUpdateVivaldiPlusLabel => Properties.Resources.text_auto_update_vivaldi_plus;
+        public string LocalizedUseMirrorAddressLabel => Properties.Resources.text_use_mirror_address;
+        
+        private string _selectedLanguage = "auto";
+
+        /// <summary>
+        /// Selected language
+        /// </summary>
+        public string SelectedLanguage
+        {
+            get => _selectedLanguage;
+            set
+            {
+                _selectedLanguage = value;
+                _appSettings.Language = value;
+                _appSettings.Save();
+                _appSettings.ApplyLanguage();
+                OnPropertyChanged();
+                
+                // Update all UI text immediately
+                RefreshAllUIText();
+                
+                // Notify all windows about language change
+                LanguageManager.NotifyLanguageChanged();
+            }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        
+        private async void RefreshAllUIText()
+        {
+            // Clear and refresh the resource manager to reflect new culture
+            try
+            {
+                // Force the resource manager to reload with new culture
+                Properties.Resources.ResourceManager.ReleaseAllResources();
+                
+                // Refresh language options with new resource strings
+                RefreshLanguageOptions();
+                
+                // Notify all localized labels to refresh
+                OnPropertyChanged(nameof(LocalizedLanguageLabel));
+                OnPropertyChanged(nameof(LocalizedVivaldiBrowserLabel));
+                OnPropertyChanged(nameof(LocalizedVivaldiPlusPluginLabel));
+                OnPropertyChanged(nameof(LocalizedAutoUpdateVivaldiLabel));
+                OnPropertyChanged(nameof(LocalizedEnableVivaldiPlusLabel));
+                OnPropertyChanged(nameof(LocalizedAutoUpdateVivaldiPlusLabel));
+                OnPropertyChanged(nameof(LocalizedUseMirrorAddressLabel));
+                
+                // Re-run the context update to refresh all resource strings with new language
+                await UpdateContext();
+            }
+            catch
+            {
+                // If refresh fails, just clear the status message
+                ProcessBarNotifyText = "";
+            }
         }
 
         public async Task UpdateContext()
@@ -139,6 +284,23 @@ namespace VivaldiUpdater.ViewModel
             set
             {
                 _enableVivaldiUpdate = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _useMirrorAddress = true;
+
+        /// <summary>
+        /// Use mirror address for downloads
+        /// </summary>
+        public bool UseMirrorAddress
+        {
+            get => _useMirrorAddress;
+            set
+            {
+                _useMirrorAddress = value;
+                _appSettings.UseMirrorAddress = value;
+                _appSettings.Save();
                 OnPropertyChanged();
             }
         }
@@ -352,6 +514,28 @@ namespace VivaldiUpdater.ViewModel
             get { return _applyCommand ?? (_applyCommand = new RelayCommand(ApplyChanges, () => CanApplyChanges)); }
         }
 
+        private ICommand _configureProxyCommand;
+
+        public ICommand ConfigureProxyCommand
+        {
+            get { return _configureProxyCommand ?? (_configureProxyCommand = new RelayCommand(ConfigureProxy)); }
+        }
+        
+        private void ConfigureProxy()
+        {
+            var mainWindow = Application.Current.MainWindow;
+            var proxyWindow = new ProxyConfigWindow();
+            proxyWindow.Owner = mainWindow;
+            
+            // 设置窗口大小和位置与主窗口完全一致
+            proxyWindow.Width = mainWindow.ActualWidth;
+            proxyWindow.Height = mainWindow.ActualHeight;
+            proxyWindow.Left = mainWindow.Left;
+            proxyWindow.Top = mainWindow.Top;
+            
+            proxyWindow.ShowDialog();
+        }
+
         private async void ApplyChanges()
         {
             try
@@ -447,7 +631,10 @@ namespace VivaldiUpdater.ViewModel
                     var installerFullPath = Path.Combine(
                         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                         $"Vivaldi.{latestVersion.Version}.exe");
-                    await downloader.DownloadFileAsync(urls[0].UrlMirror, installerFullPath);
+                    
+                    // Choose URL based on UseMirrorAddress setting
+                    var downloadUrl = UseMirrorAddress ? urls[0].UrlMirror : urls[0].Url;
+                    await downloader.DownloadFileAsync(downloadUrl, installerFullPath);
                     ProcessBarNotifyText = Properties.Resources.txt_extrating_vivaldi_installer;
                     // Install Vivaldi
                     var ExtractPath = Path.Combine(
@@ -553,6 +740,10 @@ namespace VivaldiUpdater.ViewModel
         {
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute;
+        }
+
+        public RelayCommand(Action execute) : this(execute, null)
+        {
         }
 
         public bool CanExecute(object parameter) => _canExecute == null || _canExecute();

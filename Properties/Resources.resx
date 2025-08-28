@@ -165,4 +165,52 @@
   <data name="text_not_installed" xml:space="preserve">
     <value>❎未安装</value>
   </data>
+  <data name="text_use_mirror_address" xml:space="preserve">
+    <value>使用镜像地址</value>
+  </data>
+  <data name="text_proxy_settings" xml:space="preserve">
+    <value>代理设置</value>
+  </data>
+  <data name="text_configure" xml:space="preserve">
+    <value>配置</value>
+  </data>
+  <data name="text_language" xml:space="preserve">
+    <value>语言</value>
+  </data>
+  <data name="text_auto" xml:space="preserve">
+    <value>自动</value>
+  </data>
+  <data name="text_chinese" xml:space="preserve">
+    <value>中文</value>
+  </data>
+  <data name="text_english" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="text_proxy_config_title" xml:space="preserve">
+    <value>代理配置</value>
+  </data>
+  <data name="text_enable_proxy" xml:space="preserve">
+    <value>启用代理</value>
+  </data>
+  <data name="text_proxy_type" xml:space="preserve">
+    <value>代理类型:</value>
+  </data>
+  <data name="text_host" xml:space="preserve">
+    <value>主机:</value>
+  </data>
+  <data name="text_port" xml:space="preserve">
+    <value>端口:</value>
+  </data>
+  <data name="text_username" xml:space="preserve">
+    <value>用户名:</value>
+  </data>
+  <data name="text_password" xml:space="preserve">
+    <value>密码:</value>
+  </data>
+  <data name="text_ok" xml:space="preserve">
+    <value>确定</value>
+  </data>
+  <data name="text_cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
 </root>

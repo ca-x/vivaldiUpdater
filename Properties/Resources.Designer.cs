@@ -211,5 +211,149 @@ namespace VivaldiUpdater.Properties {
                 return ResourceManager.GetString("txt_extrating_vivaldi_installer", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 使用镜像地址.
+        /// </summary>
+        public static string text_use_mirror_address {
+            get {
+                return ResourceManager.GetString("text_use_mirror_address", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 代理设置.
+        /// </summary>
+        public static string text_proxy_settings {
+            get {
+                return ResourceManager.GetString("text_proxy_settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 配置.
+        /// </summary>
+        public static string text_configure {
+            get {
+                return ResourceManager.GetString("text_configure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 语言.
+        /// </summary>
+        public static string text_language {
+            get {
+                return ResourceManager.GetString("text_language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 自动.
+        /// </summary>
+        public static string text_auto {
+            get {
+                return ResourceManager.GetString("text_auto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 中文.
+        /// </summary>
+        public static string text_chinese {
+            get {
+                return ResourceManager.GetString("text_chinese", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to English.
+        /// </summary>
+        public static string text_english {
+            get {
+                return ResourceManager.GetString("text_english", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 代理配置.
+        /// </summary>
+        public static string text_proxy_config_title {
+            get {
+                return ResourceManager.GetString("text_proxy_config_title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 启用代理.
+        /// </summary>
+        public static string text_enable_proxy {
+            get {
+                return ResourceManager.GetString("text_enable_proxy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 代理类型:.
+        /// </summary>
+        public static string text_proxy_type {
+            get {
+                return ResourceManager.GetString("text_proxy_type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 主机:.
+        /// </summary>
+        public static string text_host {
+            get {
+                return ResourceManager.GetString("text_host", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 端口:.
+        /// </summary>
+        public static string text_port {
+            get {
+                return ResourceManager.GetString("text_port", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 用户名:.
+        /// </summary>
+        public static string text_username {
+            get {
+                return ResourceManager.GetString("text_username", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 密码:.
+        /// </summary>
+        public static string text_password {
+            get {
+                return ResourceManager.GetString("text_password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 确定.
+        /// </summary>
+        public static string text_ok {
+            get {
+                return ResourceManager.GetString("text_ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 取消.
+        /// </summary>
+        public static string text_cancel {
+            get {
+                return ResourceManager.GetString("text_cancel", resourceCulture);
+            }
+        }
     }
 }
