@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -541,7 +541,8 @@ namespace VivaldiUpdater.ViewModel
             try
             {
                 CanApplyChanges = false; // 禁用按钮
-
+                ShowUpdateProcessBar = Visibility.Visible;
+                
                 var AppDir = Path.Combine(
                     Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                     "App"
@@ -558,27 +559,47 @@ namespace VivaldiUpdater.ViewModel
                 {
                     installed.VivaldiPlusArch = Win32Api.Is64BitOperatingSystem ? "x64" : "x86";
                 }
+                
+                bool hasVivaldiUpdates = false;
+                bool hasVivaldiPlusUpdates = false;
 
                 if (EnableVivaldiUpdate)
                 {
-                    ShowUpdateProcessBar = Visibility.Visible;
+                    ProcessBarNotifyText = Properties.Resources.text_checking_vivaldi_update ?? "正在检查Vivaldi更新...";
                     await CheckAndUpdateVivaldi(AppDir, installed.InstalledVivaldi, installed.VivaldiArch);
-                    ShowUpdateProcessBar = Visibility.Hidden;
+                    hasVivaldiUpdates = true;
                 }
 
                 if (EnableVivaldiPlus && EnableVivaldiPlusUpdate)
                 {
-                    ShowUpdateProcessBar = Visibility.Visible;
+                    ProcessBarNotifyText = Properties.Resources.text_checking_vpp_update ?? "正在检查Vivaldi++更新...";
                     await CheckAndUpdateVivaldiPlus(AppDir, installed.InstalledVivaldiPlus, installed.VivaldiPlusArch);
-                    ShowUpdateProcessBar = Visibility.Hidden;
+                    hasVivaldiPlusUpdates = true;
                 }
-
-                ProcessBarNotifyText = Properties.Resources.text_already_latest_version;
+                
+                // 显示最终状态
+                if (hasVivaldiUpdates || hasVivaldiPlusUpdates)
+                {
+                    ProcessBarNotifyText = Properties.Resources.text_all_updates_completed ?? "所有更新已完成！";
+                    DownloadProgress = 100;
+                    
+                    // 刷新界面信息
+                    await Task.Delay(1000); // 给用户时间看到成功消息
+                    await UpdateContext(); // 重新检查状态
+                }
+                else
+                {
+                    ProcessBarNotifyText = Properties.Resources.text_already_latest_version;
+                }
             }
             catch (Exception e)
             {
                 ProcessBarNotifyText = $"{Properties.Resources.text_service_not_avaliable}:{e.Message}";
-                CanApplyChanges = true;
+            }
+            finally
+            {
+                ShowUpdateProcessBar = Visibility.Hidden;
+                CanApplyChanges = true; // 重新启用按钮
             }
         }
 
@@ -615,36 +636,58 @@ namespace VivaldiUpdater.ViewModel
             if (installedVersion == null ||
                 Semver.IsBigger(latestVersion.Version, installedVersion) > 0)
             {
-                ProcessBarNotifyText = $"{Properties.Resources.text_downloading_vivaldi}";
+                ProcessBarNotifyText = Properties.Resources.text_preparing_update ?? "正在准备更新...";
+                
                 // Update Vivaldi
                 var urls = await VivaldiInfoEx.GetVivaldiDistUrls(installArch);
                 if (urls != null && urls.Count > 0)
                 {
-                    var downloader = new ResumeableDownloader();
-                    downloader.DownloadProgressChanged += (sender, args) =>
-                    {
-                        // Update progress bar
-                        DownloadProgress = args.ProgressPercentage;
-                        ProcessBarNotifyText = $"{Properties.Resources.text_downloading_vivaldi} {DownloadProgress}%";
-                    };
-
                     var installerFullPath = Path.Combine(
                         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                         $"Vivaldi.{latestVersion.Version}.exe");
                     
-                    // Choose URL based on UseMirrorAddress setting
-                    var downloadUrl = UseMirrorAddress ? urls[0].UrlMirror : urls[0].Url;
-                    await downloader.DownloadFileAsync(downloadUrl, installerFullPath);
-                    ProcessBarNotifyText = Properties.Resources.txt_extrating_vivaldi_installer;
+                    // 检查安装文件是否已存在
+                    bool fileExists = File.Exists(installerFullPath);
+                    if (fileExists)
+                    {
+                        var fileInfo = new FileInfo(installerFullPath);
+                        ProcessBarNotifyText = string.Format(Properties.Resources.text_file_exists_using ?? "发现已有安装文件 ({0}MB)，使用现有文件进行安装...", (fileInfo.Length / (1024 * 1024)).ToString("F1"));
+                        DownloadProgress = 100; // 显示完成状态
+                    }
+                    else
+                    {
+                        ProcessBarNotifyText = Properties.Resources.text_downloading_vivaldi ?? "正在下载Vivaldi...";
+                        DownloadProgress = 0;
+                        
+                        var downloader = new ResumeableDownloader();
+                        downloader.DownloadProgressChanged += (sender, args) =>
+                        {
+                            // Update progress bar
+                            DownloadProgress = args.ProgressPercentage;
+                            var speed = args.BytesPerSecond > 0 ? $" ({(args.BytesPerSecond / (1024 * 1024)):F1}MB/s)" : "";
+                            ProcessBarNotifyText = $"{Properties.Resources.text_downloading_vivaldi} {DownloadProgress}%{speed}";
+                        };
+    
+                        // Choose URL based on UseMirrorAddress setting
+                        var downloadUrl = UseMirrorAddress ? urls[0].UrlMirror : urls[0].Url;
+                        await downloader.DownloadFileAsync(downloadUrl, installerFullPath);
+                    }
+                    ProcessBarNotifyText = Properties.Resources.text_extracting_installer ?? "正在解压安装程序...";
+                    DownloadProgress = 0; // 重置进度条用于显示解压进度
+                    
                     // Install Vivaldi
                     var ExtractPath = Path.Combine(
                         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                         "tempor");
+                    
                     var ExtractResult = VivaldiInstaller.ExtractVivaldi(
                         installerFullPath, ExtractPath
                     );
                     if (ExtractResult == 0)
                     {
+                        ProcessBarNotifyText = Properties.Resources.text_installing_to_directory ?? "正在安装到目标目录...";
+                        DownloadProgress = 50;
+                        
                         // copy to origin App Dir
                         if (Directory.Exists(AppDir))
                         {
@@ -652,6 +695,11 @@ namespace VivaldiUpdater.ViewModel
                             string AppDirBackupPath = Path.Combine(Directory.GetCurrentDirectory(), "AppBackup");
                             if (File.Exists(originVivaldiPath))
                             {
+                                ProcessBarNotifyText = Properties.Resources.text_backing_up_existing ?? "正在备份现有版本...";
+                                if (Directory.Exists(AppDirBackupPath))
+                                {
+                                    Directory.Delete(AppDirBackupPath, true);
+                                }
                                 Directory.Move(AppDir, AppDirBackupPath);
                                 Directory.CreateDirectory(AppDir);
                             }
@@ -659,21 +707,56 @@ namespace VivaldiUpdater.ViewModel
                             var ExtractAppPath = Path.Combine(ExtractPath, "App");
                             if (Directory.Exists(ExtractAppPath))
                             {
+                                ProcessBarNotifyText = Properties.Resources.text_copying_files ?? "正在复制文件到安装目录...";
+                                DownloadProgress = 75;
                                 Copier.CopyDirectory(ExtractAppPath, AppDir);
                             }
 
-                            VivaldiInstalledVersion = latestVersion.Version;
-                            VivaldiUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
+                            ProcessBarNotifyText = Properties.Resources.text_verifying_installation ?? "正在验证安装...";
+                            DownloadProgress = 90;
+                            
+                            // 验证安装
+                            var installedInfo = VivaldiInstaller.GetVivaldiInfoFromInstallDir(AppDir);
+                            if (installedInfo.version != null)
+                            {
+                                VivaldiInstalledVersion = installedInfo.version;
+                                VivaldiUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
+                                ProcessBarNotifyText = string.Format(Properties.Resources.text_installation_completed ?? "{0} {1} 安装完成！", "Vivaldi", installedInfo.version);
+                            }
+                            else
+                            {
+                                ProcessBarNotifyText = Properties.Resources.text_installation_verification_failed ?? "安装验证失败，请重试。";
+                                return;
+                            }
                         }
                     }
+                    else
+                    {
+                        ProcessBarNotifyText = string.Format(Properties.Resources.text_extraction_failed ?? "解压安装程序失败，错误代码: {0}", ExtractResult);
+                        return;
+                    }
 
-                    Directory.Delete(ExtractPath, true);
-                    File.Delete(installerFullPath);
+                    // 清理临时文件
+                    try
+                    {
+                        if (Directory.Exists(ExtractPath))
+                        {
+                            Directory.Delete(ExtractPath, true);
+                        }
+                        // 保留安装文件以备后用，只有在设置中明确要求时才删除
+                        // File.Delete(installerFullPath);
+                        ProcessBarNotifyText = Properties.Resources.text_installation_complete_cleanup ?? "安装完成，临时文件已清理。";
+                        DownloadProgress = 100;
+                    }
+                    catch (Exception ex)
+                    {
+                        ProcessBarNotifyText = string.Format(Properties.Resources.text_cleanup_error ?? "清理临时文件时出现问题: {0}", ex.Message);
+                    }
                 }
             }
             else
             {
-                MessageBox.Show("您的vivaldi已经是最新版！");
+                MessageBox.Show(Properties.Resources.text_already_latest_message ?? "您的vivaldi已经是最新版！");
             }
         }
 
@@ -687,32 +770,135 @@ namespace VivaldiUpdater.ViewModel
 
             var latestRelease = (await VivaldiInfoEx.GetVivaldiPlusPlusRelease())
                 .First(r => r.AssetName.Contains(installArch));
+                
+            var latestVersionClean = latestRelease.Version.TrimStart('v');
+            
             if (installedVersion == null ||
                 (latestRelease != null &&
-                 Semver.IsBigger(
-                     latestRelease.Version.TrimStart('v'),
-                     installedVersion) > 0))
+                 Semver.IsBigger(latestVersionClean, installedVersion) > 0))
             {
+                ProcessBarNotifyText = Properties.Resources.text_preparing_download_vpp ?? "正在准备下载Vivaldi++...";
+                DownloadProgress = 0;
+                
                 // Update Vivaldi++
                 var downloader = new Helpers.ResumeableDownloader();
                 downloader.DownloadProgressChanged += (sender, args) =>
                 {
                     // Update progress bar
                     DownloadProgress = args.ProgressPercentage;
-                    ProcessBarNotifyText = $"{Properties.Resources.text_downloading_vivaldi} {DownloadProgress}%";
+                    var speed = args.BytesPerSecond > 0 ? $" ({(args.BytesPerSecond / (1024 * 1024)):F1}MB/s)" : "";
+                    ProcessBarNotifyText = $"{Properties.Resources.text_downloading_vivaldi_plus ?? "正在下载Vivaldi++"} {DownloadProgress}%{speed}";
                 };
 
-                await downloader.DownloadFileAsync(latestRelease.FastgitMirrorUrl, latestRelease.AssetName);
-
+                var downloadPath = Path.Combine(
+                    Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                    latestRelease.AssetName);
+                
+                // 检查文件是否已存在
+                bool fileExists = File.Exists(downloadPath);
+                if (fileExists)
+                {
+                    var fileInfo = new FileInfo(downloadPath);
+                    ProcessBarNotifyText = string.Format(Properties.Resources.text_found_existing_vpp_file ?? "发现已有Vivaldi++文件 ({0}KB)，使用现有文件...", (fileInfo.Length / 1024).ToString("F1"));
+                    DownloadProgress = 100;
+                }
+                else
+                {
+                    await downloader.DownloadFileAsync(latestRelease.FastgitMirrorUrl, downloadPath);
+                }
 
                 if (Directory.Exists(AppDir))
                 {
-                    Copier.ExtractToDirectory(latestRelease.AssetName, AppDir);
+                    ProcessBarNotifyText = Properties.Resources.text_installing_vpp_to_directory ?? "正在安装Vivaldi++到目标目录...";
+                    DownloadProgress = 50;
+                    
+                    Copier.ExtractToDirectory(downloadPath, AppDir);
+                    
+                    // 验证安装
+                    ProcessBarNotifyText = Properties.Resources.text_verifying_vpp_installation ?? "正在验证Vivaldi++安装...";
+                    DownloadProgress = 90;
+                    
+                    var verifyInfo = VivaldiInstaller.GetVivaldiPlusInfoFromInstallDir(AppDir);
+                    if (verifyInfo.version != null)
+                    {
+                        VivaldiPlusInstalledVersion = verifyInfo.version;
+                        VivaldiPlusUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
+                        ProcessBarNotifyText = string.Format(Properties.Resources.text_installation_completed ?? "{0} {1} 安装完成！", "Vivaldi++", verifyInfo.version);
+                    }
+                    else
+                    {
+                        ProcessBarNotifyText = Properties.Resources.text_vpp_installation_verification_failed ?? "Vivaldi++安装验证失败，请重试。";
+                    }
+                    
+                    DownloadProgress = 100;
                 }
 
-                File.Delete(latestRelease.AssetName);
-                VivaldiPlusInstalledVersion = latestRelease.Version;
-                VivaldiPlusUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
+                // 清理下载文件(可选)
+                try
+                {
+                    // 保留下载文件以备后用
+                    // File.Delete(downloadPath);
+                }
+                catch { }
+            }
+            else if (installedVersion != null && 
+                     latestRelease != null && 
+                     Semver.IsBigger(latestVersionClean, installedVersion) == 0)
+            {
+                // 版本一致的情况：检查version.dll是否存在，不存在则复制
+                ProcessBarNotifyText = Properties.Resources.text_checking_vpp_version_consistency ?? "检查Vivaldi++版本一致性...";
+                DownloadProgress = 10;
+                
+                if (!File.Exists(vivaldiPlusFile))
+                {
+                    ProcessBarNotifyText = Properties.Resources.text_version_consistent_dll_missing ?? "版本一致但version.dll不存在，正在重新下载...";
+                    DownloadProgress = 20;
+                    
+                    var downloader = new Helpers.ResumeableDownloader();
+                    downloader.DownloadProgressChanged += (sender, args) =>
+                    {
+                        DownloadProgress = (int)(20 + (args.ProgressPercentage * 0.6)); // 20-80%
+                        var speed = args.BytesPerSecond > 0 ? $" ({(args.BytesPerSecond / (1024 * 1024)):F1}MB/s)" : "";
+                        ProcessBarNotifyText = $"{Properties.Resources.text_downloading_vivaldi_plus ?? "正在下载Vivaldi++"} {args.ProgressPercentage}%{speed}";
+                    };
+                    
+                    var downloadPath = Path.Combine(
+                        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                        latestRelease.AssetName);
+                        
+                    await downloader.DownloadFileAsync(latestRelease.FastgitMirrorUrl, downloadPath);
+                    
+                    ProcessBarNotifyText = Properties.Resources.text_installing_version_dll ?? "正在安装version.dll...";
+                    DownloadProgress = 85;
+                    
+                    Copier.ExtractToDirectory(downloadPath, AppDir);
+                    
+                    // 验证安装
+                    var verifyInfo = VivaldiInstaller.GetVivaldiPlusInfoFromInstallDir(AppDir);
+                    if (verifyInfo.version != null)
+                    {
+                        ProcessBarNotifyText = Properties.Resources.text_version_dll_copied_successfully ?? "version.dll已成功复制到安装目录。";
+                        VivaldiPlusUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
+                    }
+                    else
+                    {
+                        ProcessBarNotifyText = Properties.Resources.text_version_dll_copy_failed ?? "version.dll复制失败，请重试。";
+                    }
+                    
+                    DownloadProgress = 100;
+                    
+                    // 清理下载文件
+                    try
+                    {
+                        // File.Delete(downloadPath);
+                    }
+                    catch { }
+                }
+                else
+                {
+                    ProcessBarNotifyText = Properties.Resources.text_vpp_latest_and_dll_exists ?? "Vivaldi++已是最新版本且version.dll存在。";
+                    DownloadProgress = 100;
+                }
             }
         }
 

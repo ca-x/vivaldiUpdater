@@ -1,4 +1,5 @@
-﻿using System;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,9 +25,9 @@ namespace VivaldiUpdater
             DataContext = _viewModel;
             
             ProxySettings = ProxySettings.Load();
-            Console.WriteLine($"ProxyConfigWindow loaded settings: UseProxy={ProxySettings.UseProxy}, Host={ProxySettings.ProxyHost}, Port={ProxySettings.ProxyPort}");
-            LoadSettings();
-            UpdateControlStates();
+            
+            // 延迟加载设置，确保所有控件都已正确初始化
+            this.Loaded += ProxyConfigWindow_Loaded;
             
             // 添加键盘快捷键
             this.KeyDown += ProxyConfigWindow_KeyDown;
@@ -36,6 +37,14 @@ namespace VivaldiUpdater
             
             // Handle window closing to unsubscribe from events
             this.Closed += (s, e) => LanguageManager.LanguageChanged -= OnLanguageChanged;
+        }
+
+        
+        private void ProxyConfigWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            // 确保在窗口完全加载后再加载设置
+            LoadSettings();
+            UpdateControlStates();
         }
         
         private void OnLanguageChanged(object sender, EventArgs e)
@@ -58,21 +67,82 @@ namespace VivaldiUpdater
 
         private void LoadSettings()
         {
-            EnableProxyCheckBox.IsChecked = ProxySettings.UseProxy;
-            
-            foreach (var item in ProxyTypeComboBox.Items.Cast<ComboBoxItem>())
+            try
             {
-                if (item.Tag.ToString() == ProxySettings.ProxyType.ToString())
+                if (ProxySettings == null)
                 {
-                    ProxyTypeComboBox.SelectedItem = item;
-                    break;
+                    return;
+                }
+
+                // 设置启用代理复选框
+                if (EnableProxyCheckBox != null)
+                {
+                    EnableProxyCheckBox.IsChecked = ProxySettings.UseProxy;
+                }
+                
+                // 设置代理类型
+                if (ProxyTypeComboBox != null)
+                {
+                    bool typeFound = false;
+                    for (int i = 0; i < ProxyTypeComboBox.Items.Count; i++)
+                    {
+                        var item = ProxyTypeComboBox.Items[i] as ComboBoxItem;
+                        if (item != null && item.Tag?.ToString() == ProxySettings.ProxyType.ToString())
+                        {
+                            ProxyTypeComboBox.SelectedIndex = i;
+                            ProxyTypeComboBox.SelectedItem = item;
+                            typeFound = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!typeFound && ProxyTypeComboBox.Items.Count > 0)
+                    {
+                        ProxyTypeComboBox.SelectedIndex = 0;
+                    }
+                }
+    
+                // 设置主机地址
+                if (ProxyHostTextBox != null)
+                {
+                    ProxyHostTextBox.Text = ProxySettings.ProxyHost ?? "";
+                }
+                
+                // 设置端口
+                if (ProxyPortTextBox != null)
+                {
+                    ProxyPortTextBox.Text = ProxySettings.ProxyPort > 0 ? ProxySettings.ProxyPort.ToString() : "";
+                }
+                
+                // 设置用户名
+                if (ProxyUsernameTextBox != null)
+                {
+                    ProxyUsernameTextBox.Text = ProxySettings.ProxyUsername ?? "";
+                }
+                
+                // 设置密码
+                if (ProxyPasswordTextBox != null)
+                {
+                    ProxyPasswordTextBox.Password = ProxySettings.ProxyPassword ?? "";
                 }
             }
-
-            ProxyHostTextBox.Text = ProxySettings.ProxyHost;
-            ProxyPortTextBox.Text = ProxySettings.ProxyPort > 0 ? ProxySettings.ProxyPort.ToString() : "";
-            ProxyUsernameTextBox.Text = ProxySettings.ProxyUsername;
-            ProxyPasswordTextBox.Password = ProxySettings.ProxyPassword;
+            catch (Exception)
+            {
+                // 在出错时尝试恢复默认设置
+                try
+                {
+                    if (EnableProxyCheckBox != null) EnableProxyCheckBox.IsChecked = false;
+                    if (ProxyTypeComboBox != null && ProxyTypeComboBox.Items.Count > 0) ProxyTypeComboBox.SelectedIndex = 0;
+                    if (ProxyHostTextBox != null) ProxyHostTextBox.Text = "";
+                    if (ProxyPortTextBox != null) ProxyPortTextBox.Text = "";
+                    if (ProxyUsernameTextBox != null) ProxyUsernameTextBox.Text = "";
+                    if (ProxyPasswordTextBox != null) ProxyPasswordTextBox.Password = "";
+                }
+                catch
+                {
+                    // 忽略错误
+                }
+            }
         }
 
         private void UpdateControlStates()
@@ -100,25 +170,18 @@ namespace VivaldiUpdater
         {
             try
             {
-                Console.WriteLine("=== OK Button Clicked ===");
-                Console.WriteLine($"Current ProxySettings instance: {ProxySettings.GetHashCode()}");
-                
                 ProxySettings.UseProxy = EnableProxyCheckBox.IsChecked == true;
-                Console.WriteLine($"Set UseProxy to: {ProxySettings.UseProxy}");
                 
                 if (ProxyTypeComboBox.SelectedItem is ComboBoxItem selectedItem)
                 {
                     ProxySettings.ProxyType = (ProxyType)Enum.Parse(typeof(ProxyType), selectedItem.Tag.ToString());
-                    Console.WriteLine($"Set ProxyType to: {ProxySettings.ProxyType}");
                 }
 
                 ProxySettings.ProxyHost = ProxyHostTextBox.Text.Trim();
-                Console.WriteLine($"Set ProxyHost to: '{ProxySettings.ProxyHost}'");
                 
                 if (int.TryParse(ProxyPortTextBox.Text, out int port))
                 {
                     ProxySettings.ProxyPort = port;
-                    Console.WriteLine($"Set ProxyPort to: {ProxySettings.ProxyPort}");
                 }
                 else if (ProxySettings.UseProxy)
                 {
@@ -128,17 +191,12 @@ namespace VivaldiUpdater
                 else
                 {
                     ProxySettings.ProxyPort = 0; // 代理未启用时设置为0
-                    Console.WriteLine($"Set ProxyPort to: {ProxySettings.ProxyPort} (disabled)");
                 }
 
                 ProxySettings.ProxyUsername = ProxyUsernameTextBox.Text.Trim();
                 ProxySettings.ProxyPassword = ProxyPasswordTextBox.Password;
-                Console.WriteLine($"Set ProxyUsername to: '{ProxySettings.ProxyUsername}'");
-                Console.WriteLine($"Set ProxyPassword to: '{(string.IsNullOrEmpty(ProxySettings.ProxyPassword) ? "<empty>" : "<set>")}'");
 
-                Console.WriteLine("=== About to save settings ===");
                 ProxySettings.Save();
-                Console.WriteLine("=== Save method completed ===");
                 
                 // Show success message to user
                 if (ProxySettings.UseProxy)
@@ -156,8 +214,6 @@ namespace VivaldiUpdater
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Exception in OkButton_Click: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
                 MessageBox.Show($"保存代理设置失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }

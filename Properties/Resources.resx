@@ -213,4 +213,85 @@
   <data name="text_cancel" xml:space="preserve">
     <value>取消</value>
   </data>
+  <data name="text_preparing_update" xml:space="preserve">
+    <value>正在准备更新...</value>
+  </data>
+  <data name="text_file_exists_using" xml:space="preserve">
+    <value>发现已有安装文件 ({0}MB)，使用现有文件进行安装...</value>
+  </data>
+  <data name="text_extracting_installer" xml:space="preserve">
+    <value>正在解压安装程序...</value>
+  </data>
+  <data name="text_installing_to_directory" xml:space="preserve">
+    <value>正在安装到目标目录...</value>
+  </data>
+  <data name="text_backing_up_existing" xml:space="preserve">
+    <value>正在备份现有版本...</value>
+  </data>
+  <data name="text_copying_files" xml:space="preserve">
+    <value>正在复制文件到安装目录...</value>
+  </data>
+  <data name="text_verifying_installation" xml:space="preserve">
+    <value>正在验证安装...</value>
+  </data>
+  <data name="text_installation_completed" xml:space="preserve">
+    <value>{0} {1} 安装完成！</value>
+  </data>
+  <data name="text_installation_verification_failed" xml:space="preserve">
+    <value>安装验证失败，请重试。</value>
+  </data>
+  <data name="text_extraction_failed" xml:space="preserve">
+    <value>解压安装程序失败，错误代码: {0}</value>
+  </data>
+  <data name="text_installation_complete_cleanup" xml:space="preserve">
+    <value>安装完成，临时文件已清理。</value>
+  </data>
+  <data name="text_cleanup_error" xml:space="preserve">
+    <value>清理临时文件时出现问题: {0}</value>
+  </data>
+  <data name="text_already_latest_message" xml:space="preserve">
+    <value>您的vivaldi已经是最新版！</value>
+  </data>
+  <data name="text_preparing_download_vpp" xml:space="preserve">
+    <value>正在准备下载Vivaldi++...</value>
+  </data>
+  <data name="text_found_existing_vpp_file" xml:space="preserve">
+    <value>发现已有Vivaldi++文件 ({0}KB)，使用现有文件...</value>
+  </data>
+  <data name="text_installing_vpp_to_directory" xml:space="preserve">
+    <value>正在安装Vivaldi++到目标目录...</value>
+  </data>
+  <data name="text_verifying_vpp_installation" xml:space="preserve">
+    <value>正在验证Vivaldi++安装...</value>
+  </data>
+  <data name="text_vpp_installation_verification_failed" xml:space="preserve">
+    <value>Vivaldi++安装验证失败，请重试。</value>
+  </data>
+  <data name="text_checking_vpp_version_consistency" xml:space="preserve">
+    <value>检查Vivaldi++版本一致性...</value>
+  </data>
+  <data name="text_version_consistent_dll_missing" xml:space="preserve">
+    <value>版本一致但version.dll不存在，正在重新下载...</value>
+  </data>
+  <data name="text_installing_version_dll" xml:space="preserve">
+    <value>正在安装version.dll...</value>
+  </data>
+  <data name="text_version_dll_copied_successfully" xml:space="preserve">
+    <value>version.dll已成功复制到安装目录。</value>
+  </data>
+  <data name="text_version_dll_copy_failed" xml:space="preserve">
+    <value>version.dll复制失败，请重试。</value>
+  </data>
+  <data name="text_vpp_latest_and_dll_exists" xml:space="preserve">
+    <value>Vivaldi++已是最新版本且version.dll存在。</value>
+  </data>
+  <data name="text_checking_vivaldi_update" xml:space="preserve">
+    <value>正在检查Vivaldi更新...</value>
+  </data>
+  <data name="text_checking_vpp_update" xml:space="preserve">
+    <value>正在检查Vivaldi++更新...</value>
+  </data>
+  <data name="text_all_updates_completed" xml:space="preserve">
+    <value>所有更新已完成！</value>
+  </data>
 </root>

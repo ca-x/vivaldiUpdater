@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿﻿﻿using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -117,7 +117,7 @@ namespace VivaldiUpdater.Helpers
                     if (currentPosition == contentLength)
                     {
                         // 文件已经下载完毕
-                        OnDownloadProgressChanged(new DownloadProgressEventArgs(100, currentPosition));
+                        OnDownloadProgressChanged(new DownloadProgressEventArgs(100, currentPosition, 0));
                         return;
                     }
 
@@ -134,16 +134,36 @@ namespace VivaldiUpdater.Helpers
                     {
                         var buffer = new byte[8192];
                         var bytesRead = 0;
+                        var lastReportTime = DateTime.Now;
+                        var lastReportedBytes = currentPosition;
 
                         while ((bytesRead = await rangeStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                         {
                             await fileStream.WriteAsync(buffer, 0, bytesRead);
                             currentPosition += bytesRead;
 
-                            var progressPercentage = (int)(((double)currentPosition / contentLength) * 100);
-                            OnDownloadProgressChanged(
-                                new DownloadProgressEventArgs(progressPercentage, currentPosition));
+                            var now = DateTime.Now;
+                            var timeDiff = now - lastReportTime;
+                            
+                            // 每500ms报告一次进度
+                            if (timeDiff.TotalMilliseconds >= 500)
+                            {
+                                var progressPercentage = (int)(((double)currentPosition / contentLength) * 100);
+                                var bytesDiff = currentPosition - lastReportedBytes;
+                                var bytesPerSecond = (long)(bytesDiff / timeDiff.TotalSeconds);
+                                
+                                OnDownloadProgressChanged(
+                                    new DownloadProgressEventArgs(progressPercentage, currentPosition, bytesPerSecond));
+                                    
+                                lastReportTime = now;
+                                lastReportedBytes = currentPosition;
+                            }
                         }
+                        
+                        // 最后一次报告，确保100%完成
+                        var finalProgressPercentage = (int)(((double)currentPosition / contentLength) * 100);
+                        OnDownloadProgressChanged(
+                            new DownloadProgressEventArgs(finalProgressPercentage, currentPosition, 0));
                     }
                 }
             }
@@ -172,11 +192,13 @@ namespace VivaldiUpdater.Helpers
     {
         public int ProgressPercentage { get; private set; }
         public long BytesReceived { get; private set; }
+        public long BytesPerSecond { get; private set; }
 
-        public DownloadProgressEventArgs(int progressPercentage, long bytesReceived)
+        public DownloadProgressEventArgs(int progressPercentage, long bytesReceived, long bytesPerSecond = 0)
         {
             ProgressPercentage = progressPercentage;
             BytesReceived = bytesReceived;
+            BytesPerSecond = bytesPerSecond;
         }
     }
 }
