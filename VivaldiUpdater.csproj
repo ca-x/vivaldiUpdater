@@ -89,7 +89,6 @@
   <ItemGroup>
     <Compile Include="Model\AppSettings.cs" />
     <Compile Include="Model\LanguageManager.cs" />
-    <Compile Include="Model\ProxySettings.cs" />
     <Compile Include="Model\VivaldiDistUrlInfo.cs" />
     <Compile Include="Model\VivaldiPlusPlusRelease.cs" />
     <Compile Include="Model\VivaldiVersionInfo.cs" />

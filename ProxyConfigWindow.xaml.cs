@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -10,7 +10,8 @@ namespace VivaldiUpdater
 {
     public partial class ProxyConfigWindow : Window
     {
-        public ProxySettings ProxySettings { get; private set; }
+        public AppSettings AppSettings { get; private set; }
+        public ProxyConfig ProxySettings => AppSettings.Proxy;
         private ProxyConfigViewModel _viewModel;
 
         public ProxyConfigWindow()
@@ -24,7 +25,7 @@ namespace VivaldiUpdater
             _viewModel = new ProxyConfigViewModel();
             DataContext = _viewModel;
             
-            ProxySettings = ProxySettings.Load();
+            AppSettings = appSettings;
             
             // 延迟加载设置，确保所有控件都已正确初始化
             this.Loaded += ProxyConfigWindow_Loaded;
@@ -196,7 +197,8 @@ namespace VivaldiUpdater
                 ProxySettings.ProxyUsername = ProxyUsernameTextBox.Text.Trim();
                 ProxySettings.ProxyPassword = ProxyPasswordTextBox.Password;
 
-                ProxySettings.Save();
+                // 保存到统一配置文件
+                AppSettings.Save();
                 
                 // Show success message to user
                 if (ProxySettings.UseProxy)

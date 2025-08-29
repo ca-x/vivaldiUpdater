@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -570,7 +570,8 @@ namespace VivaldiUpdater.ViewModel
                     hasVivaldiUpdates = true;
                 }
 
-                if (EnableVivaldiPlus && EnableVivaldiPlusUpdate)
+                // 修改Vivaldi++安装逻辑：如果勾选了EnableVivaldiPlus，就进行安装或更新检查
+                if (EnableVivaldiPlus)
                 {
                     ProcessBarNotifyText = Properties.Resources.text_checking_vpp_update ?? "正在检查Vivaldi++更新...";
                     await CheckAndUpdateVivaldiPlus(AppDir, installed.InstalledVivaldiPlus, installed.VivaldiPlusArch);

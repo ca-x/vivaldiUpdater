@@ -1,4 +1,4 @@
-﻿﻿﻿﻿using System;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -19,7 +19,7 @@ namespace VivaldiUpdater.Helpers
             ConfigureProxy();
             
             // 订阅代理设置变更事件
-            ProxySettings.ProxySettingsChanged += OnProxySettingsChanged;
+            AppSettings.ProxySettingsChanged += OnProxySettingsChanged;
         }
 
         private void OnProxySettingsChanged()
@@ -41,7 +41,8 @@ namespace VivaldiUpdater.Helpers
         private void ConfigureProxy()
         {
             _handler = new HttpClientHandler();
-            var proxySettings = ProxySettings.Load();
+            var appSettings = AppSettings.Load();
+            var proxySettings = appSettings.Proxy;
             
             if (proxySettings.UseProxy && !string.IsNullOrEmpty(proxySettings.ProxyHost))
             {
@@ -181,7 +182,7 @@ namespace VivaldiUpdater.Helpers
         public void Dispose()
         {
             // 取消订阅事件以避免内存泄漏
-            ProxySettings.ProxySettingsChanged -= OnProxySettingsChanged;
+            AppSettings.ProxySettingsChanged -= OnProxySettingsChanged;
             
             _client?.Dispose();
             _handler?.Dispose();
