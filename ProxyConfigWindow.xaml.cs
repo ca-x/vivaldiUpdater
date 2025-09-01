@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -14,18 +14,16 @@ namespace VivaldiUpdater
         public ProxyConfig ProxySettings => AppSettings.Proxy;
         private ProxyConfigViewModel _viewModel;
 
-        public ProxyConfigWindow()
+        public ProxyConfigWindow(AppSettings appSettings = null)
         {
             // Apply current language settings before initialization
-            var appSettings = AppSettings.Load();
-            appSettings.ApplyLanguage();
+            AppSettings = appSettings ?? AppSettings.Load();
+            AppSettings.ApplyLanguage();
             
             InitializeComponent();
             
             _viewModel = new ProxyConfigViewModel();
             DataContext = _viewModel;
-            
-            AppSettings = appSettings;
             
             // 延迟加载设置，确保所有控件都已正确初始化
             this.Loaded += ProxyConfigWindow_Loaded;
@@ -45,7 +43,10 @@ namespace VivaldiUpdater
         {
             // 确保在窗口完全加载后再加载设置
             LoadSettings();
-            UpdateControlStates();
+            // 延迟调用UpdateControlStates，确保所有控件都设置完成
+            this.Dispatcher.BeginInvoke(new System.Action(() => {
+                UpdateControlStates();
+            }), System.Windows.Threading.DispatcherPriority.Loaded);
         }
         
         private void OnLanguageChanged(object sender, EventArgs e)
@@ -70,15 +71,24 @@ namespace VivaldiUpdater
         {
             try
             {
-                if (ProxySettings == null)
+                if (AppSettings == null || ProxySettings == null)
                 {
                     return;
                 }
-
+                
                 // 设置启用代理复选框
                 if (EnableProxyCheckBox != null)
                 {
+                    // 临时解除事件绑定，避免触发Checked/Unchecked事件
+                    EnableProxyCheckBox.Checked -= EnableProxyCheckBox_Checked;
+                    EnableProxyCheckBox.Unchecked -= EnableProxyCheckBox_Unchecked;
+                    
+                    // 设置复选框状态
                     EnableProxyCheckBox.IsChecked = ProxySettings.UseProxy;
+                    
+                    // 重新绑定事件
+                    EnableProxyCheckBox.Checked += EnableProxyCheckBox_Checked;
+                    EnableProxyCheckBox.Unchecked += EnableProxyCheckBox_Unchecked;
                 }
                 
                 // 设置代理类型

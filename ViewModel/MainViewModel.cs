@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -43,8 +43,8 @@ namespace VivaldiUpdater.ViewModel
         public MainViewModel()
         {
             _appSettings = AppSettings.Load();
-            UseMirrorAddress = _appSettings.UseMirrorAddress;
-            SelectedLanguage = _appSettings.Language;
+            _useMirrorAddress = _appSettings.UseMirrorAddress;  // 直接设置字段，避免触发setter
+            _selectedLanguage = _appSettings.Language;         // 直接设置字段，避免触发setter
             
             // Initialize language options - this is the key fix
             InitializeLanguageOptions();
@@ -524,7 +524,7 @@ namespace VivaldiUpdater.ViewModel
         private void ConfigureProxy()
         {
             var mainWindow = Application.Current.MainWindow;
-            var proxyWindow = new ProxyConfigWindow();
+            var proxyWindow = new ProxyConfigWindow(_appSettings);
             proxyWindow.Owner = mainWindow;
             
             // 设置窗口大小和位置与主窗口完全一致

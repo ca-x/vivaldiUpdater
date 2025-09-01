@@ -1,8 +1,9 @@
-﻿﻿﻿﻿using System;
+﻿﻿﻿﻿﻿﻿using System;
 using System.IO;
 using System.Globalization;
 using System.Threading;
 using VivaldiUpdater.Helpers;
+using System.Collections.Generic;
 
 namespace VivaldiUpdater.Model
 {
@@ -24,180 +25,133 @@ namespace VivaldiUpdater.Model
         {
             try
             {
-                Console.WriteLine($"=== AppSettings.Load Debug ===");
-                Console.WriteLine($"Config File Path: {ConfigFilePath}");
-                Console.WriteLine($"File Exists: {File.Exists(ConfigFilePath)}");
-                
                 if (File.Exists(ConfigFilePath))
                 {
                     var jsonString = File.ReadAllText(ConfigFilePath);
-                    Console.WriteLine($"File Content: {jsonString}");
                     
                     if (!string.IsNullOrWhiteSpace(jsonString))
                     {
                         try
                         {
-                            // 使用字典方式反序列化，避免枚举类型转换问题
-                            var dict = SimpleJson.SimpleJson.DeserializeObject<System.Collections.Generic.Dictionary<string, object>>(jsonString);
-                            var settings = new AppSettings();
-                            
-                            // 加载应用设置
-                            if (dict.ContainsKey("Language") && dict["Language"] != null)
+                            // 直接反序列化为AppSettings对象
+                            var settings = SimpleJson.SimpleJson.DeserializeObject<AppSettings>(jsonString);
+                            if (settings != null)
                             {
-                                settings.Language = dict["Language"].ToString();
-                            }
-                            
-                            if (dict.ContainsKey("UseMirrorAddress") && dict["UseMirrorAddress"] != null)
-                            {
-                                settings.UseMirrorAddress = Convert.ToBoolean(dict["UseMirrorAddress"]);
-                            }
-                            
-                            // 加载代理设置
-                            if (dict.ContainsKey("Proxy") && dict["Proxy"] != null)
-                            {
-                                var proxyDict = dict["Proxy"] as System.Collections.Generic.Dictionary<string, object>;
-                                if (proxyDict != null)
+                                // 确保代理配置对象不为空
+                                if (settings.Proxy == null)
                                 {
-                                    settings.Proxy = LoadProxyFromDict(proxyDict);
+                                    settings.Proxy = new ProxyConfig();
                                 }
+                                return settings;
                             }
-                            
-                            Console.WriteLine($"Loaded: Language={settings.Language}, UseMirror={settings.UseMirrorAddress}, UseProxy={settings.Proxy.UseProxy}");
-                            return settings;
                         }
-                        catch (Exception deserEx)
+                        catch (Exception ex)
                         {
-                            Console.WriteLine($"Deserialization error: {deserEx.Message}");
+                            // 反序列化失败时，尝试手动解析关键字段
+                            return LoadFromJsonObject(jsonString);
                         }
                     }
                 }
-                else
-                {
-                    Console.WriteLine("Config file does not exist, checking for migration from old files");
-                    
-                    // 尝试从旧的配置文件迁移
-                    var settings = new AppSettings();
-                    settings = TryMigrateOldSettings(settings);
-                    
-                    // 迁移后保存新格式
-                    settings.Save();
-                    return settings;
-                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine($"Error loading app settings: {ex.Message}");
+                // 加载失败，返回默认设置
             }
             return new AppSettings();
         }
         
-        private static ProxyConfig LoadProxyFromDict(System.Collections.Generic.Dictionary<string, object> proxyDict)
+        private static AppSettings LoadFromJsonObject(string jsonString)
+        {
+            try
+            {
+                // 使用JsonObject方式解析
+                var jsonObject = SimpleJson.SimpleJson.DeserializeObject(jsonString) as IDictionary<string, object>;
+                if (jsonObject != null)
+                {
+                    var settings = new AppSettings();
+                    
+                    // 加载应用设置
+                    if (jsonObject.ContainsKey("Language") && jsonObject["Language"] != null)
+                    {
+                        settings.Language = jsonObject["Language"].ToString();
+                    }
+                    
+                    if (jsonObject.ContainsKey("UseMirrorAddress") && jsonObject["UseMirrorAddress"] != null)
+                    {
+                        settings.UseMirrorAddress = Convert.ToBoolean(jsonObject["UseMirrorAddress"]);
+                    }
+                    
+                    // 加载代理设置
+                    if (jsonObject.ContainsKey("Proxy") && jsonObject["Proxy"] != null)
+                    {
+                        var proxyObject = jsonObject["Proxy"] as IDictionary<string, object>;
+                        if (proxyObject != null)
+                        {
+                            settings.Proxy = LoadProxyFromJsonObject(proxyObject);
+                        }
+                    }
+                    
+                    return settings;
+                }
+            }
+            catch (Exception)
+            {
+                // 解析失败
+            }
+            
+            return new AppSettings();
+        }
+        
+        private static ProxyConfig LoadProxyFromJsonObject(IDictionary<string, object> proxyObject)
         {
             var proxy = new ProxyConfig();
             
-            if (proxyDict.ContainsKey("UseProxy") && proxyDict["UseProxy"] != null)
+            if (proxyObject.ContainsKey("UseProxy") && proxyObject["UseProxy"] != null)
             {
-                proxy.UseProxy = Convert.ToBoolean(proxyDict["UseProxy"]);
+                proxy.UseProxy = Convert.ToBoolean(proxyObject["UseProxy"]);
             }
             
-            if (proxyDict.ContainsKey("ProxyType") && proxyDict["ProxyType"] != null)
+            if (proxyObject.ContainsKey("ProxyType") && proxyObject["ProxyType"] != null)
             {
-                var proxyTypeValue = Convert.ToInt32(proxyDict["ProxyType"]);
+                var proxyTypeValue = Convert.ToInt32(proxyObject["ProxyType"]);
                 proxy.ProxyType = (ProxyType)proxyTypeValue;
             }
             
-            if (proxyDict.ContainsKey("ProxyHost") && proxyDict["ProxyHost"] != null)
+            if (proxyObject.ContainsKey("ProxyHost") && proxyObject["ProxyHost"] != null)
             {
-                proxy.ProxyHost = proxyDict["ProxyHost"].ToString();
+                proxy.ProxyHost = proxyObject["ProxyHost"].ToString();
             }
             
-            if (proxyDict.ContainsKey("ProxyPort") && proxyDict["ProxyPort"] != null)
+            if (proxyObject.ContainsKey("ProxyPort") && proxyObject["ProxyPort"] != null)
             {
-                proxy.ProxyPort = Convert.ToInt32(proxyDict["ProxyPort"]);
+                proxy.ProxyPort = Convert.ToInt32(proxyObject["ProxyPort"]);
             }
             
-            if (proxyDict.ContainsKey("ProxyUsername") && proxyDict["ProxyUsername"] != null)
+            if (proxyObject.ContainsKey("ProxyUsername") && proxyObject["ProxyUsername"] != null)
             {
-                proxy.ProxyUsername = proxyDict["ProxyUsername"].ToString();
+                proxy.ProxyUsername = proxyObject["ProxyUsername"].ToString();
             }
             
-            if (proxyDict.ContainsKey("ProxyPassword") && proxyDict["ProxyPassword"] != null)
+            if (proxyObject.ContainsKey("ProxyPassword") && proxyObject["ProxyPassword"] != null)
             {
-                proxy.ProxyPassword = proxyDict["ProxyPassword"].ToString();
+                proxy.ProxyPassword = proxyObject["ProxyPassword"].ToString();
             }
             
             return proxy;
         }
         
-        private static AppSettings TryMigrateOldSettings(AppSettings settings)
-        {
-            try
-            {
-                // 迁移旧的 settings.json
-                var oldSettingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
-                if (File.Exists(oldSettingsPath))
-                {
-                    var jsonString = File.ReadAllText(oldSettingsPath);
-                    var oldSettings = SimpleJson.SimpleJson.DeserializeObject<AppSettings>(jsonString);
-                    if (oldSettings != null)
-                    {
-                        settings.Language = oldSettings.Language;
-                        settings.UseMirrorAddress = oldSettings.UseMirrorAddress;
-                        Console.WriteLine("Migrated old app settings");
-                    }
-                }
-                
-                // 迁移旧的 proxy.json
-                var oldProxyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "proxy.json");
-                if (File.Exists(oldProxyPath))
-                {
-                    var jsonString = File.ReadAllText(oldProxyPath);
-                    var dict = SimpleJson.SimpleJson.DeserializeObject<System.Collections.Generic.Dictionary<string, object>>(jsonString);
-                    if (dict != null)
-                    {
-                        settings.Proxy = LoadProxyFromDict(dict);
-                        Console.WriteLine("Migrated old proxy settings");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error during migration: {ex.Message}");
-            }
-            
-            return settings;
-        }
-
         public void Save()
         {
             try
             {
-                Console.WriteLine($"=== AppSettings.Save Debug ===");
-                Console.WriteLine($"Config File Path: {ConfigFilePath}");
-                Console.WriteLine($"Settings to save: Language={Language}, UseMirror={UseMirrorAddress}, UseProxy={Proxy.UseProxy}");
-                
                 var jsonString = SimpleJson.SimpleJson.SerializeObject(this);
-                Console.WriteLine($"Serialized JSON: {jsonString}");
-                
                 File.WriteAllText(ConfigFilePath, jsonString);
-                
-                var fileExistsAfterSave = File.Exists(ConfigFilePath);
-                Console.WriteLine($"File exists after save: {fileExistsAfterSave}");
-                
-                if (fileExistsAfterSave)
-                {
-                    var savedContent = File.ReadAllText(ConfigFilePath);
-                    Console.WriteLine($"Saved file content: {savedContent}");
-                }
-                
-                Console.WriteLine("App settings saved successfully!");
                 
                 // 通知代理设置已更改
                 ProxySettingsChanged?.Invoke();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine($"Error saving app settings: {ex.Message}");
                 throw;
             }
         }
@@ -228,9 +182,9 @@ namespace VivaldiUpdater.Model
                 CultureInfo.DefaultThreadCurrentCulture = culture;
                 CultureInfo.DefaultThreadCurrentUICulture = culture;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine($"Error applying language: {ex.Message}");
+                // 语言应用失败时忽略
             }
         }
     }
