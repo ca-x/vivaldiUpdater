@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -53,6 +53,9 @@ namespace VivaldiUpdater
         {
             // Refresh the view model's localized properties
             _viewModel?.RefreshLocalizedProperties();
+            
+            // 重新应用语言设置以确保消息框也使用正确的语言
+            AppSettings?.ApplyLanguage();
         }
 
         private void ProxyConfigWindow_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -196,7 +199,11 @@ namespace VivaldiUpdater
                 }
                 else if (ProxySettings.UseProxy)
                 {
-                    MessageBox.Show("请输入有效的端口号", "错误", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    // 使用统一的多语言资源机制
+                    string errorMessage = Properties.Resources.text_invalid_port ?? "请输入有效的端口号";
+                    string errorTitle = Properties.Resources.text_error ?? "错误";
+                    
+                    MessageBox.Show(errorMessage, errorTitle, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
                 else
@@ -213,12 +220,21 @@ namespace VivaldiUpdater
                 // Show success message to user
                 if (ProxySettings.UseProxy)
                 {
-                    MessageBox.Show($"代理设置已保存！\n类型: {ProxySettings.ProxyType}\n地址: {ProxySettings.ProxyHost}:{ProxySettings.ProxyPort}", 
-                                    "代理设置", MessageBoxButton.OK, MessageBoxImage.Information);
+                    // 使用统一的多语言资源机制和格式化字符串
+                    string messageText = string.Format(
+                        Properties.Resources.text_proxy_settings_saved ?? 
+                        "代理设置已保存！\n类型: {0}\n地址: {1}:{2}",
+                        ProxySettings.ProxyType, ProxySettings.ProxyHost, ProxySettings.ProxyPort);
+                    string titleText = Properties.Resources.text_proxy_settings ?? "代理设置";
+                    
+                    MessageBox.Show(messageText, titleText, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {
-                    MessageBox.Show("代理已禁用，设置已保存！", "代理设置", MessageBoxButton.OK, MessageBoxImage.Information);
+                    string messageText = Properties.Resources.text_proxy_disabled_saved ?? "代理已禁用，设置已保存！";
+                    string titleText = Properties.Resources.text_proxy_settings ?? "代理设置";
+                    
+                    MessageBox.Show(messageText, titleText, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 
                 DialogResult = true;
@@ -226,7 +242,11 @@ namespace VivaldiUpdater
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"保存代理设置失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                // 使用统一的多语言资源机制
+                string errorMessage = $"{Properties.Resources.text_proxy_save_failed ?? "保存代理设置失败"}: {ex.Message}";
+                string errorTitle = Properties.Resources.text_error ?? "错误";
+                
+                MessageBox.Show(errorMessage, errorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
