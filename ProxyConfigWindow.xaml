@@ -18,12 +18,15 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    <!--  Semi-transparent overlay background  -->
-    <Grid Background="#80000000" MouseLeftButtonDown="Overlay_MouseLeftButtonDown">
+    <!--  Semi-transparent overlay background with rounded corners  -->
+    <Border
+        Background="#80000000"
+        CornerRadius="20"
+        MouseLeftButtonDown="Overlay_MouseLeftButtonDown">
         <!--  Main content card  -->
         <Border
-            Width="380"
-            Height="500"
+            Width="360"
+            Height="420"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Background="#EFD6F3"
@@ -100,8 +103,8 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="1" />
+                        <RowDefinition Height="55" />
                     </Grid.RowDefinitions>
 
                     <!--  Enable Proxy  -->
@@ -210,19 +213,19 @@
                     <!--  Buttons  -->
                     <StackPanel
                         Grid.Row="7"
-                        Margin="0,10,0,0"
+                        Margin="0,2,0,0"
                         HorizontalAlignment="Right"
                         Orientation="Horizontal">
                         <Button
                             Width="90"
-                            Height="55"
+                            Height="45"
                             Margin="0,0,10,0"
                             Click="OkButton_Click"
                             Content="{Binding LocalizedOk}"
                             Style="{StaticResource ApplePriButtonStyle}" />
                         <Button
                             Width="90"
-                            Height="55"
+                            Height="45"
                             Click="CancelButton_Click"
                             Content="{Binding LocalizedCancel}"
                             Style="{StaticResource ApplePriButtonStyle}" />
@@ -230,5 +233,5 @@
                 </Grid>
             </Grid>
         </Border>
-    </Grid>
+    </Border>
 </Window>
