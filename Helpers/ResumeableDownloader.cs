@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -171,6 +171,47 @@ namespace VivaldiUpdater.Helpers
             catch (Exception ex)
             {
                 Console.WriteLine($"An error occurred: {ex.Message}");
+                throw; // 重新抛出异常，让调用者处理
+            }
+        }
+
+        /// <summary>
+        /// 下载文件，支持备用URL回退机制
+        /// </summary>
+        /// <param name="primaryUrl">主要下载URL</param>
+        /// <param name="fallbackUrl">备用下载URL</param>
+        /// <param name="outputPath">输出文件路径</param>
+        public async Task DownloadFileWithFallbackAsync(string primaryUrl, string fallbackUrl, string outputPath)
+        {
+            try
+            {
+                // 首先尝试使用主要URL下载
+                await DownloadFileAsync(primaryUrl, outputPath);
+            }
+            catch (Exception primaryException)
+            {
+                Console.WriteLine($"Primary download failed: {primaryException.Message}");
+                
+                // 如果主要URL下载失败，尝试使用备用URL
+                if (!string.IsNullOrEmpty(fallbackUrl))
+                {
+                    try
+                    {
+                        Console.WriteLine($"Attempting fallback download from: {fallbackUrl}");
+                        await DownloadFileAsync(fallbackUrl, outputPath);
+                    }
+                    catch (Exception fallbackException)
+                    {
+                        Console.WriteLine($"Fallback download failed: {fallbackException.Message}");
+                        // 如果备用URL也失败，抛出异常
+                        throw new AggregateException("Both primary and fallback downloads failed", primaryException, fallbackException);
+                    }
+                }
+                else
+                {
+                    // 没有备用URL，重新抛出原始异常
+                    throw;
+                }
             }
         }
 
