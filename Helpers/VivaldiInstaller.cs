@@ -62,7 +62,7 @@ namespace VivaldiUpdater.Helpers
         /// use vivaldi command line to extract installer
         /// </summary>
         /// <param name="installerFullPath"></param>
-        /// <param name="Dir"></param>
+        /// <param name="installDir"></param>
         public static int ExtractVivaldi(string installerFullPath, string installDir)
         {
             if (!Path.IsPathRooted(installerFullPath))
@@ -77,7 +77,7 @@ namespace VivaldiUpdater.Helpers
 
             var commandLineParams = new List<string>
             {
-                $"--vivaldi-install-dir=\"{installDir}\"",
+                string.Format("--vivaldi-install-dir=\"{0}\"", installDir),
                 "--vivaldi-standalone",
                 "--vivaldi-silent",
                 "--do-not-launch-chrome"
@@ -139,7 +139,7 @@ namespace VivaldiUpdater.Helpers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"exception: {ex.Message}");
+                Console.WriteLine(string.Format("exception: {0}", ex.Message));
                 return -1;
             }
             finally

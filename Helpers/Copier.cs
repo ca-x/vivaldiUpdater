@@ -58,11 +58,11 @@ namespace VivaldiUpdater.Helpers
                     }
                 }
 
-                Console.WriteLine($"Successfully extracted {zipFilePath} to {extractPath}");
+                Console.WriteLine(string.Format("Successfully extracted {0} to {1}", zipFilePath, extractPath));
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error extracting {zipFilePath}: {ex.Message}");
+                Console.WriteLine(string.Format("Error extracting {0}: {1}", zipFilePath, ex.Message));
             }
         }
     }
