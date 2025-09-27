@@ -8,9 +8,13 @@ namespace VivaldiUpdater.Model
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged(string propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
 
@@ -20,11 +24,11 @@ namespace VivaldiUpdater.Model
         [DataMember(Name = "asset_name")]
         public string AssetName
         {
-            get => _assetName;
+            get { return _assetName; }
             set
             {
                 _assetName = value;
-                OnPropertyChanged();
+                OnPropertyChanged("AssetName");
             }
         }
 
@@ -34,11 +38,11 @@ namespace VivaldiUpdater.Model
         [DataMember(Name = "version")]
         public string Version
         {
-            get => _version;
+            get { return _version; }
             set
             {
                 _version = value;
-                OnPropertyChanged();
+                OnPropertyChanged("Version");
             }
         }
 
@@ -47,11 +51,11 @@ namespace VivaldiUpdater.Model
         [DataMember(Name = "github_origin_url")]
         public string GithubOriginUrl
         {
-            get => _githubOriginUrl;
+            get { return _githubOriginUrl; }
             set
             {
                 _githubOriginUrl = value;
-                OnPropertyChanged();
+                OnPropertyChanged("GithubOriginUrl");
             }
         }
 
@@ -60,11 +64,11 @@ namespace VivaldiUpdater.Model
         [DataMember(Name = "fastgit_mirror_url")]
         public string FastgitMirrorUrl
         {
-            get => _fastgitMirrorUrl;
+            get { return _fastgitMirrorUrl; }
             set
             {
                 _fastgitMirrorUrl = value;
-                OnPropertyChanged();
+                OnPropertyChanged("FastgitMirrorUrl");
             }
         }
     }

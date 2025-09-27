@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿using System;
+﻿﻿using System;
 using System.IO;
 using System.Globalization;
 using System.Threading;
@@ -10,16 +10,23 @@ namespace VivaldiUpdater.Model
     public class AppSettings
     {
         // 应用程序设置
-        public string Language { get; set; } = "auto";
-        public bool UseMirrorAddress { get; set; } = true;
+        public string Language { get; set; }
+        public bool UseMirrorAddress { get; set; }
         
         // 代理设置
-        public ProxyConfig Proxy { get; set; } = new ProxyConfig();
+        public ProxyConfig Proxy { get; set; }
 
         private static readonly string ConfigFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
         
         // 代理设置更改事件
         public static event Action ProxySettingsChanged;
+
+        public AppSettings()
+        {
+            Language = "auto";
+            UseMirrorAddress = true;
+            Proxy = new ProxyConfig();
+        }
 
         public static AppSettings Load()
         {
@@ -194,12 +201,22 @@ namespace VivaldiUpdater.Model
     /// </summary>
     public class ProxyConfig
     {
-        public bool UseProxy { get; set; } = false;
-        public ProxyType ProxyType { get; set; } = ProxyType.Http;
-        public string ProxyHost { get; set; } = "";
-        public int ProxyPort { get; set; } = 0;
-        public string ProxyUsername { get; set; } = "";
-        public string ProxyPassword { get; set; } = "";
+        public bool UseProxy { get; set; }
+        public ProxyType ProxyType { get; set; }
+        public string ProxyHost { get; set; }
+        public int ProxyPort { get; set; }
+        public string ProxyUsername { get; set; }
+        public string ProxyPassword { get; set; }
+        
+        public ProxyConfig()
+        {
+            UseProxy = false;
+            ProxyType = ProxyType.Http;
+            ProxyHost = "";
+            ProxyPort = 0;
+            ProxyUsername = "";
+            ProxyPassword = "";
+        }
     }
     
     /// <summary>

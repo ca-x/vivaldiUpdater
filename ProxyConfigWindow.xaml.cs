@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
+﻿﻿using System;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -243,7 +243,7 @@ namespace VivaldiUpdater
             catch (Exception ex)
             {
                 // 使用统一的多语言资源机制
-                string errorMessage = $"{Properties.Resources.text_proxy_save_failed ?? "保存代理设置失败"}: {ex.Message}";
+                string errorMessage = string.Format("{0}: {1}", Properties.Resources.text_proxy_save_failed ?? "保存代理设置失败", ex.Message);
                 string errorTitle = Properties.Resources.text_error ?? "错误";
                 
                 MessageBox.Show(errorMessage, errorTitle, MessageBoxButton.OK, MessageBoxImage.Error);

@@ -50,7 +50,7 @@ namespace VivaldiUpdater.Helpers
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern uint SizeofResource(IntPtr hModule, IntPtr hResInfo);
 
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern IntPtr LoadLibraryEx(string lpFileName, IntPtr hReservedNull, LoadLibraryFlags dwFlags);
 
         [DllImport("kernel32.dll")]
@@ -233,15 +233,13 @@ namespace VivaldiUpdater.Helpers
                             "The operation involved multiple destination paths, which can fail in the case of a move operation.";
                     case 0x7C: return "The path in the source or destination or both was invalid.";
                     case 0x7D: return "The source and destination have the same parent folder.";
-                    case 0x7E: return "The destination path is an existing file.";
-                    case 0x80: return "The destination path is an existing folder.";
-                    case 0x81: return "The name of the file exceeds MAX_PATH.";
-                    case 0x82: return "The destination is a read-only CD-ROM, possibly unformatted.";
-                    case 0x83: return "The destination is a read-only DVD, possibly unformatted.";
-                    case 0x84: return "The destination is a writable CD-ROM, possibly unformatted.";
-                    case 0x85:
-                        return
-                            "The file involved in the operation is too large for the destination media or file system.";
+                    case 0x7E: return "The name of the file exceeds MAX_PATH.";
+                    case 0x80: return "The destination path is an existing file.";
+                    case 0x81: return "The destination path is an existing folder.";
+                    case 0x82: return "The file involved in the operation is too large for the destination media or file system.";
+                    case 0x83: return "The source is a read-only CD-ROM, possibly unformatted.";
+                    case 0x84: return "The source is a read-only DVD, possibly unformatted.";
+                    case 0x85: return "The source is a writable CD-ROM, possibly unformatted.";
                     case 0x86: return "The source is a read-only CD-ROM, possibly unformatted.";
                     case 0x87: return "The source is a read-only DVD, possibly unformatted.";
                     case 0x88: return "The source is a writable CD-ROM, possibly unformatted.";
@@ -305,7 +303,7 @@ namespace VivaldiUpdater.Helpers
                 bool showProgress = false)
             {
                 var ret = SHFileOperation(fileName, toRecycle, showDialog, showProgress);
-                if (ret != 0) throw new System.IO.IOException($"Error:{ret}({GetErrorString(ret)})");
+                if (ret != 0) throw new System.IO.IOException(string.Format("Error:{0}({1})", ret, GetErrorString(ret)));
             }
 
             public static void MoveUp(string source, bool showDialog = false, bool showProgress = false,
@@ -314,9 +312,9 @@ namespace VivaldiUpdater.Helpers
                 var dfName = System.IO.Path.GetDirectoryName(source);
                 var ret = SHFileOperation(FileFuncFlags.FO_MOVE, source + "\\*.*", dfName, showDialog, showProgress,
                     autoRename);
-                if (ret != 0) throw new System.IO.IOException($"Error:{ret}({GetErrorString(ret)})");
+                if (ret != 0) throw new System.IO.IOException(string.Format("Error:{0}({1})", ret, GetErrorString(ret)));
                 ret = SHFileOperation(source, false, showDialog, showProgress);
-                if (ret != 0) throw new System.IO.IOException($"Error:{ret}({GetErrorString(ret)})");
+                if (ret != 0) throw new System.IO.IOException(string.Format("Error:{0}({1})", ret, GetErrorString(ret)));
             }
         }
     }

@@ -6,7 +6,7 @@ namespace VivaldiUpdater.Helpers
 {
     public static class Copier
     {
-      public  static void CopyDirectory(string sourceDir, string destinationDir)
+        public static void CopyDirectory(string sourceDir, string destinationDir)
         {
             Directory.CreateDirectory(destinationDir);
             

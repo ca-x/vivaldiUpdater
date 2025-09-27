@@ -8,9 +8,13 @@ namespace VivaldiUpdater.Model
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged(string propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
 
@@ -19,24 +23,25 @@ namespace VivaldiUpdater.Model
         [DataMember(Name = "platform")]
         public string Platform
         {
-            get => _platform;
+            get { return _platform; }
             set
             {
                 _platform = value;
-                OnPropertyChanged();
+                OnPropertyChanged("Platform");
             }
         }
 
 
-        [DataMember(Name = "url")] private string _url;
+        private string _url;
 
+        [DataMember(Name = "url")]
         public string Url
         {
-            get => _url;
+            get { return _url; }
             set
             {
                 _url = value;
-                OnPropertyChanged();
+                OnPropertyChanged("Url");
             }
         }
 
@@ -46,11 +51,11 @@ namespace VivaldiUpdater.Model
         [DataMember(Name = "url_mirror")]
         public string UrlMirror
         {
-            get => _urlMirror;
+            get { return _urlMirror; }
             set
             {
                 _urlMirror = value;
-                OnPropertyChanged();
+                OnPropertyChanged("UrlMirror");
             }
         }
         
@@ -59,11 +64,11 @@ namespace VivaldiUpdater.Model
         [DataMember(Name = "version")]
         public string Version
         {
-            get => _version;
+            get { return _version; }
             set
             {
                 _version = value;
-                OnPropertyChanged();
+                OnPropertyChanged("Version");
             }
         }
     }

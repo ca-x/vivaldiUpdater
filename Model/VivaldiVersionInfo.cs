@@ -8,9 +8,13 @@ namespace VivaldiUpdater.Model
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged(string propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         private string _version;
@@ -18,11 +22,11 @@ namespace VivaldiUpdater.Model
         [DataMember(Name = "vivaldi_version_number")]
         public string Version
         {
-            get => _version;
+            get { return _version; }
             set
             {
                 _version = value;
-                OnPropertyChanged();
+                OnPropertyChanged("Version");
             }
         }
 
@@ -32,11 +36,11 @@ namespace VivaldiUpdater.Model
         [DataMember(Name = "vivaldi_version_number_android")]
         public string AndroidVersion
         {
-            get => _androidVersion;
+            get { return _androidVersion; }
             set
             {
                 _androidVersion = value;
-                OnPropertyChanged();
+                OnPropertyChanged("AndroidVersion");
             }
         }
 
@@ -46,11 +50,11 @@ namespace VivaldiUpdater.Model
         [DataMember(Name = "vivaldi_version_number_ios")]
         public string IOSVersion
         {
-            get => _iosVersion;
+            get { return _iosVersion; }
             set
             {
                 _iosVersion = value;
-                OnPropertyChanged();
+                OnPropertyChanged("IOSVersion");
             }
         }
     }

@@ -42,7 +42,7 @@ namespace VivaldiUpdater.Helpers
                     }
 
                     return SimpleJson.SimpleJson.DeserializeObject<List<VivaldiDistUrlInfo>>(
-                        await hc.GetStringAsync($"{VivaldiDistUrlsEndPoint}?platforms={platforms}"));
+                        await hc.GetStringAsync(string.Format("{0}?platforms={1}", VivaldiDistUrlsEndPoint, platforms)));
                 }
                 catch (Exception e)
                 {

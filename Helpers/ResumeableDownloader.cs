@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
+﻿﻿using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -46,7 +46,7 @@ namespace VivaldiUpdater.Helpers
             
             if (proxySettings.UseProxy && !string.IsNullOrEmpty(proxySettings.ProxyHost))
             {
-                Console.WriteLine($"Using proxy: {proxySettings.ProxyType} {proxySettings.ProxyHost}:{proxySettings.ProxyPort}");
+                Console.WriteLine(string.Format("Using proxy: {0} {1}:{2}", proxySettings.ProxyType, proxySettings.ProxyHost, proxySettings.ProxyPort));
                 
                 if (proxySettings.ProxyType == ProxyType.Http)
                 {
@@ -71,7 +71,7 @@ namespace VivaldiUpdater.Helpers
                     
                     try 
                     {
-                        var socksProxy = new WebProxy($"socks5://{proxySettings.ProxyHost}:{proxySettings.ProxyPort}");
+                        var socksProxy = new WebProxy(string.Format("socks5://{0}:{1}", proxySettings.ProxyHost, proxySettings.ProxyPort));
                         if (!string.IsNullOrEmpty(proxySettings.ProxyUsername))
                         {
                             socksProxy.Credentials = new NetworkCredential(proxySettings.ProxyUsername, proxySettings.ProxyPassword);
@@ -122,7 +122,7 @@ namespace VivaldiUpdater.Helpers
                         return;
                     }
 
-                    rangeRequest.Headers.Add("Range", $"bytes={currentPosition}-");
+                    rangeRequest.Headers.Add("Range", string.Format("bytes={0}-", currentPosition));
                 }
 
                 using (var rangeResponse =
@@ -170,7 +170,7 @@ namespace VivaldiUpdater.Helpers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occurred: {ex.Message}");
+                Console.WriteLine(string.Format("An error occurred: {0}", ex.Message));
                 throw; // 重新抛出异常，让调用者处理
             }
         }
@@ -190,19 +190,19 @@ namespace VivaldiUpdater.Helpers
             }
             catch (Exception primaryException)
             {
-                Console.WriteLine($"Primary download failed: {primaryException.Message}");
+                Console.WriteLine(string.Format("Primary download failed: {0}", primaryException.Message));
                 
                 // 如果主要URL下载失败，尝试使用备用URL
                 if (!string.IsNullOrEmpty(fallbackUrl))
                 {
                     try
                     {
-                        Console.WriteLine($"Attempting fallback download from: {fallbackUrl}");
+                        Console.WriteLine(string.Format("Attempting fallback download from: {0}", fallbackUrl));
                         await DownloadFileAsync(fallbackUrl, outputPath);
                     }
                     catch (Exception fallbackException)
                     {
-                        Console.WriteLine($"Fallback download failed: {fallbackException.Message}");
+                        Console.WriteLine(string.Format("Fallback download failed: {0}", fallbackException.Message));
                         // 如果备用URL也失败，抛出异常
                         throw new AggregateException("Both primary and fallback downloads failed", primaryException, fallbackException);
                     }

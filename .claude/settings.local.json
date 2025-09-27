@@ -8,7 +8,9 @@
       "Bash(dir)",
       "Bash(del:*)",
       "Bash(\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe\" \"D:\\code\\vivaldiUpdater\\VivaldiUpdater.csproj\" /p:Configuration=Release)",
-      "Bash(where:*)"
+      "Bash(where:*)",
+      "Bash(dir:*)",
+      "Bash(dotnet build:*)"
     ],
     "deny": [],
     "ask": []

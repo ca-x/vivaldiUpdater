@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
+﻿﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -795,46 +795,45 @@ namespace VivaldiUpdater.ViewModel
                     Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                     latestRelease.AssetName);
                         
-                    // 使用回退机制下载Vivaldi++文件
-                    // 如果UseMirrorAddress为true，优先使用镜像地址，否则使用GitHub原始地址
-                    if (UseMirrorAddress && !string.IsNullOrEmpty(latestRelease.FastgitMirrorUrl))
-                    {
-                        await downloader.DownloadFileWithFallbackAsync(latestRelease.FastgitMirrorUrl, latestRelease.GithubOriginUrl, downloadPath);
-                    }
-                    else if (!string.IsNullOrEmpty(latestRelease.GithubOriginUrl))
-                    {
-                        await downloader.DownloadFileAsync(latestRelease.GithubOriginUrl, downloadPath);
-                    }
-                    else
-                    {
-                        // 如果没有可用的URL，抛出异常
-                        throw new InvalidOperationException("No valid download URL available for Vivaldi++");
-                    }
-                    
-                    ProcessBarNotifyText = Properties.Resources.text_installing_version_dll ?? "正在安装version.dll...";
-                    DownloadProgress = 85;
-                    
-                    Copier.ExtractToDirectory(downloadPath, AppDir);
-                    
-                    // 验证安装
-                    ProcessBarNotifyText = Properties.Resources.text_verifying_vpp_installation ?? "正在验证Vivaldi++安装...";
-                    DownloadProgress = 90;
-                    
-                    var verifyInfo = VivaldiInstaller.GetVivaldiPlusInfoFromInstallDir(AppDir);
-                    if (verifyInfo.version != null)
-                    {
-                        VivaldiPlusInstalledVersion = verifyInfo.version;
-                        VivaldiPlusUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
-                        ProcessBarNotifyText = string.Format(Properties.Resources.text_installation_completed ?? "{0} {1} 安装完成！", "Vivaldi++", verifyInfo.version);
-                    }
-                    else
-                    {
-                        ProcessBarNotifyText = Properties.Resources.text_vpp_installation_verification_failed ?? "Vivaldi++安装验证失败，请重试。";
-                    }
-                    
-                    DownloadProgress = 100;
+                // 使用回退机制下载Vivaldi++文件
+                // 如果UseMirrorAddress为true，优先使用镜像地址，否则使用GitHub原始地址
+                if (UseMirrorAddress && !string.IsNullOrEmpty(latestRelease.FastgitMirrorUrl))
+                {
+                    await downloader.DownloadFileWithFallbackAsync(latestRelease.FastgitMirrorUrl, latestRelease.GithubOriginUrl, downloadPath);
                 }
-
+                else if (!string.IsNullOrEmpty(latestRelease.GithubOriginUrl))
+                {
+                    await downloader.DownloadFileAsync(latestRelease.GithubOriginUrl, downloadPath);
+                }
+                else
+                {
+                    // 如果没有可用的URL，抛出异常
+                    throw new InvalidOperationException("No valid download URL available for Vivaldi++");
+                }
+                
+                ProcessBarNotifyText = Properties.Resources.text_installing_version_dll ?? "正在安装version.dll...";
+                DownloadProgress = 85;
+                
+                Copier.ExtractToDirectory(downloadPath, AppDir);
+                
+                // 验证安装
+                ProcessBarNotifyText = Properties.Resources.text_verifying_vpp_installation ?? "正在验证Vivaldi++安装...";
+                DownloadProgress = 90;
+                
+                var verifyInfo = VivaldiInstaller.GetVivaldiPlusInfoFromInstallDir(AppDir);
+                if (verifyInfo.version != null)
+                {
+                    VivaldiPlusInstalledVersion = verifyInfo.version;
+                    VivaldiPlusUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
+                    ProcessBarNotifyText = string.Format(Properties.Resources.text_installation_completed ?? "{0} {1} 安装完成！", "Vivaldi++", verifyInfo.version);
+                }
+                else
+                {
+                    ProcessBarNotifyText = Properties.Resources.text_vpp_installation_verification_failed ?? "Vivaldi++安装验证失败，请重试。";
+                }
+                
+                DownloadProgress = 100;
+                
                 // 清理下载文件(可选)
                 try
                 {

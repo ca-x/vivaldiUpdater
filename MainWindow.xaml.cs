@@ -54,7 +54,7 @@ namespace VivaldiUpdater
                 }
                 catch (System.Exception ex)
                 {
-                    mm.ProcessBarNotifyText = $"初始化失败 / Initialization failed: {ex.Message}";
+                    mm.ProcessBarNotifyText = string.Format("初始化失败 / Initialization failed: {0}", ex.Message);
                 }
                 finally
                 {
