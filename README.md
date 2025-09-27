@@ -14,3 +14,6 @@
 ## mod scripts
 + https://github.com/luetage/vivaldi_modding
 + https://github.com/benzBrake/VivaldiMods
+
+## 修复说明
++ 添加了Vivaldi++下载的回退机制，当镜像地址下载失败时会自动回退到GitHub原始地址

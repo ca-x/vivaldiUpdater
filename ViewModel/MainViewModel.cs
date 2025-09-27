@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -794,24 +794,25 @@ namespace VivaldiUpdater.ViewModel
                 var downloadPath = Path.Combine(
                     Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                     latestRelease.AssetName);
-                
-                // 检查文件是否已存在
-                bool fileExists = File.Exists(downloadPath);
-                if (fileExists)
-                {
-                    var fileInfo = new FileInfo(downloadPath);
-                    ProcessBarNotifyText = string.Format(Properties.Resources.text_found_existing_vpp_file ?? "发现已有Vivaldi++文件 ({0}KB)，使用现有文件...", (fileInfo.Length / 1024).ToString("F1"));
-                    DownloadProgress = 100;
-                }
-                else
-                {
-                    await downloader.DownloadFileAsync(latestRelease.FastgitMirrorUrl, downloadPath);
-                }
-
-                if (Directory.Exists(AppDir))
-                {
-                    ProcessBarNotifyText = Properties.Resources.text_installing_vpp_to_directory ?? "正在安装Vivaldi++到目标目录...";
-                    DownloadProgress = 50;
+                        
+                    // 使用回退机制下载Vivaldi++文件
+                    // 如果UseMirrorAddress为true，优先使用镜像地址，否则使用GitHub原始地址
+                    if (UseMirrorAddress && !string.IsNullOrEmpty(latestRelease.FastgitMirrorUrl))
+                    {
+                        await downloader.DownloadFileWithFallbackAsync(latestRelease.FastgitMirrorUrl, latestRelease.GithubOriginUrl, downloadPath);
+                    }
+                    else if (!string.IsNullOrEmpty(latestRelease.GithubOriginUrl))
+                    {
+                        await downloader.DownloadFileAsync(latestRelease.GithubOriginUrl, downloadPath);
+                    }
+                    else
+                    {
+                        // 如果没有可用的URL，抛出异常
+                        throw new InvalidOperationException("No valid download URL available for Vivaldi++");
+                    }
+                    
+                    ProcessBarNotifyText = Properties.Resources.text_installing_version_dll ?? "正在安装version.dll...";
+                    DownloadProgress = 85;
                     
                     Copier.ExtractToDirectory(downloadPath, AppDir);
                     
