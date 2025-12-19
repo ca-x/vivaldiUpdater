@@ -218,4 +218,10 @@
     <data name="text_proxy_settings_saved" xml:space="preserve">
         <value>Proxy settings saved!\nType: {0}\nHost: {1}:{2}</value>
     </data>
+    <data name="text_yes" xml:space="preserve">
+        <value>Yes</value>
+    </data>
+    <data name="text_no" xml:space="preserve">
+        <value>No</value>
+    </data>
 </root>

@@ -203,7 +203,7 @@ namespace VivaldiUpdater
                     string errorMessage = Properties.Resources.text_invalid_port ?? "请输入有效的端口号";
                     string errorTitle = Properties.Resources.text_error ?? "错误";
                     
-                    MessageBox.Show(errorMessage, errorTitle, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    CustomMessageBox.Show(errorMessage, errorTitle, CustomMessageBox.MessageBoxButtons.OK, this);
                     return;
                 }
                 else
@@ -221,20 +221,22 @@ namespace VivaldiUpdater
                 if (ProxySettings.UseProxy)
                 {
                     // 使用统一的多语言资源机制和格式化字符串
+                    string messageFormat = Properties.Resources.text_proxy_settings_saved ?? "代理设置已保存！\n类型: {0}\n地址: {1}:{2}";
+                    messageFormat = messageFormat.Replace("\\n", "\n");
+                    
                     string messageText = string.Format(
-                        Properties.Resources.text_proxy_settings_saved ?? 
-                        "代理设置已保存！\n类型: {0}\n地址: {1}:{2}",
+                        messageFormat,
                         ProxySettings.ProxyType, ProxySettings.ProxyHost, ProxySettings.ProxyPort);
                     string titleText = Properties.Resources.text_proxy_settings ?? "代理设置";
                     
-                    MessageBox.Show(messageText, titleText, MessageBoxButton.OK, MessageBoxImage.Information);
+                    CustomMessageBox.Show(messageText, titleText, CustomMessageBox.MessageBoxButtons.OK, this);
                 }
                 else
                 {
                     string messageText = Properties.Resources.text_proxy_disabled_saved ?? "代理已禁用，设置已保存！";
                     string titleText = Properties.Resources.text_proxy_settings ?? "代理设置";
                     
-                    MessageBox.Show(messageText, titleText, MessageBoxButton.OK, MessageBoxImage.Information);
+                    CustomMessageBox.Show(messageText, titleText, CustomMessageBox.MessageBoxButtons.OK, this);
                 }
                 
                 DialogResult = true;
@@ -246,7 +248,7 @@ namespace VivaldiUpdater
                 string errorMessage = string.Format("{0}: {1}", Properties.Resources.text_proxy_save_failed ?? "保存代理设置失败", ex.Message);
                 string errorTitle = Properties.Resources.text_error ?? "错误";
                 
-                MessageBox.Show(errorMessage, errorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                CustomMessageBox.Show(errorMessage, errorTitle, CustomMessageBox.MessageBoxButtons.OK, this);
             }
         }
 

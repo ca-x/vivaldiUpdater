@@ -321,4 +321,10 @@
   <data name="text_proxy_settings_saved" xml:space="preserve">
     <value>代理设置已保存！\n类型: {0}\n地址: {1}:{2}</value>
   </data>
+  <data name="text_yes" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="text_no" xml:space="preserve">
+    <value>否</value>
+  </data>
 </root>

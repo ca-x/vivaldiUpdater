@@ -675,9 +675,27 @@ namespace VivaldiUpdater.Properties {
         /// <summary>
         ///   查找类似 代理设置已保存！\n类型: {0}\n地址: {1}:{2} 的本地化字符串。
         /// </summary>
-        internal static string text_proxy_settings_saved {
+         internal static string text_proxy_settings_saved {
             get {
                 return ResourceManager.GetString("text_proxy_settings_saved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 是 的本地化字符串。
+        /// </summary>
+        internal static string text_yes {
+            get {
+                return ResourceManager.GetString("text_yes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 否 的本地化字符串。
+        /// </summary>
+        internal static string text_no {
+            get {
+                return ResourceManager.GetString("text_no", resourceCulture);
             }
         }
     }
