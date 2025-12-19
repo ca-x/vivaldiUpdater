@@ -294,4 +294,31 @@
   <data name="text_all_updates_completed" xml:space="preserve">
     <value>所有更新已完成！</value>
   </data>
+  <data name="text_basic_settings" xml:space="preserve">
+    <value>基础设置</value>
+  </data>
+  <data name="text_update_settings" xml:space="preserve">
+    <value>更新选项</value>
+  </data>
+  <data name="text_delete_installer_after_update" xml:space="preserve">
+    <value>是否删除下载的安装包</value>
+  </data>
+  <data name="text_clean_backup_after_update" xml:space="preserve">
+    <value>是否清理更新前创建的备份</value>
+  </data>
+  <data name="text_error" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="text_invalid_port" xml:space="preserve">
+    <value>请输入有效的端口号</value>
+  </data>
+  <data name="text_proxy_disabled_saved" xml:space="preserve">
+    <value>代理已禁用，设置已保存！</value>
+  </data>
+  <data name="text_proxy_save_failed" xml:space="preserve">
+    <value>保存代理设置失败</value>
+  </data>
+  <data name="text_proxy_settings_saved" xml:space="preserve">
+    <value>代理设置已保存！\n类型: {0}\n地址: {1}:{2}</value>
+  </data>
 </root>

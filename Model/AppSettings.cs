@@ -12,6 +12,8 @@ namespace VivaldiUpdater.Model
         // 应用程序设置
         public string Language { get; set; }
         public bool UseMirrorAddress { get; set; }
+        public bool DeleteFullInstallerAfterUpdate { get; set; }
+        public bool CleanBackupAfterUpdate { get; set; }
         
         // 代理设置
         public ProxyConfig Proxy { get; set; }
@@ -86,6 +88,16 @@ namespace VivaldiUpdater.Model
                     if (jsonObject.ContainsKey("UseMirrorAddress") && jsonObject["UseMirrorAddress"] != null)
                     {
                         settings.UseMirrorAddress = Convert.ToBoolean(jsonObject["UseMirrorAddress"]);
+                    }
+
+                    if (jsonObject.ContainsKey("DeleteFullInstallerAfterUpdate") && jsonObject["DeleteFullInstallerAfterUpdate"] != null)
+                    {
+                        settings.DeleteFullInstallerAfterUpdate = Convert.ToBoolean(jsonObject["DeleteFullInstallerAfterUpdate"]);
+                    }
+
+                    if (jsonObject.ContainsKey("CleanBackupAfterUpdate") && jsonObject["CleanBackupAfterUpdate"] != null)
+                    {
+                        settings.CleanBackupAfterUpdate = Convert.ToBoolean(jsonObject["CleanBackupAfterUpdate"]);
                     }
                     
                     // 加载代理设置

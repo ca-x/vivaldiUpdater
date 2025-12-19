@@ -45,6 +45,8 @@ namespace VivaldiUpdater.ViewModel
             _appSettings = AppSettings.Load();
             _useMirrorAddress = _appSettings.UseMirrorAddress;  // 直接设置字段，避免触发setter
             _selectedLanguage = _appSettings.Language;         // 直接设置字段，避免触发setter
+            _deleteFullInstallerAfterUpdate = _appSettings.DeleteFullInstallerAfterUpdate;
+            _cleanBackupAfterUpdate = _appSettings.CleanBackupAfterUpdate;
             
             // Initialize language options - this is the key fix
             InitializeLanguageOptions();
@@ -105,6 +107,11 @@ namespace VivaldiUpdater.ViewModel
         public string LocalizedAutoUpdateVivaldiPlusLabel => Properties.Resources.text_auto_update_vivaldi_plus;
         public string LocalizedUseMirrorAddressLabel => Properties.Resources.text_use_mirror_address;
         
+        public string LocalizedBasicSettingsLabel => Properties.Resources.text_basic_settings;
+        public string LocalizedUpdateSettingsLabel => Properties.Resources.text_update_settings;
+        public string LocalizedDeleteInstallerAfterUpdateLabel => Properties.Resources.text_delete_installer_after_update;
+        public string LocalizedCleanBackupAfterUpdateLabel => Properties.Resources.text_clean_backup_after_update;
+        
         private string _selectedLanguage = "auto";
 
         /// <summary>
@@ -154,6 +161,11 @@ namespace VivaldiUpdater.ViewModel
                 OnPropertyChanged(nameof(LocalizedEnableVivaldiPlusLabel));
                 OnPropertyChanged(nameof(LocalizedAutoUpdateVivaldiPlusLabel));
                 OnPropertyChanged(nameof(LocalizedUseMirrorAddressLabel));
+                
+                OnPropertyChanged(nameof(LocalizedBasicSettingsLabel));
+                OnPropertyChanged(nameof(LocalizedUpdateSettingsLabel));
+                OnPropertyChanged(nameof(LocalizedDeleteInstallerAfterUpdateLabel));
+                OnPropertyChanged(nameof(LocalizedCleanBackupAfterUpdateLabel));
                 
                 // Re-run the context update to refresh all resource strings with new language
                 await UpdateContext();
@@ -300,6 +312,34 @@ namespace VivaldiUpdater.ViewModel
             {
                 _useMirrorAddress = value;
                 _appSettings.UseMirrorAddress = value;
+                _appSettings.Save();
+                OnPropertyChanged();
+            }
+        }
+        
+        private bool _deleteFullInstallerAfterUpdate;
+
+        public bool DeleteFullInstallerAfterUpdate
+        {
+            get => _deleteFullInstallerAfterUpdate;
+            set
+            {
+                _deleteFullInstallerAfterUpdate = value;
+                _appSettings.DeleteFullInstallerAfterUpdate = value;
+                _appSettings.Save();
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _cleanBackupAfterUpdate;
+
+        public bool CleanBackupAfterUpdate
+        {
+            get => _cleanBackupAfterUpdate;
+            set
+            {
+                _cleanBackupAfterUpdate = value;
+                _appSettings.CleanBackupAfterUpdate = value;
                 _appSettings.Save();
                 OnPropertyChanged();
             }
@@ -729,6 +769,19 @@ namespace VivaldiUpdater.ViewModel
                                 ProcessBarNotifyText = Properties.Resources.text_installation_verification_failed ?? "安装验证失败，请重试。";
                                 return;
                             }
+                            
+                            // 清理备份
+                            if (CleanBackupAfterUpdate && Directory.Exists(AppDirBackupPath))
+                            {
+                                try
+                                {
+                                    Directory.Delete(AppDirBackupPath, true);
+                                }
+                                catch
+                                {
+                                    // 忽略清理备份失败
+                                }
+                            }
                         }
                     }
                     else
@@ -744,8 +797,13 @@ namespace VivaldiUpdater.ViewModel
                         {
                             Directory.Delete(ExtractPath, true);
                         }
-                        // 保留安装文件以备后用，只有在设置中明确要求时才删除
-                        // File.Delete(installerFullPath);
+                        
+                        // Delete installer if requested
+                        if (DeleteFullInstallerAfterUpdate && File.Exists(installerFullPath))
+                        {
+                             File.Delete(installerFullPath);
+                        }
+                        
                         ProcessBarNotifyText = Properties.Resources.text_installation_complete_cleanup ?? "安装完成，临时文件已清理。";
                         DownloadProgress = 100;
                     }

@@ -8,7 +8,7 @@
     xmlns:properties="clr-namespace:VivaldiUpdater.Properties"
     Title="MainWindow"
     Width="525"
-    Height="450"
+    Height="500"
     AllowsTransparency="True"
     Background="Transparent"
     Loaded="MainWindow_OnLoaded"
@@ -138,9 +138,9 @@
             <Grid Grid.Row="1" Margin="15">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="70" />
+                    <RowDefinition Height="80" />
                 </Grid.RowDefinitions>
                 <!--  display info  -->
                 <StackPanel>
@@ -191,93 +191,133 @@
 
                 </StackPanel>
                 <!--  Options  -->
-                <StackPanel Grid.Row="1" Margin="0,10,0,0">
-                    <!--  auto patch with vivaldi++  -->
-                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                        <TextBlock
-                            Width="120"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            Foreground="PaleVioletRed"
-                            Text="{Binding LocalizedAutoUpdateVivaldiLabel}" />
-                        <ToggleButton
-                            Width="100"
-                            Height="35"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            IsChecked="{Binding EnableVivaldiUpdate, Mode=TwoWay}"
-                            Style="{StaticResource AppleToggleButtonStyle}" />
-                    </StackPanel>
-                    <!--  auto patch with vivaldi++  -->
-                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                        <TextBlock
-                            Width="120"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            Foreground="PaleVioletRed"
-                            Text="{Binding LocalizedEnableVivaldiPlusLabel}" />
-                        <ToggleButton
-                            Width="100"
-                            Height="35"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            IsChecked="{Binding EnableVivaldiPlus, Mode=TwoWay}"
-                            Style="{StaticResource AppleToggleButtonStyle}" />
-                    </StackPanel>
-                    <!--  update vivaldi++  -->
-                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                        <TextBlock
-                            Width="120"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            Foreground="PaleVioletRed"
-                            Text="{Binding LocalizedAutoUpdateVivaldiPlusLabel}" />
-                        <ToggleButton
-                            Width="100"
-                            Height="35"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            IsChecked="{Binding EnableVivaldiPlusUpdate, Mode=TwoWay}"
-                            Style="{StaticResource AppleToggleButtonStyle}" />
-                    </StackPanel>
-                    <!--  use mirror address  -->
-                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                        <TextBlock
-                            Width="120"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            Foreground="PaleVioletRed"
-                            Text="{Binding LocalizedUseMirrorAddressLabel}" />
-                        <ToggleButton
-                            Width="100"
-                            Height="35"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            IsChecked="{Binding UseMirrorAddress, Mode=TwoWay}"
-                            Style="{StaticResource AppleToggleButtonStyle}" />
-                    </StackPanel>
-                    <!--  language selection  -->
-                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                        <TextBlock
-                            Width="120"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            Foreground="PaleVioletRed"
-                            Text="{Binding LocalizedLanguageLabel}" />
-                        <ComboBox
-                            Width="100"
-                            Height="35"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            DisplayMemberPath="DisplayName"
-                            ItemContainerStyle="{StaticResource AppleComboBoxItemStyle}"
-                            ItemsSource="{Binding LanguageOptions}"
-                            SelectedValue="{Binding SelectedLanguage, Mode=TwoWay}"
-                            SelectedValuePath="Tag"
-                            Style="{StaticResource AppleComboBoxStyle}" />
-                    </StackPanel>
-
-                </StackPanel>
+                <!--  Options  -->
+                <TabControl Grid.Row="1" Margin="10,10,10,0" Style="{StaticResource AppleTabControlStyle}">
+                    <TabItem Header="{Binding LocalizedBasicSettingsLabel}">
+                        <StackPanel Margin="0,10,0,0">
+                            <!--  auto patch with vivaldi++  -->
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="120"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Foreground="PaleVioletRed"
+                                    Text="{Binding LocalizedAutoUpdateVivaldiLabel}" />
+                                <ToggleButton
+                                    Width="100"
+                                    Height="35"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    IsChecked="{Binding EnableVivaldiUpdate, Mode=TwoWay}"
+                                    Style="{StaticResource AppleToggleButtonStyle}" />
+                            </StackPanel>
+                            <!--  auto patch with vivaldi++  -->
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="120"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Foreground="PaleVioletRed"
+                                    Text="{Binding LocalizedEnableVivaldiPlusLabel}" />
+                                <ToggleButton
+                                    Width="100"
+                                    Height="35"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    IsChecked="{Binding EnableVivaldiPlus, Mode=TwoWay}"
+                                    Style="{StaticResource AppleToggleButtonStyle}" />
+                            </StackPanel>
+                            <!--  update vivaldi++  -->
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="120"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Foreground="PaleVioletRed"
+                                    Text="{Binding LocalizedAutoUpdateVivaldiPlusLabel}" />
+                                <ToggleButton
+                                    Width="100"
+                                    Height="35"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    IsChecked="{Binding EnableVivaldiPlusUpdate, Mode=TwoWay}"
+                                    Style="{StaticResource AppleToggleButtonStyle}" />
+                            </StackPanel>
+                            <!--  use mirror address  -->
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="120"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Foreground="PaleVioletRed"
+                                    Text="{Binding LocalizedUseMirrorAddressLabel}" />
+                                <ToggleButton
+                                    Width="100"
+                                    Height="35"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    IsChecked="{Binding UseMirrorAddress, Mode=TwoWay}"
+                                    Style="{StaticResource AppleToggleButtonStyle}" />
+                            </StackPanel>
+                            <!--  language selection  -->
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="120"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Foreground="PaleVioletRed"
+                                    Text="{Binding LocalizedLanguageLabel}" />
+                                <ComboBox
+                                    Width="100"
+                                    Height="35"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    DisplayMemberPath="DisplayName"
+                                    ItemContainerStyle="{StaticResource AppleComboBoxItemStyle}"
+                                    ItemsSource="{Binding LanguageOptions}"
+                                    SelectedValue="{Binding SelectedLanguage, Mode=TwoWay}"
+                                    SelectedValuePath="Tag"
+                                    Style="{StaticResource AppleComboBoxStyle}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </TabItem>
+                    <TabItem Header="{Binding LocalizedUpdateSettingsLabel}">
+                        <StackPanel Margin="0,10,0,0">
+                             <!--  Delete Full Installer  -->
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="220"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Foreground="PaleVioletRed"
+                                    Text="{Binding LocalizedDeleteInstallerAfterUpdateLabel}" />
+                                <ToggleButton
+                                    Width="100"
+                                    Height="35"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    IsChecked="{Binding DeleteFullInstallerAfterUpdate, Mode=TwoWay}"
+                                    Style="{StaticResource AppleToggleButtonStyle}" />
+                            </StackPanel>
+                             <!--  Clean Backup  -->
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="220"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Foreground="PaleVioletRed"
+                                    Text="{Binding LocalizedCleanBackupAfterUpdateLabel}" />
+                                <ToggleButton
+                                    Width="100"
+                                    Height="35"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    IsChecked="{Binding CleanBackupAfterUpdate, Mode=TwoWay}"
+                                    Style="{StaticResource AppleToggleButtonStyle}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </TabItem>
+                </TabControl>
                 <!--  update process  -->
                 <StackPanel Grid.Row="2" Margin="0,10,0,0">
                     <ProgressBar

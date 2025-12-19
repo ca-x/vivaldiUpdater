@@ -191,4 +191,31 @@
     <data name="text_all_updates_completed" xml:space="preserve">
         <value>All updates completed!</value>
     </data>
+    <data name="text_basic_settings" xml:space="preserve">
+        <value>Basic Settings</value>
+    </data>
+    <data name="text_update_settings" xml:space="preserve">
+        <value>Update Settings</value>
+    </data>
+    <data name="text_delete_installer_after_update" xml:space="preserve">
+        <value>Delete downloaded installer</value>
+    </data>
+    <data name="text_clean_backup_after_update" xml:space="preserve">
+        <value>Clean backup after update</value>
+    </data>
+    <data name="text_error" xml:space="preserve">
+        <value>Error</value>
+    </data>
+    <data name="text_invalid_port" xml:space="preserve">
+        <value>Please enter a valid port number</value>
+    </data>
+    <data name="text_proxy_disabled_saved" xml:space="preserve">
+        <value>Proxy disabled, settings saved!</value>
+    </data>
+    <data name="text_proxy_save_failed" xml:space="preserve">
+        <value>Failed to save proxy settings</value>
+    </data>
+    <data name="text_proxy_settings_saved" xml:space="preserve">
+        <value>Proxy settings saved!\nType: {0}\nHost: {1}:{2}</value>
+    </data>
 </root>
