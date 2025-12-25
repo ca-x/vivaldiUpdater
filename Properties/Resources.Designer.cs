@@ -97,6 +97,15 @@ namespace VivaldiUpdater.Properties {
         }
         
         /// <summary>
+        ///   查找类似 正在应用更新... 的本地化字符串。
+        /// </summary>
+        internal static string text_applying_update {
+            get {
+                return ResourceManager.GetString("text_applying_update", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 自动 的本地化字符串。
         /// </summary>
         internal static string text_auto {
@@ -241,6 +250,24 @@ namespace VivaldiUpdater.Properties {
         }
         
         /// <summary>
+        ///   查找类似 正在下载新版本... 的本地化字符串。
+        /// </summary>
+        internal static string text_downloading_new_version {
+            get {
+                return ResourceManager.GetString("text_downloading_new_version", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 正在下载更新包 {0}% 的本地化字符串。
+        /// </summary>
+        internal static string text_downloading_update_package {
+            get {
+                return ResourceManager.GetString("text_downloading_update_package", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 正在下载vivaldi 的本地化字符串。
         /// </summary>
         internal static string text_downloading_vivaldi {
@@ -255,6 +282,15 @@ namespace VivaldiUpdater.Properties {
         internal static string text_downloading_vivaldi_plus {
             get {
                 return ResourceManager.GetString("text_downloading_vivaldi_plus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 自动更新程序本身 的本地化字符串。
+        /// </summary>
+        internal static string text_enable_app_update {
+            get {
+                return ResourceManager.GetString("text_enable_app_update", resourceCulture);
             }
         }
         
@@ -286,11 +322,29 @@ namespace VivaldiUpdater.Properties {
         }
         
         /// <summary>
+        ///   查找类似 错误 的本地化字符串。
+        /// </summary>
+        internal static string text_error {
+            get {
+                return ResourceManager.GetString("text_error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 正在解压安装程序... 的本地化字符串。
         /// </summary>
         internal static string text_extracting_installer {
             get {
                 return ResourceManager.GetString("text_extracting_installer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 正在解压更新... 的本地化字符串。
+        /// </summary>
+        internal static string text_extracting_update {
+            get {
+                return ResourceManager.GetString("text_extracting_update", resourceCulture);
             }
         }
         
@@ -394,11 +448,38 @@ namespace VivaldiUpdater.Properties {
         }
         
         /// <summary>
+        ///   查找类似 请输入有效的端口号 的本地化字符串。
+        /// </summary>
+        internal static string text_invalid_port {
+            get {
+                return ResourceManager.GetString("text_invalid_port", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 语言 的本地化字符串。
         /// </summary>
         internal static string text_language {
             get {
                 return ResourceManager.GetString("text_language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 发现新版本 的本地化字符串。
+        /// </summary>
+        internal static string text_new_version_found {
+            get {
+                return ResourceManager.GetString("text_new_version_found", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 否 的本地化字符串。
+        /// </summary>
+        internal static string text_no {
+            get {
+                return ResourceManager.GetString("text_no", resourceCulture);
             }
         }
         
@@ -475,11 +556,38 @@ namespace VivaldiUpdater.Properties {
         }
         
         /// <summary>
+        ///   查找类似 代理已禁用，设置已保存！ 的本地化字符串。
+        /// </summary>
+        internal static string text_proxy_disabled_saved {
+            get {
+                return ResourceManager.GetString("text_proxy_disabled_saved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 保存代理设置失败 的本地化字符串。
+        /// </summary>
+        internal static string text_proxy_save_failed {
+            get {
+                return ResourceManager.GetString("text_proxy_save_failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 代理设置 的本地化字符串。
         /// </summary>
         internal static string text_proxy_settings {
             get {
                 return ResourceManager.GetString("text_proxy_settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 代理设置已保存！\n类型: {0}\n地址: {1}:{2} 的本地化字符串。
+        /// </summary>
+        internal static string text_proxy_settings_saved {
+            get {
+                return ResourceManager.GetString("text_proxy_settings_saved", resourceCulture);
             }
         }
         
@@ -520,11 +628,38 @@ namespace VivaldiUpdater.Properties {
         }
         
         /// <summary>
-        ///   查找类似 更新选项 的本地化字符串。
+        ///   查找类似 更新完成，正在重启... 的本地化字符串。
+        /// </summary>
+        internal static string text_update_complete_restart {
+            get {
+                return ResourceManager.GetString("text_update_complete_restart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 更新失败: {0} 的本地化字符串。
+        /// </summary>
+        internal static string text_update_failed {
+            get {
+                return ResourceManager.GetString("text_update_failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 数据选项 的本地化字符串。
         /// </summary>
         internal static string text_update_settings {
             get {
                 return ResourceManager.GetString("text_update_settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 正在更新程序... 的本地化字符串。
+        /// </summary>
+        internal static string text_updating_app {
+            get {
+                return ResourceManager.GetString("text_updating_app", resourceCulture);
             }
         }
         
@@ -610,6 +745,15 @@ namespace VivaldiUpdater.Properties {
         }
         
         /// <summary>
+        ///   查找类似 Vivaldi更新器 的本地化字符串。
+        /// </summary>
+        internal static string text_vivaldi_updater {
+            get {
+                return ResourceManager.GetString("text_vivaldi_updater", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Vivaldi++安装验证失败，请重试。 的本地化字符串。
         /// </summary>
         internal static string text_vpp_installation_verification_failed {
@@ -628,60 +772,6 @@ namespace VivaldiUpdater.Properties {
         }
         
         /// <summary>
-        ///   查找类似 正在解压Vivaldi程序 的本地化字符串。
-        /// </summary>
-        internal static string txt_extrating_vivaldi_installer {
-            get {
-                return ResourceManager.GetString("txt_extrating_vivaldi_installer", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   查找类似 错误 的本地化字符串。
-        /// </summary>
-        internal static string text_error {
-            get {
-                return ResourceManager.GetString("text_error", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   查找类似 请输入有效的端口号 的本地化字符串。
-        /// </summary>
-        internal static string text_invalid_port {
-            get {
-                return ResourceManager.GetString("text_invalid_port", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   查找类似 代理已禁用，设置已保存！ 的本地化字符串。
-        /// </summary>
-        internal static string text_proxy_disabled_saved {
-            get {
-                return ResourceManager.GetString("text_proxy_disabled_saved", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   查找类似 保存代理设置失败 的本地化字符串。
-        /// </summary>
-        internal static string text_proxy_save_failed {
-            get {
-                return ResourceManager.GetString("text_proxy_save_failed", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   查找类似 代理设置已保存！\n类型: {0}\n地址: {1}:{2} 的本地化字符串。
-        /// </summary>
-         internal static string text_proxy_settings_saved {
-            get {
-                return ResourceManager.GetString("text_proxy_settings_saved", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   查找类似 是 的本地化字符串。
         /// </summary>
         internal static string text_yes {
@@ -691,11 +781,11 @@ namespace VivaldiUpdater.Properties {
         }
         
         /// <summary>
-        ///   查找类似 否 的本地化字符串。
+        ///   查找类似 正在解压Vivaldi程序 的本地化字符串。
         /// </summary>
-        internal static string text_no {
+        internal static string txt_extrating_vivaldi_installer {
             get {
-                return ResourceManager.GetString("text_no", resourceCulture);
+                return ResourceManager.GetString("txt_extrating_vivaldi_installer", resourceCulture);
             }
         }
     }

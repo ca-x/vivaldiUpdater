@@ -195,7 +195,7 @@
         <value>Basic Settings</value>
     </data>
     <data name="text_update_settings" xml:space="preserve">
-        <value>Update Settings</value>
+        <value>Data Options</value>
     </data>
     <data name="text_delete_installer_after_update" xml:space="preserve">
         <value>Delete downloaded installer</value>
@@ -221,7 +221,40 @@
     <data name="text_yes" xml:space="preserve">
         <value>Yes</value>
     </data>
+  <data name="text_updating_app" xml:space="preserve">
+    <value>Updating application...</value>
+  </data>
+  <data name="text_downloading_new_version" xml:space="preserve">
+    <value>Downloading new version...</value>
+  </data>
+  <data name="text_downloading_update_package" xml:space="preserve">
+    <value>Downloading update package {0}%</value>
+  </data>
+  <data name="text_extracting_update" xml:space="preserve">
+    <value>Extracting update...</value>
+  </data>
+  <data name="text_applying_update" xml:space="preserve">
+    <value>Applying update...</value>
+  </data>
+  <data name="text_update_complete_restart" xml:space="preserve">
+    <value>Update completed, restarting...</value>
+  </data>
+  <data name="text_update_failed" xml:space="preserve">
+    <value>Update failed: {0}</value>
+  </data>
+    <data name="text_new_version_found" xml:space="preserve">
+    <value>New version available</value>
+  </data>
+  <data name="text_enable_app_update" xml:space="preserve">
+    <value>Auto Update Vivaldi Updater</value>
+  </data>
+  <data name="text_update" xml:space="preserve">
+    <value>Update</value>
+  </data>
     <data name="text_no" xml:space="preserve">
         <value>No</value>
+    </data>
+    <data name="text_vivaldi_updater" xml:space="preserve">
+        <value>Vivaldi Updater</value>
     </data>
 </root>

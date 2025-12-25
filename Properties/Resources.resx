@@ -298,7 +298,7 @@
     <value>基础设置</value>
   </data>
   <data name="text_update_settings" xml:space="preserve">
-    <value>更新选项</value>
+    <value>数据选项</value>
   </data>
   <data name="text_delete_installer_after_update" xml:space="preserve">
     <value>是否删除下载的安装包</value>
@@ -324,7 +324,40 @@
   <data name="text_yes" xml:space="preserve">
     <value>是</value>
   </data>
+  <data name="text_updating_app" xml:space="preserve">
+    <value>正在更新程序...</value>
+  </data>
+  <data name="text_downloading_new_version" xml:space="preserve">
+    <value>正在下载新版本...</value>
+  </data>
+  <data name="text_downloading_update_package" xml:space="preserve">
+    <value>正在下载更新包 {0}%</value>
+  </data>
+  <data name="text_extracting_update" xml:space="preserve">
+    <value>正在解压更新...</value>
+  </data>
+  <data name="text_applying_update" xml:space="preserve">
+    <value>正在应用更新...</value>
+  </data>
+  <data name="text_update_complete_restart" xml:space="preserve">
+    <value>更新完成，正在重启...</value>
+  </data>
+  <data name="text_update_failed" xml:space="preserve">
+    <value>更新失败: {0}</value>
+  </data>
+  <data name="text_new_version_found" xml:space="preserve">
+    <value>发现新版本</value>
+  </data>
+  <data name="text_enable_app_update" xml:space="preserve">
+    <value>自动更新程序本身</value>
+  </data>
+  <data name="text_update" xml:space="preserve">
+    <value>更新</value>
+  </data>
   <data name="text_no" xml:space="preserve">
     <value>否</value>
+  </data>
+  <data name="text_vivaldi_updater" xml:space="preserve">
+    <value>Vivaldi更新器</value>
   </data>
 </root>

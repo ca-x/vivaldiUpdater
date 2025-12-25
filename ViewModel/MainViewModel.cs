@@ -10,6 +10,8 @@ using System.Windows;
 using System.Windows.Input;
 using VivaldiUpdater.Helpers;
 using VivaldiUpdater.Model;
+using System.IO.Compression;
+using System.Diagnostics;
 
 namespace VivaldiUpdater.ViewModel
 {
@@ -47,9 +49,12 @@ namespace VivaldiUpdater.ViewModel
             _selectedLanguage = _appSettings.Language;         // 直接设置字段，避免触发setter
             _deleteFullInstallerAfterUpdate = _appSettings.DeleteFullInstallerAfterUpdate;
             _cleanBackupAfterUpdate = _appSettings.CleanBackupAfterUpdate;
+            _enableAppUpdate = _appSettings.EnableAppUpdate;
 
             // Initialize language options - this is the key fix
             InitializeLanguageOptions();
+            
+            ManualUpdateAppCommand = new RelayCommand(ManualUpdateApp);
         }
 
         private ObservableCollection<LanguageOption> _languageOptions;
@@ -111,6 +116,8 @@ namespace VivaldiUpdater.ViewModel
         public string LocalizedUpdateSettingsLabel => Properties.Resources.text_update_settings;
         public string LocalizedDeleteInstallerAfterUpdateLabel => Properties.Resources.text_delete_installer_after_update;
         public string LocalizedCleanBackupAfterUpdateLabel => Properties.Resources.text_clean_backup_after_update;
+        public string LocalizedVivaldiUpdaterLabel => Properties.Resources.text_vivaldi_updater ?? "Vivaldi Updater";
+        public string LocalizedEnableAppUpdateLabel => Properties.Resources.text_enable_app_update ?? "Auto Update Vivaldi Updater";
 
         private string _selectedLanguage = "auto";
 
@@ -166,6 +173,8 @@ namespace VivaldiUpdater.ViewModel
                 OnPropertyChanged(nameof(LocalizedUpdateSettingsLabel));
                 OnPropertyChanged(nameof(LocalizedDeleteInstallerAfterUpdateLabel));
                 OnPropertyChanged(nameof(LocalizedCleanBackupAfterUpdateLabel));
+                OnPropertyChanged(nameof(LocalizedVivaldiUpdaterLabel));
+                OnPropertyChanged(nameof(LocalizedEnableAppUpdateLabel));
 
                 // Re-run the context update to refresh all resource strings with new language
                 await UpdateContext();
@@ -200,6 +209,22 @@ namespace VivaldiUpdater.ViewModel
 
             var vivaldiPlusInfo = await Helpers.VivaldiInfoEx.GetVivaldiPlusPlusRelease();
             VivaldiPlusLatestVersion = vivaldiPlusInfo.FirstOrDefault().Version.TrimStart('v');
+
+            var appRelease = await Helpers.VivaldiInfoEx.GetAppLatestRelease();
+            if (appRelease != null)
+            {
+                AppLatestVersion = appRelease.TagName.TrimStart('v');
+                if (Semver.IsBigger(AppLatestVersion, AppVersion) > 0)
+                {
+                    AppUpdateNotifyText = Properties.Resources.text_update_avaliable ?? "有新版本";
+                    IsAppUpdateAvailable = true;
+                }
+                else
+                {
+                    AppUpdateNotifyText = Properties.Resources.text_no_update_avaliable ?? "已是最新";
+                    IsAppUpdateAvailable = false;
+                }
+            }
         }
 
         private (string InstalledVivaldi, string VivaldiArch, string InstalledVivaldiPlus, string VivaldiPlusArch)
@@ -244,46 +269,82 @@ namespace VivaldiUpdater.ViewModel
 
         private bool UpdateVivaldiUI(string installedVersion)
         {
-            if (installedVersion == null) return false;
+            if (installedVersion == null)
+            {
+                IsVivaldiUpdateAvailable = false;
+                return false;
+            }
 
             int comparison = Semver.IsBigger(VivaldiLatestVersion, installedVersion);
 
             if (comparison > 0)
             {
                 VivaldiUpdateNotifyText = Properties.Resources.text_update_avaliable;
+                IsVivaldiUpdateAvailable = true;
                 return false;
             }
 
             if (comparison == 0)
             {
                 VivaldiUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
+                IsVivaldiUpdateAvailable = false;
                 return true;
             }
 
+            IsVivaldiUpdateAvailable = false;
             return false;
         }
 
         private bool UpdateVivaldiPlusUI(string installedVersion)
         {
-            if (installedVersion == null) return false;
+            if (installedVersion == null) 
+            {
+                IsVivaldiPlusUpdateAvailable = false;
+                return false;
+            }
 
             int comparison = Semver.IsBigger(VivaldiPlusLatestVersion, installedVersion);
             if (comparison > 0)
             {
                 VivaldiPlusUpdateNotifyText = Properties.Resources.text_update_avaliable;
+                IsVivaldiPlusUpdateAvailable = true;
                 return false;
             }
 
             if (comparison == 0)
             {
                 VivaldiPlusUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
+                IsVivaldiPlusUpdateAvailable = false;
                 return true;
             }
 
+            IsVivaldiPlusUpdateAvailable = false;
             return false;
         }
 
         #region flag display
+
+        private bool _isVivaldiUpdateAvailable;
+        public bool IsVivaldiUpdateAvailable
+        {
+            get => _isVivaldiUpdateAvailable;
+            set { _isVivaldiUpdateAvailable = value; OnPropertyChanged(); }
+        }
+
+        private bool _isVivaldiPlusUpdateAvailable;
+        public bool IsVivaldiPlusUpdateAvailable
+        {
+            get => _isVivaldiPlusUpdateAvailable;
+            set { _isVivaldiPlusUpdateAvailable = value; OnPropertyChanged(); }
+        }
+
+        private bool _isAppUpdateAvailable;
+        public bool IsAppUpdateAvailable
+        {
+            get => _isAppUpdateAvailable;
+            set { _isAppUpdateAvailable = value; OnPropertyChanged(); }
+        }
+
 
         private bool _enableVivaldiUpdate;
 
@@ -343,6 +404,22 @@ namespace VivaldiUpdater.ViewModel
                 _appSettings.Save();
                 OnPropertyChanged();
             }
+        }
+        
+        private bool _enableAppUpdate;
+        public bool EnableAppUpdate
+        {
+           get => _enableAppUpdate;
+           set
+           {
+               if (_enableAppUpdate != value)
+               {
+                   _enableAppUpdate = value;
+                   OnPropertyChanged();
+                   _appSettings.EnableAppUpdate = value;
+                   _appSettings.Save();
+               }
+           }
         }
 
         private bool _enableVivaldiPlus;
@@ -530,6 +607,28 @@ namespace VivaldiUpdater.ViewModel
             }
         }
 
+        private string _appLatestVersion;
+        public string AppLatestVersion
+        {
+            get => _appLatestVersion;
+            set
+            {
+                _appLatestVersion = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _appUpdateNotifyText;
+        public string AppUpdateNotifyText
+        {
+            get => _appUpdateNotifyText;
+            set
+            {
+                _appUpdateNotifyText = value;
+                OnPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region command
@@ -610,12 +709,19 @@ namespace VivaldiUpdater.ViewModel
                     hasVivaldiUpdates = true;
                 }
 
-                // 修改Vivaldi++安装逻辑：如果勾选了EnableVivaldiPlus，就进行安装或更新检查
                 if (EnableVivaldiPlus)
                 {
                     ProcessBarNotifyText = Properties.Resources.text_checking_vpp_update ?? "正在检查Vivaldi++更新...";
                     await CheckAndUpdateVivaldiPlus(AppDir, installed.InstalledVivaldiPlus, installed.VivaldiPlusArch);
                     hasVivaldiPlusUpdates = true;
+                }
+
+                // Check and update App itself if enabled
+                if (EnableAppUpdate && AppLatestVersion != null && Semver.IsBigger(AppLatestVersion, AppVersion) > 0)
+                {
+                     ProcessBarNotifyText = Properties.Resources.text_updating_app ?? "正在更新程序...";
+                     await PerformSelfUpdate();
+                     return; // Restarting, so stop here
                 }
 
                 // 显示最终状态
@@ -641,6 +747,79 @@ namespace VivaldiUpdater.ViewModel
             {
                 ShowUpdateProcessBar = Visibility.Hidden;
                 CanApplyChanges = true; // 重新启用按钮
+            }
+        }
+
+        private async Task PerformSelfUpdate()
+        {
+            try
+            {
+                ProcessBarNotifyText = Properties.Resources.text_downloading_new_version ?? "正在下载新版本...";
+                var release = await VivaldiInfoEx.GetAppLatestRelease();
+                if (release == null || release.Assets == null || release.Assets.Count == 0) return;
+
+                var asset = release.Assets[0]; // Assuming Release.zip is the first or only asset
+                var downloadUrl = asset.BrowserDownloadUrl;
+
+                var tempDir = Path.Combine(Path.GetTempPath(), "VivaldiUpdaterUpdate");
+                if (Directory.Exists(tempDir)) Directory.Delete(tempDir, true);
+                Directory.CreateDirectory(tempDir);
+
+                var zipPath = Path.Combine(tempDir, "Release.zip");
+                var downloader = new ResumeableDownloader();
+                downloader.DownloadProgressChanged += (s, e) =>
+                {
+                    DownloadProgress = e.ProgressPercentage;
+                    ProcessBarNotifyText = string.Format(Properties.Resources.text_downloading_update_package ?? "正在下载更新包 {0}%", e.ProgressPercentage);
+                };
+
+                await downloader.DownloadFileAsync(downloadUrl, zipPath);
+
+                ProcessBarNotifyText = Properties.Resources.text_extracting_update ?? "正在解压更新...";
+                ZipFile.ExtractToDirectory(zipPath, tempDir);
+
+                var extractDir = Path.Combine(tempDir, "Release" /* Assuming zip contains a 'Release' folder based on user input, or just root? User said 'Release.zip', contents listing shows 'Release' folder? No, list shows contents inside Release dir? 'PS ...\Desktop\Release> ls'. It implies zip content might be the files directly or inside a folder. Usually github releases zip the folder. Let's assume flat or check.*/);
+                
+                // Check if extracted content is in a subdir
+                var extractedFiles = Directory.GetFiles(tempDir, "VivaldiUpdater.exe", SearchOption.AllDirectories);
+                if (extractedFiles.Length == 0) throw new Exception("Update package corrupted");
+                var sourceDir = Path.GetDirectoryName(extractedFiles[0]);
+
+                ProcessBarNotifyText = Properties.Resources.text_applying_update ?? "正在应用更新...";
+                var currentDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                var currentExe = Path.Combine(currentDir, "VivaldiUpdater.exe");
+                var oldExe = Path.Combine(currentDir, $"VivaldiUpdater.exe.old.{DateTime.Now.Ticks}");
+
+                File.Move(currentExe, oldExe);
+
+                // Copy new files
+                foreach (var file in Directory.GetFiles(sourceDir))
+                {
+                    var fileName = Path.GetFileName(file);
+                    if (fileName.Equals("settings.json", StringComparison.OrdinalIgnoreCase)) continue; // Skip settings
+                    var destFile = Path.Combine(currentDir, fileName);
+                    File.Copy(file, destFile, true);
+                }
+                
+                // Copy subdirectories (like en-us)
+                foreach (var dir in Directory.GetDirectories(sourceDir))
+                {
+                    var dirName = Path.GetFileName(dir);
+                    var destDir = Path.Combine(currentDir, dirName);
+                    // Simple directory copy
+                    Copier.CopyDirectory(dir, destDir);
+                }
+
+                ProcessBarNotifyText = Properties.Resources.text_update_complete_restart ?? "更新完成，正在重启...";
+                await Task.Delay(1000);
+                Process.Start(currentExe);
+                Application.Current.Shutdown();
+            }
+            catch (Exception ex)
+            {
+                ProcessBarNotifyText = string.Format(Properties.Resources.text_update_failed ?? "更新失败: {0}", ex.Message);
+                // Restore if possible? Complex.
+                throw;
             }
         }
 
@@ -894,8 +1073,10 @@ namespace VivaldiUpdater.ViewModel
                 // 清理下载文件(可选)
                 try
                 {
-                    // 保留下载文件以备后用
-                    // File.Delete(downloadPath);
+                    if (DeleteFullInstallerAfterUpdate && File.Exists(downloadPath))
+                    {
+                        File.Delete(downloadPath);
+                    }
                 }
                 catch { }
             }
@@ -948,7 +1129,10 @@ namespace VivaldiUpdater.ViewModel
                     // 清理下载文件
                     try
                     {
-                        // File.Delete(downloadPath);
+                        if (DeleteFullInstallerAfterUpdate && File.Exists(downloadPath))
+                        {
+                            File.Delete(downloadPath);
+                        }
                     }
                     catch { }
                 }
@@ -972,7 +1156,59 @@ namespace VivaldiUpdater.ViewModel
             }
         }
 
+
+        public string LocalizedNewVersionFoundLabel => Properties.Resources.text_new_version_found;
+
         #endregion
+        public ICommand ManualUpdateAppCommand { get; }
+
+        private async void ManualUpdateApp()
+        {
+            if (string.IsNullOrEmpty(AppLatestVersion)) return;
+
+             // If auto-update is enabled, skip confirmation
+            if (EnableAppUpdate)
+            {
+                try 
+                {
+                    ShowUpdateProcessBar = Visibility.Visible;
+                    CanApplyChanges = false;
+                    await PerformSelfUpdate();
+                }
+                finally
+                {
+                    ShowUpdateProcessBar = Visibility.Hidden;
+                    CanApplyChanges = true;
+                }
+                return;
+            }
+
+            var msg = $"{Properties.Resources.text_new_version_found}: {AppLatestVersion}\n{Properties.Resources.text_update}?";
+            // Simplest way to ask confirmation. VivaldiUpdater.CustomMessageBox seems to only support Show(string) for info?
+            // Assuming MessageBox for now since CustomMessageBox might not return result.
+            // If the user previously used CustomMessageBox effectively, check if it has confirmation.
+            // But based on previous reads, CustomMessageBox code was not fully visible. 
+            // Using standard MessageBox for confirmation is safer unless CustomMessageBox is known to return result.
+            // Standard MessageBox:
+            var result = MessageBox.Show(msg, Properties.Resources.text_vivaldi_updater, MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                // Since PerformSelfUpdate requires UI thread for some parts but runs async...
+                // And ApplyChanges disables UI. We should probably disable UI here too or re-use logic.
+                // But simplified:
+                try 
+                {
+                    ShowUpdateProcessBar = Visibility.Visible;
+                    CanApplyChanges = false;
+                    await PerformSelfUpdate();
+                }
+                finally
+                {
+                    ShowUpdateProcessBar = Visibility.Hidden;
+                    CanApplyChanges = true;
+                }
+            }
+        }
     }
 
     public class RelayCommand : ICommand

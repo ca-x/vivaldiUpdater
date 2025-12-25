@@ -108,5 +108,31 @@ namespace VivaldiUpdater.Helpers
                 return null;
             }
         }
+        private const string GithubLatestReleaseUrl = "https://api.github.com/repos/ca-x/vivaldiUpdater/releases/latest";
+
+        /// <summary>
+        /// Get the latest release of the updater itself from GitHub
+        /// </summary>
+        /// <param name="timeoutSeconds"></param>
+        /// <returns></returns>
+        public static async Task<GithubRelease> GetAppLatestRelease(int timeoutSeconds = HttpClientTimeoutSeconds)
+        {
+            using (var hc = new HttpClient { Timeout = TimeSpan.FromSeconds(timeoutSeconds) })
+            {
+                // GitHub API requires User-Agent
+                hc.DefaultRequestHeaders.Add("User-Agent", "VivaldiUpdater");
+                try
+                {
+                    var json = await hc.GetStringAsync(GithubLatestReleaseUrl);
+                    return SimpleJson.SimpleJson.DeserializeObject<GithubRelease>(json);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
+                return null;
+            }
+        }
     }
 }

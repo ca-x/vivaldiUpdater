@@ -54,6 +54,31 @@
                                 Color="OrangeRed" />
                         </TextBlock.Effect>
                     </TextBlock>
+                    <!-- Update Icon in Header -->
+                    <Button
+                        Width="20"
+                        Height="20"
+                        Margin="120,0,0,0"
+                        Padding="0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Command="{Binding ManualUpdateAppCommand}"
+                        Cursor="Hand"
+                        ToolTip="{Binding LocalizedNewVersionFoundLabel}">
+                         <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource AppleButtonStyle}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsAppUpdateAvailable}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <Path Data="{StaticResource UpdateIconGeometry}" Fill="#FF5722" Width="14" Height="14" Stretch="Uniform" VerticalAlignment="Center"/>
+                    </Button>
                     <!--  Proxy Settings Button in Header  -->
                     <Button
                         Width="20"
@@ -158,12 +183,40 @@
                             VerticalAlignment="Center"
                             Foreground="Green"
                             Text="{Binding VivaldiLatestVersion}" />
-                        <TextBlock
-                            Margin="20,0,0,0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            Foreground="BlueViolet"
-                            Text="{Binding VivaldiUpdateNotifyText}" />
+                        
+                         <!-- Update Status -->
+                        <Grid Margin="20,0,0,0">
+                            <!-- Icon for Update Available -->
+                            <Path Data="{StaticResource UpdateIconGeometry}" Fill="#FF5722" Width="16" Height="16" Stretch="Uniform" VerticalAlignment="Center">
+                                 <Path.Style>
+                                     <Style TargetType="Path">
+                                         <Setter Property="Visibility" Value="Collapsed"/>
+                                         <Style.Triggers>
+                                             <DataTrigger Binding="{Binding IsVivaldiUpdateAvailable}" Value="True">
+                                                 <Setter Property="Visibility" Value="Visible"/>
+                                             </DataTrigger>
+                                         </Style.Triggers>
+                                     </Style>
+                                 </Path.Style>
+                            </Path>
+                            <!-- Text for No Update -->
+                            <TextBlock
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Foreground="BlueViolet"
+                                Text="{Binding VivaldiUpdateNotifyText}">
+                                 <TextBlock.Style>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Visibility" Value="Visible"/>
+                                         <Style.Triggers>
+                                             <DataTrigger Binding="{Binding IsVivaldiUpdateAvailable}" Value="True">
+                                                 <Setter Property="Visibility" Value="Collapsed"/>
+                                             </DataTrigger>
+                                         </Style.Triggers>
+                                     </Style>
+                                 </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
                     </StackPanel>
 
                     <!--  vivaldi++ info  -->
@@ -181,13 +234,41 @@
                             VerticalAlignment="Center"
                             Foreground="Green"
                             Text="{Binding VivaldiPlusLatestVersion}" />
-                        <TextBlock
-                            Margin="20,0,0,0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            Foreground="BlueViolet"
-                            Text="{Binding VivaldiPlusUpdateNotifyText}" />
+                        
+                         <!-- Update Status -->
+                         <Grid Margin="20,0,0,0">
+                            <Path Data="{StaticResource UpdateIconGeometry}" Fill="#FF5722" Width="16" Height="16" Stretch="Uniform" VerticalAlignment="Center">
+                                 <Path.Style>
+                                     <Style TargetType="Path">
+                                         <Setter Property="Visibility" Value="Collapsed"/>
+                                         <Style.Triggers>
+                                             <DataTrigger Binding="{Binding IsVivaldiPlusUpdateAvailable}" Value="True">
+                                                 <Setter Property="Visibility" Value="Visible"/>
+                                             </DataTrigger>
+                                         </Style.Triggers>
+                                     </Style>
+                                 </Path.Style>
+                            </Path>
+                            <TextBlock
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Foreground="BlueViolet"
+                                Text="{Binding VivaldiPlusUpdateNotifyText}">
+                                 <TextBlock.Style>
+                                     <Style TargetType="TextBlock">
+                                         <Setter Property="Visibility" Value="Visible"/>
+                                         <Style.Triggers>
+                                             <DataTrigger Binding="{Binding IsVivaldiPlusUpdateAvailable}" Value="True">
+                                                 <Setter Property="Visibility" Value="Collapsed"/>
+                                             </DataTrigger>
+                                         </Style.Triggers>
+                                     </Style>
+                                 </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
                     </StackPanel>
+                    
+
 
                 </StackPanel>
                 <!--  Options  -->
@@ -241,6 +322,22 @@
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
                                     IsChecked="{Binding EnableVivaldiPlusUpdate, Mode=TwoWay}"
+                                    Style="{StaticResource AppleToggleButtonStyle}" />
+                            </StackPanel>
+                            <!--  Enable App Self Update  -->
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="120"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Foreground="PaleVioletRed"
+                                    Text="{Binding LocalizedEnableAppUpdateLabel}" />
+                                <ToggleButton
+                                    Width="100"
+                                    Height="35"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    IsChecked="{Binding EnableAppUpdate, Mode=TwoWay}"
                                     Style="{StaticResource AppleToggleButtonStyle}" />
                             </StackPanel>
                             <!--  use mirror address  -->
@@ -315,6 +412,9 @@
                                     IsChecked="{Binding CleanBackupAfterUpdate, Mode=TwoWay}"
                                     Style="{StaticResource AppleToggleButtonStyle}" />
                             </StackPanel>
+
+
+
                         </StackPanel>
                     </TabItem>
                 </TabControl>

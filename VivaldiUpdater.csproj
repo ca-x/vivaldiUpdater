@@ -58,6 +58,7 @@
     <Compile Include="CustomMessageBox.xaml.cs" />
     <Compile Include="Helpers\Copier.cs" />
     <Compile Include="Helpers\VivaldiInstaller.cs" />
+    <Compile Include="Model\GithubRelease.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
