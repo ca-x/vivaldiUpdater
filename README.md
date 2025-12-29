@@ -3,7 +3,7 @@
  ![image](https://github.com/user-attachments/assets/80b1a3a2-c912-4d1b-8d02-534c51b3f357)
 
 ## roadmap
- - [ ] self update
+ - [x] self update
  - [ ] auto install mod scripts
  - [x] vivaldi install and update
  - [x] vivaldi++ install and update
