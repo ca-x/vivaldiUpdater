@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.IO.Compression;
 
@@ -6,13 +6,18 @@ namespace VivaldiUpdater.Helpers
 {
     public static class Copier
     {
-        public static void CopyDirectory(string sourceDir, string destinationDir)
+public static void CopyDirectory(string sourceDir, string destinationDir)
         {
             Directory.CreateDirectory(destinationDir);
             
             foreach (string file in Directory.GetFiles(sourceDir))
             {
-                string destFile = Path.Combine(destinationDir, Path.GetFileName(file));
+                string fileName = Path.GetFileName(file);
+                // 跳过settings.json文件，保护用户配置
+                if (fileName.Equals("settings.json", StringComparison.OrdinalIgnoreCase))
+                    continue;
+                    
+                string destFile = Path.Combine(destinationDir, fileName);
                 File.Copy(file, destFile, true);
             }
 
