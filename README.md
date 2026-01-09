@@ -2,6 +2,7 @@
  vivaldi updater is an updater for  windows vivaldi browser with vivaldi++ 
 <img width="870" height="814" alt="image" src="https://github.com/user-attachments/assets/1683a193-c477-4167-90a6-598a41b45161" />
 
+<img width="841" height="793" alt="image" src="https://github.com/user-attachments/assets/0f09d456-8ce4-4bd9-a3d9-3ecf6efc464c" />
 
 ## roadmap
  - [x] self update
