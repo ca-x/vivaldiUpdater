@@ -51,10 +51,54 @@ namespace VivaldiUpdater.ViewModel
             _cleanBackupAfterUpdate = _appSettings.CleanBackupAfterUpdate;
             _enableAppUpdate = _appSettings.EnableAppUpdate;
 
-            // Initialize language options - this is the key fix
+// Initialize language options - this is the key fix
             InitializeLanguageOptions();
             
             ManualUpdateAppCommand = new RelayCommand(ManualUpdateApp);
+            
+            // 启动时清理可能残留的临时文件
+            CleanupTemporaryFiles();
+        }
+
+        private void CleanupTemporaryFiles()
+        {
+            try
+            {
+                var currentDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                
+                // 清理旧的exe文件
+                var oldExeFiles = Directory.GetFiles(currentDir, "VivaldiUpdater.exe.old.*");
+                foreach (var oldExe in oldExeFiles)
+                {
+                    try
+                    {
+                        File.Delete(oldExe);
+                    }
+                    catch
+                    {
+                        // 如果文件正在使用中，忽略错误
+                    }
+                }
+                
+                // 清理系统临时目录中的更新文件夹
+                var tempUpdateDir = Path.Combine(Path.GetTempPath(), "VivaldiUpdaterUpdate");
+                if (Directory.Exists(tempUpdateDir))
+                {
+                    try
+                    {
+                        Directory.Delete(tempUpdateDir, true);
+                    }
+                    catch
+                    {
+                        // 如果目录正在使用中，忽略错误
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // 清理失败不应该影响程序启动
+                System.Diagnostics.Debug.WriteLine($"Cleanup temporary files failed: {ex.Message}");
+            }
         }
 
         private ObservableCollection<LanguageOption> _languageOptions;
@@ -886,7 +930,8 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
                     Copier.CopyDirectory(dir, destDir);
                 }
 
-                ProcessBarNotifyText = Properties.Resources.text_update_complete_restart ?? "更新完成，正在重启...";
+ProcessBarNotifyText = Properties.Resources.text_update_complete_restart ?? "更新完成，正在重启...";
+                
                 await Task.Delay(1000);
                 Process.Start(currentExe);
                 Application.Current.Shutdown();
@@ -897,8 +942,9 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
                 // Restore if possible? Complex.
                 throw;
             }
-        }
+}
 
+        
 
         private static (string InstalledVivaldi, string VivaldiArch, string InstalledVivaldiPlus, string VivaldiPlusArch
             ) CheckInstalledInfo(string AppDir)
