@@ -237,40 +237,55 @@ namespace VivaldiUpdater.ViewModel
             return CheckInstalledInfo(AppDir);
         }
 
-        private void UpdateUIBasedOnInstalledInfo(
+private void UpdateUIBasedOnInstalledInfo(
             (string InstalledVivaldi, string VivaldiArch, string InstalledVivaldiPlus, string VivaldiPlusArch)
                 installedInfo)
         {
-            if (installedInfo.InstalledVivaldi == null && installedInfo.InstalledVivaldiPlus == null)
+            // 分别设置每个组件的安装状态
+            // 注意：这些状态文本会在UpdateUIBasedOnVersionComparison中被覆盖（如果组件已安装）
+            if (installedInfo.InstalledVivaldi == null)
             {
-                Operation = Properties.Resources.text_install;
-                VivaldiPlusUpdateNotifyText = Properties.Resources.text_not_installed;
                 VivaldiUpdateNotifyText = Properties.Resources.text_not_installed;
             }
-            else
+            
+            if (installedInfo.InstalledVivaldiPlus == null)
             {
-                Operation = Properties.Resources.text_update;
+                VivaldiPlusUpdateNotifyText = Properties.Resources.text_not_installed;
             }
         }
 
-        private void UpdateUIBasedOnVersionComparison(
+private void UpdateUIBasedOnVersionComparison(
             (string InstalledVivaldi, string VivaldiArch, string InstalledVivaldiPlus, string VivaldiPlusArch)
                 installedInfo)
         {
             bool vivaldiHasNoUpdate = UpdateVivaldiUI(installedInfo.InstalledVivaldi);
             bool vivaldiPlusHasNoUpdate = UpdateVivaldiPlusUI(installedInfo.InstalledVivaldiPlus);
 
-            if (vivaldiHasNoUpdate && vivaldiPlusHasNoUpdate)
+            // 如果有未安装的组件，按钮显示"安装"
+            if (installedInfo.InstalledVivaldi == null || installedInfo.InstalledVivaldiPlus == null)
+            {
+                Operation = Properties.Resources.text_install;
+                CanApplyChanges = true;
+            }
+            // 如果所有组件都已安装且都是最新版，按钮显示"已是最新版"并禁用
+            else if (vivaldiHasNoUpdate && vivaldiPlusHasNoUpdate)
             {
                 Operation = Properties.Resources.text_already_latest_version;
                 CanApplyChanges = false;
             }
+            // 其他情况（已安装但需要更新），按钮显示"更新"
+            else
+            {
+                Operation = Properties.Resources.text_update;
+                CanApplyChanges = true;
+            }
         }
 
-        private bool UpdateVivaldiUI(string installedVersion)
+private bool UpdateVivaldiUI(string installedVersion)
         {
             if (installedVersion == null)
             {
+                VivaldiUpdateNotifyText = Properties.Resources.text_not_installed;
                 IsVivaldiUpdateAvailable = false;
                 return false;
             }
@@ -295,10 +310,11 @@ namespace VivaldiUpdater.ViewModel
             return false;
         }
 
-        private bool UpdateVivaldiPlusUI(string installedVersion)
+private bool UpdateVivaldiPlusUI(string installedVersion)
         {
             if (installedVersion == null) 
             {
+                VivaldiPlusUpdateNotifyText = Properties.Resources.text_not_installed;
                 IsVivaldiPlusUpdateAvailable = false;
                 return false;
             }
@@ -1055,8 +1071,12 @@ namespace VivaldiUpdater.ViewModel
                     }
                 }
             }
-            else
-                VivaldiUpdater.CustomMessageBox.Show(Properties.Resources.text_already_latest_message ?? "您的vivaldi已经是最新版！");
+else
+            {
+                // Vivaldi已经是最新版，但不要显示弹窗，因为界面已经显示了状态
+                // 用户可以通过界面上的状态信息了解Vivaldi已是最新版
+                ProcessBarNotifyText = Properties.Resources.text_no_update_avaliable ?? "Vivaldi已是最新版本";
+            }
         }
         
 
