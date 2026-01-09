@@ -1,4 +1,4 @@
-﻿﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -750,6 +750,66 @@ namespace VivaldiUpdater.ViewModel
             }
         }
 
+        private async Task CopyExistingVivaldiPlusFiles(string backupPath, string targetAppDir)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(backupPath) || !Directory.Exists(backupPath))
+                {
+                    // 如果没有备份目录，检查当前目录是否有Vivaldi++
+                    backupPath = targetAppDir;
+                }
+
+                // 检查备份目录或当前目录中的Vivaldi++文件
+                var versionDllPath = Path.Combine(backupPath, "version.dll");
+                var configIniPath = Path.Combine(backupPath, "config.ini");
+
+                // 检查version.dll是否存在且为最新版本
+                if (File.Exists(versionDllPath))
+                {
+                    // 获取现有Vivaldi++版本信息
+                    var existingVppInfo = VivaldiInstaller.GetVivaldiPlusInfoFromInstallDir(backupPath);
+                    if (existingVppInfo.version != null)
+                    {
+                        // 获取最新Vivaldi++版本
+                        var latestRelease = (await VivaldiInfoEx.GetVivaldiPlusPlusRelease())
+                            .FirstOrDefault(r => r.AssetName.Contains(existingVppInfo.arch));
+                        
+                        if (latestRelease != null)
+                        {
+                            var latestVersionClean = latestRelease.Version.TrimStart('v');
+                            
+                            // 如果现有版本是最新版本，则复制
+                            if (Semver.IsBigger(latestVersionClean, existingVppInfo.version) <= 0)
+                            {
+                                ProcessBarNotifyText = "检测到最新版Vivaldi++，正在复制...";
+                                DownloadProgress = 92;
+
+                                // 复制version.dll到新版本目录
+                                var targetVersionDllPath = Path.Combine(targetAppDir, "version.dll");
+                                File.Copy(versionDllPath, targetVersionDllPath, true);
+
+                                // 复制config.ini（如果存在）
+                                if (File.Exists(configIniPath))
+                                {
+                                    var targetConfigIniPath = Path.Combine(targetAppDir, "config.ini");
+                                    File.Copy(configIniPath, targetConfigIniPath, true);
+                                }
+
+                                ProcessBarNotifyText = "Vivaldi++文件已成功复制到新版本目录。";
+                                DownloadProgress = 95;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // 复制失败不影响主要功能，只记录错误
+                ProcessBarNotifyText = $"复制Vivaldi++文件时出错: {ex.Message}";
+            }
+        }
+
         private async Task PerformSelfUpdate()
         {
             try
@@ -942,6 +1002,9 @@ namespace VivaldiUpdater.ViewModel
                                 VivaldiInstalledVersion = installedInfo.version;
                                 VivaldiUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
                                 ProcessBarNotifyText = string.Format(Properties.Resources.text_installation_completed ?? "{0} {1} 安装完成！", "Vivaldi", installedInfo.version);
+                                
+                                // 检查并复制现有的Vivaldi++文件
+                                await CopyExistingVivaldiPlusFiles(AppDirBackupPath, AppDir);
                             }
                             else
                             {
