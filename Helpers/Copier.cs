@@ -12,12 +12,19 @@ public static void CopyDirectory(string sourceDir, string destinationDir)
             
             foreach (string file in Directory.GetFiles(sourceDir))
             {
+               
                 string fileName = Path.GetFileName(file);
-                // 跳过settings.json文件，保护用户配置
-                if (fileName.Equals("settings.json", StringComparison.OrdinalIgnoreCase))
-                    continue;
-                    
-                string destFile = Path.Combine(destinationDir, fileName);
+				string destFile = Path.Combine(destinationDir, fileName);
+
+				// 如果settings.json文件已经存在，跳过，用于保留用户配置
+				if (fileName.Equals("settings.json", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (File.Exists(destFile))
+                    {
+                        continue;
+					}
+				}  
+                
                 File.Copy(file, destFile, true);
             }
 
