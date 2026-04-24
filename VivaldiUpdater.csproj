@@ -81,6 +81,7 @@
     <Compile Include="Helpers\ResumeableDownloader.cs" />
     <Compile Include="Helpers\Semver.cs" />
     <Compile Include="Helpers\SimpleJson.cs" />
+    <Compile Include="Helpers\ThemeManager.cs" />
     <Compile Include="Helpers\VivaldiInfoEx.cs" />
     <Compile Include="Helpers\Win32Api.cs" />
     <Compile Include="MainWindow.xaml.cs">

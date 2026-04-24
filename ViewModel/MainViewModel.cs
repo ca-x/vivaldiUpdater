@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -47,12 +47,14 @@ namespace VivaldiUpdater.ViewModel
             _appSettings = AppSettings.Load();
             _useMirrorAddress = _appSettings.UseMirrorAddress;  // 直接设置字段，避免触发setter
             _selectedLanguage = _appSettings.Language;         // 直接设置字段，避免触发setter
+            _selectedTheme = ThemeManager.NormalizeTheme(_appSettings.Theme);
             _deleteFullInstallerAfterUpdate = _appSettings.DeleteFullInstallerAfterUpdate;
             _cleanBackupAfterUpdate = _appSettings.CleanBackupAfterUpdate;
             _enableAppUpdate = _appSettings.EnableAppUpdate;
 
 // Initialize language options - this is the key fix
             InitializeLanguageOptions();
+            InitializeThemeOptions();
             
             ManualUpdateAppCommand = new RelayCommand(ManualUpdateApp);
             
@@ -112,6 +114,27 @@ namespace VivaldiUpdater.ViewModel
             }
         }
 
+        private ObservableCollection<LanguageOption> _themeOptions;
+        public ObservableCollection<LanguageOption> ThemeOptions
+        {
+            get => _themeOptions;
+            set
+            {
+                _themeOptions = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private void InitializeThemeOptions()
+        {
+            _themeOptions = new ObservableCollection<LanguageOption>
+            {
+                new LanguageOption { DisplayName = "粉色", Tag = ThemeManager.PinkTheme },
+                new LanguageOption { DisplayName = "任天堂", Tag = ThemeManager.NintendoTheme }
+            };
+            OnPropertyChanged(nameof(ThemeOptions));
+        }
+
         private void InitializeLanguageOptions()
         {
             // Create the options immediately, not in RefreshLanguageOptions
@@ -162,6 +185,28 @@ namespace VivaldiUpdater.ViewModel
         public string LocalizedCleanBackupAfterUpdateLabel => Properties.Resources.text_clean_backup_after_update;
         public string LocalizedVivaldiUpdaterLabel => Properties.Resources.text_vivaldi_updater ?? "Vivaldi Updater";
         public string LocalizedEnableAppUpdateLabel => Properties.Resources.text_enable_app_update ?? "Auto Update Vivaldi Updater";
+        public string LocalizedThemeLabel => "主题 / Theme";
+
+        private string _selectedTheme = ThemeManager.PinkTheme;
+        public string SelectedTheme
+        {
+            get => _selectedTheme;
+            set
+            {
+                var normalizedTheme = ThemeManager.NormalizeTheme(value);
+                if (_selectedTheme == normalizedTheme)
+                {
+                    return;
+                }
+
+                _selectedTheme = normalizedTheme;
+                _appSettings.Theme = normalizedTheme;
+                _appSettings.Save();
+                ThemeManager.ApplyTheme(Application.Current?.MainWindow?.Resources, normalizedTheme);
+                OnPropertyChanged();
+            }
+        }
+
 
         private string _selectedLanguage = "auto";
 
@@ -219,6 +264,7 @@ namespace VivaldiUpdater.ViewModel
                 OnPropertyChanged(nameof(LocalizedCleanBackupAfterUpdateLabel));
                 OnPropertyChanged(nameof(LocalizedVivaldiUpdaterLabel));
                 OnPropertyChanged(nameof(LocalizedEnableAppUpdateLabel));
+                OnPropertyChanged(nameof(LocalizedThemeLabel));
 
                 // Re-run the context update to refresh all resource strings with new language
                 await UpdateContext();

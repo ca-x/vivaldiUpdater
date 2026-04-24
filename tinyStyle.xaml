@@ -1,5 +1,34 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Geometry x:Key="UpdateIconGeometry">M512 0C230.4 0 0 230.4 0 512s230.4 512 512 512 512-230.4 512-512-230.4-512-512-512z m41.344 849.728H488.128c-20.096 0-40.128-20.48-40.128-40.896S468.032 768 488.128 768h65.216c20.032 0 40.128 20.48 40.128 40.832 0 20.48-20.096 40.896-40.128 40.896z m173.952-325.952h-128v148.096c0 23.68-17.472 41.472-40.768 41.472H477.12a40.128 40.128 0 0 1-40.768-41.472V523.776H296.704c-23.232 0-40.704-17.792-40.704-35.584 0-17.728 0-41.472 17.472-53.312l197.76-225.088a55.552 55.552 0 0 1 81.472 0l197.824 225.088c11.648 11.84 17.472 35.584 17.472 53.312-5.76 17.792-23.296 35.584-40.704 35.584z</Geometry>
+
+    <!--  Theme palette defaults to the original vivid pink style; ThemeManager can switch it at runtime.  -->
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#3D2F36" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="#8C5F72" />
+    <SolidColorBrush x:Key="TextSubtleBrush" Color="#8A7480" />
+    <SolidColorBrush x:Key="AccentBrush" Color="#F5798B" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="#FF69B4" />
+    <SolidColorBrush x:Key="AccentPressedBrush" Color="#FF1493" />
+    <SolidColorBrush x:Key="AccentSoftBrush" Color="#FFE6EF" />
+    <SolidColorBrush x:Key="SuccessBrush" Color="#2F9B68" />
+    <SolidColorBrush x:Key="InfoBrush" Color="#6856C9" />
+    <SolidColorBrush x:Key="WarningBrush" Color="#FF5722" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#FAFFFFFF" />
+    <SolidColorBrush x:Key="SurfaceBorderBrush" Color="#88FFFFFF" />
+    <SolidColorBrush x:Key="TrackOffBrush" Color="#E8DDE4" />
+    <SolidColorBrush x:Key="TrackOnBrush" Color="#F5798B" />
+
+    <LinearGradientBrush x:Key="AppWindowBackgroundBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FFFFFCFE" Offset="0" />
+        <GradientStop Color="#FFFFEEF6" Offset="0.45" />
+        <GradientStop Color="#FFEFD6F3" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="AccentGradientBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FFFF86A8" Offset="0" />
+        <GradientStop Color="#FFF5798B" Offset="0.58" />
+        <GradientStop Color="#FFFF1493" Offset="1" />
+    </LinearGradientBrush>
+
     <Style x:Key="AppleButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="Margin" Value="5" />
         <Setter Property="Cursor" Value="Hand" />
@@ -14,7 +43,7 @@
 
     <!--  专门的图标按钮样式  -->
     <Style x:Key="AppleIconButtonStyle" TargetType="{x:Type Button}">
-        <Setter Property="Background" Value="#F5798B" />
+        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Template">
@@ -26,10 +55,10 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#FF69B4" />
+                            <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="#FF1493" />
+                            <Setter Property="Background" Value="{DynamicResource AccentPressedBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -37,12 +66,13 @@
         </Setter>
     </Style>
     <Style x:Key="ApplePriButtonStyle" TargetType="Button">
-        <Setter Property="Background" Value="#F5798B" />
-        <!--  粉色背景  -->
+        <Setter Property="Background" Value="{DynamicResource AccentGradientBrush}" />
+        <!--  Original vivid pink primary action gradient  -->
         <Setter Property="Foreground" Value="White" />
-        <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="Padding" Value="1" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Padding" Value="18,0" />
         <Setter Property="Margin" Value="1" />
+        <Setter Property="FontSize" Value="15" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
@@ -53,16 +83,23 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="30">
+                            <Border.Effect>
+                                <DropShadowEffect
+                                    BlurRadius="14"
+                                    Opacity="0.18"
+                                    ShadowDepth="4"
+                                    Color="#9E4A6474" />
+                            </Border.Effect>
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#FF69B4" />
+                            <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}" />
                             <!--  更深的粉色  -->
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="#FF1493" />
+                            <Setter Property="Background" Value="{DynamicResource AccentPressedBrush}" />
                             <!--  更深的粉色  -->
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -82,7 +119,7 @@
                         <!--  Background  -->
                         <Border
                             x:Name="BackgroundBorder"
-                            Background="#E57373"
+                            Background="{DynamicResource TrackOffBrush}"
                             CornerRadius="15" />
 
                         <!--  Thumb  -->
@@ -110,11 +147,6 @@
                             <VisualStateGroup x:Name="CheckStates">
                                 <VisualState x:Name="Checked">
                                     <Storyboard>
-                                        <ColorAnimation
-                                            Storyboard.TargetName="BackgroundBorder"
-                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                                            To="#F06292"
-                                            Duration="0:0:0.2" />
                                         <ThicknessAnimation
                                             Storyboard.TargetName="Thumb"
                                             Storyboard.TargetProperty="Margin"
@@ -124,11 +156,6 @@
                                 </VisualState>
                                 <VisualState x:Name="Unchecked">
                                     <Storyboard>
-                                        <ColorAnimation
-                                            Storyboard.TargetName="BackgroundBorder"
-                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                                            To="#E57373"
-                                            Duration="0:0:0.2" />
                                         <ThicknessAnimation
                                             Storyboard.TargetName="Thumb"
                                             Storyboard.TargetProperty="Margin"
@@ -139,6 +166,17 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                     </Grid>
+                    <ControlTemplate.Triggers>
+                        <!--  Theme-aware checked state fallback  -->
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="BackgroundBorder" Property="Background" Value="{DynamicResource AccentBrush}" />
+                            <Setter TargetName="Thumb" Property="Margin" Value="32,2,2,2" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="False">
+                            <Setter TargetName="BackgroundBorder" Property="Background" Value="{DynamicResource TrackOffBrush}" />
+                            <Setter TargetName="Thumb" Property="Margin" Value="2,2,32,2" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -273,7 +311,7 @@
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
                                                 Data="M 0 0 L 4 4 L 8 0 Z"
-                                                Fill="#F5798B" />
+                                                Fill="{DynamicResource AccentBrush}" />
                                         </Border>
                                     </ControlTemplate>
                                 </ToggleButton.Template>
@@ -314,10 +352,10 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="#F5798B" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                         </Trigger>
                         <Trigger Property="IsFocused" Value="True">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="#F5798B" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                             <Setter TargetName="Border" Property="BorderThickness" Value="2" />
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -346,7 +384,7 @@
                             <Setter TargetName="Border" Property="Background" Value="#FFF0F0F0" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="#F5798B" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource AccentBrush}" />
                             <Setter Property="Foreground" Value="White" />
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -390,10 +428,10 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="#F5798B" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                         </Trigger>
                         <Trigger Property="IsFocused" Value="True">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="#F5798B" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                             <Setter TargetName="Border" Property="BorderThickness" Value="2" />
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -438,10 +476,10 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="#F5798B" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                         </Trigger>
                         <Trigger Property="IsFocused" Value="True">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="#F5798B" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                             <Setter TargetName="Border" Property="BorderThickness" Value="2" />
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -498,16 +536,16 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="#F5798B" />
+                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="CheckBorder" Property="Background" Value="#F5798B" />
-                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="#F5798B" />
+                            <Setter TargetName="CheckBorder" Property="Background" Value="{DynamicResource AccentBrush}" />
+                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                             <Setter TargetName="CheckMark" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <Trigger Property="IsChecked" Value="{x:Null}">
-                            <Setter TargetName="CheckBorder" Property="Background" Value="#CCCCCC" />
-                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="#CCCCCC" />
+                            <Setter TargetName="CheckBorder" Property="Background" Value="#D9CAD3" />
+                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="#D9CAD3" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -537,16 +575,16 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="#F5798B" />
-                            <Setter Property="Foreground" Value="#F5798B" />
-                            <Setter Property="FontWeight" Value="Bold" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="False">
                             <Setter TargetName="Border" Property="BorderBrush" Value="Transparent" />
                             <Setter Property="Foreground" Value="Gray" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="#FF69B4" />
+                            <Setter Property="Foreground" Value="{DynamicResource AccentHoverBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -556,7 +594,7 @@
 
     <!--  Apple TabControl Style  -->
     <Style x:Key="AppleTabControlStyle" TargetType="{x:Type TabControl}">
-        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Background" Value="#00FFFFFF" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="ItemContainerStyle" Value="{StaticResource AppleTabItemStyle}" />
         <Setter Property="Template">

@@ -6,14 +6,18 @@
     xmlns:local="clr-namespace:VivaldiUpdater"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:properties="clr-namespace:VivaldiUpdater.Properties"
-    Title="MainWindow"
-    Width="525"
-    Height="500"
+    Title="Vivaldi Updater"
+    Width="560"
+    Height="590"
     AllowsTransparency="True"
     Background="Transparent"
+    FontFamily="Segoe UI"
     Loaded="MainWindow_OnLoaded"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
+    UseLayoutRounding="True"
+    TextOptions.TextFormattingMode="Display"
+    TextOptions.TextRenderingMode="ClearType"
     mc:Ignorable="d">
     <Window.Resources>
         <ResourceDictionary>
@@ -22,10 +26,24 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    <Border Background="#EFD6F3" CornerRadius="20">
+    <Border
+        Margin="4"
+        Background="{DynamicResource AppWindowBackgroundBrush}"
+        BorderBrush="{DynamicResource SurfaceBorderBrush}"
+        BorderThickness="1"
+        CornerRadius="24"
+        SnapsToDevicePixels="True">
+        <Border.Effect>
+            <DropShadowEffect
+                BlurRadius="28"
+                Direction="270"
+                Opacity="0.28"
+                ShadowDepth="8"
+                Color="#7A3D4858" />
+        </Border.Effect>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="30" />
+                <RowDefinition Height="38" />
                 <RowDefinition />
             </Grid.RowDefinitions>
             <Grid MouseLeftButtonDown="HandleDrag">
@@ -33,17 +51,25 @@
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Grid x:Name="windowsHeader" Background="Transparent">
+                <Grid
+                    x:Name="windowsHeader"
+                    Margin="10,4,0,0"
+                    Background="Transparent">
                     <TextBlock
                         Margin="5"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
                         FontSize="15"
-                        Foreground="Gray"
+                        FontWeight="SemiBold"
+                        Foreground="{DynamicResource TextMutedBrush}"
                         Text="Vivaldi Updater by czyt" />
                     <TextBlock
+                        Padding="10,3"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
+                        FontSize="12"
+                        FontWeight="SemiBold"
+                        Foreground="{DynamicResource AccentPressedBrush}"
                         Text="{Binding AppVersion, StringFormat=v{0}}">
                         <TextBlock.Effect>
                             <DropShadowEffect
@@ -51,7 +77,7 @@
                                 Direction="30"
                                 Opacity="0.5"
                                 ShadowDepth="2"
-                                Color="OrangeRed" />
+                                Color="#F5798B" />
                         </TextBlock.Effect>
                     </TextBlock>
                     <!-- Update Icon in Header -->
@@ -77,7 +103,7 @@
                                 </Style.Triggers>
                             </Style>
                         </Button.Style>
-                        <Path Data="{StaticResource UpdateIconGeometry}" Fill="#FF5722" Width="14" Height="14" Stretch="Uniform" VerticalAlignment="Center"/>
+                        <Path Data="{StaticResource UpdateIconGeometry}" Fill="{DynamicResource WarningBrush}" Width="14" Height="14" Stretch="Uniform" VerticalAlignment="Center"/>
                     </Button>
                     <!--  Proxy Settings Button in Header  -->
                     <Button
@@ -87,7 +113,7 @@
                         Padding="2"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
-                        Background="#F5798B"
+                        Background="{DynamicResource AccentBrush}"
                         BorderThickness="0"
                         Command="{Binding ConfigureProxyCommand}"
                         ToolTip="代理设置 / Proxy Settings">
@@ -99,10 +125,10 @@
                                 </Grid>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#FF69B4" />
+                                        <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}" />
                                     </Trigger>
                                     <Trigger Property="IsPressed" Value="True">
-                                        <Setter Property="Background" Value="#FF1493" />
+                                        <Setter Property="Background" Value="{DynamicResource AccentPressedBrush}" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
@@ -160,12 +186,20 @@
                     </Button>
                 </Grid>
             </Grid>
-            <Grid Grid.Row="1" Margin="15">
+            <Border
+                Grid.Row="1"
+                Margin="12,6,12,12"
+                Padding="12"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="#66FFFFFF"
+                BorderThickness="1"
+                CornerRadius="20">
+                <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="80" />
+                    <RowDefinition Height="66" />
                 </Grid.RowDefinitions>
                 <!--  display info  -->
                 <StackPanel>
@@ -175,19 +209,19 @@
                             Width="120"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
-                            Foreground="PaleVioletRed"
+                            Foreground="{DynamicResource TextMutedBrush}"
                             Text="{Binding LocalizedVivaldiBrowserLabel}" />
                         <TextBlock
                             Margin="20,0,0,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
-                            Foreground="Green"
+                            Foreground="{DynamicResource SuccessBrush}"
                             Text="{Binding VivaldiLatestVersion}" />
                         
                          <!-- Update Status -->
                         <Grid Margin="20,0,0,0">
                             <!-- Icon for Update Available -->
-                            <Path Data="{StaticResource UpdateIconGeometry}" Fill="#FF5722" Width="16" Height="16" Stretch="Uniform" VerticalAlignment="Center">
+                            <Path Data="{StaticResource UpdateIconGeometry}" Fill="{DynamicResource WarningBrush}" Width="16" Height="16" Stretch="Uniform" VerticalAlignment="Center">
                                  <Path.Style>
                                      <Style TargetType="Path">
                                          <Setter Property="Visibility" Value="Collapsed"/>
@@ -203,7 +237,7 @@
                             <TextBlock
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
-                                Foreground="BlueViolet"
+                                Foreground="{DynamicResource InfoBrush}"
                                 Text="{Binding VivaldiUpdateNotifyText}">
                                  <TextBlock.Style>
                                      <Style TargetType="TextBlock">
@@ -226,18 +260,18 @@
                             Margin="0,10,0,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
-                            Foreground="PaleVioletRed"
+                            Foreground="{DynamicResource TextMutedBrush}"
                             Text="{Binding LocalizedVivaldiPlusPluginLabel}" />
                         <TextBlock
                             Margin="20,0,0,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
-                            Foreground="Green"
+                            Foreground="{DynamicResource SuccessBrush}"
                             Text="{Binding VivaldiPlusLatestVersion}" />
                         
                          <!-- Update Status -->
                          <Grid Margin="20,0,0,0">
-                            <Path Data="{StaticResource UpdateIconGeometry}" Fill="#FF5722" Width="16" Height="16" Stretch="Uniform" VerticalAlignment="Center">
+                            <Path Data="{StaticResource UpdateIconGeometry}" Fill="{DynamicResource WarningBrush}" Width="16" Height="16" Stretch="Uniform" VerticalAlignment="Center">
                                  <Path.Style>
                                      <Style TargetType="Path">
                                          <Setter Property="Visibility" Value="Collapsed"/>
@@ -252,7 +286,7 @@
                             <TextBlock
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
-                                Foreground="BlueViolet"
+                                Foreground="{DynamicResource InfoBrush}"
                                 Text="{Binding VivaldiPlusUpdateNotifyText}">
                                  <TextBlock.Style>
                                      <Style TargetType="TextBlock">
@@ -273,16 +307,17 @@
                 </StackPanel>
                 <!--  Options  -->
                 <!--  Options  -->
-                <TabControl Grid.Row="1" Margin="10,10,10,0" Style="{StaticResource AppleTabControlStyle}">
+                <TabControl Grid.Row="1" Margin="6,6,6,0" Style="{StaticResource AppleTabControlStyle}">
                     <TabItem Header="{Binding LocalizedBasicSettingsLabel}">
-                        <StackPanel Margin="0,10,0,0">
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="0,6,0,0">
                             <!--  auto patch with vivaldi++  -->
                             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                                 <TextBlock
                                     Width="120"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
-                                    Foreground="PaleVioletRed"
+                                    Foreground="{DynamicResource TextMutedBrush}"
                                     Text="{Binding LocalizedAutoUpdateVivaldiLabel}" />
                                 <ToggleButton
                                     Width="100"
@@ -298,7 +333,7 @@
                                     Width="120"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
-                                    Foreground="PaleVioletRed"
+                                    Foreground="{DynamicResource TextMutedBrush}"
                                     Text="{Binding LocalizedEnableVivaldiPlusLabel}" />
                                 <ToggleButton
                                     Width="100"
@@ -314,7 +349,7 @@
                                     Width="120"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
-                                    Foreground="PaleVioletRed"
+                                    Foreground="{DynamicResource TextMutedBrush}"
                                     Text="{Binding LocalizedAutoUpdateVivaldiPlusLabel}" />
                                 <ToggleButton
                                     Width="100"
@@ -330,7 +365,7 @@
                                     Width="120"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
-                                    Foreground="PaleVioletRed"
+                                    Foreground="{DynamicResource TextMutedBrush}"
                                     Text="{Binding LocalizedEnableAppUpdateLabel}" />
                                 <ToggleButton
                                     Width="100"
@@ -346,7 +381,7 @@
                                     Width="120"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
-                                    Foreground="PaleVioletRed"
+                                    Foreground="{DynamicResource TextMutedBrush}"
                                     Text="{Binding LocalizedUseMirrorAddressLabel}" />
                                 <ToggleButton
                                     Width="100"
@@ -362,7 +397,7 @@
                                     Width="120"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
-                                    Foreground="PaleVioletRed"
+                                    Foreground="{DynamicResource TextMutedBrush}"
                                     Text="{Binding LocalizedLanguageLabel}" />
                                 <ComboBox
                                     Width="100"
@@ -376,17 +411,39 @@
                                     SelectedValuePath="Tag"
                                     Style="{StaticResource AppleComboBoxStyle}" />
                             </StackPanel>
-                        </StackPanel>
+                            <!--  theme selection  -->
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="120"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Foreground="{DynamicResource TextMutedBrush}"
+                                    Text="{Binding LocalizedThemeLabel}" />
+                                <ComboBox
+                                    Width="100"
+                                    Height="35"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    DisplayMemberPath="DisplayName"
+                                    ItemContainerStyle="{StaticResource AppleComboBoxItemStyle}"
+                                    ItemsSource="{Binding ThemeOptions}"
+                                    SelectedValue="{Binding SelectedTheme, Mode=TwoWay}"
+                                    SelectedValuePath="Tag"
+                                    Style="{StaticResource AppleComboBoxStyle}" />
+                            </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
                     </TabItem>
                     <TabItem Header="{Binding LocalizedUpdateSettingsLabel}">
-                        <StackPanel Margin="0,10,0,0">
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="0,6,0,0">
                              <!--  Delete Full Installer  -->
                             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                                 <TextBlock
                                     Width="220"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
-                                    Foreground="PaleVioletRed"
+                                    Foreground="{DynamicResource TextMutedBrush}"
                                     Text="{Binding LocalizedDeleteInstallerAfterUpdateLabel}" />
                                 <ToggleButton
                                     Width="100"
@@ -402,7 +459,7 @@
                                     Width="220"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
-                                    Foreground="PaleVioletRed"
+                                    Foreground="{DynamicResource TextMutedBrush}"
                                     Text="{Binding LocalizedCleanBackupAfterUpdateLabel}" />
                                 <ToggleButton
                                     Width="100"
@@ -415,11 +472,12 @@
 
 
 
-                        </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
                     </TabItem>
                 </TabControl>
                 <!--  update process  -->
-                <StackPanel Grid.Row="2" Margin="0,10,0,0">
+                <StackPanel Grid.Row="2" Margin="0,6,0,0">
                     <ProgressBar
                         Width="200"
                         Height="20"
@@ -429,20 +487,21 @@
                         Value="{Binding DownloadProgress}" />
                     <TextBlock
                         HorizontalAlignment="Center"
-                        Foreground="Sienna"
+                        Foreground="{DynamicResource TextSubtleBrush}"
                         Text="{Binding ProcessBarNotifyText}" />
                 </StackPanel>
                 <Button
                     Grid.Row="3"
                     Width="200"
-                    Height="50"
-                    Margin="0,15,0,0"
+                    Height="44"
+                    Margin="0,10,0,0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Top"
                     Command="{Binding ApplyCommand}"
                     Content="{Binding Operation}"
                     Style="{StaticResource ApplePriButtonStyle}" />
-            </Grid>
+                </Grid>
+            </Border>
         </Grid>
     </Border>
 

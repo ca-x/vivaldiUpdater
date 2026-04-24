@@ -11,6 +11,7 @@ namespace VivaldiUpdater.Model
     {
         // 应用程序设置
         public string Language { get; set; }
+        public string Theme { get; set; }
         public bool UseMirrorAddress { get; set; }
         public bool DeleteFullInstallerAfterUpdate { get; set; }
         public bool CleanBackupAfterUpdate { get; set; }
@@ -27,6 +28,7 @@ namespace VivaldiUpdater.Model
         public AppSettings()
         {
             Language = "auto";
+            Theme = ThemeManager.PinkTheme;
             UseMirrorAddress = true;
             EnableAppUpdate = false;
             Proxy = new ProxyConfig();
@@ -48,6 +50,11 @@ namespace VivaldiUpdater.Model
                             var settings = SimpleJson.SimpleJson.DeserializeObject<AppSettings>(jsonString);
                             if (settings != null)
                             {
+                                if (string.IsNullOrWhiteSpace(settings.Theme))
+                                {
+                                    settings.Theme = ThemeManager.PinkTheme;
+                                }
+
                                 // 确保代理配置对象不为空
                                 if (settings.Proxy == null)
                                 {
@@ -85,6 +92,11 @@ namespace VivaldiUpdater.Model
                     if (jsonObject.ContainsKey("Language") && jsonObject["Language"] != null)
                     {
                         settings.Language = jsonObject["Language"].ToString();
+                    }
+
+                    if (jsonObject.ContainsKey("Theme") && jsonObject["Theme"] != null)
+                    {
+                        settings.Theme = jsonObject["Theme"].ToString();
                     }
                     
                     if (jsonObject.ContainsKey("UseMirrorAddress") && jsonObject["UseMirrorAddress"] != null)

@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using VivaldiUpdater.ViewModel;
+using VivaldiUpdater.Helpers;
 using System.Threading.Tasks;
 
 namespace VivaldiUpdater
@@ -25,6 +26,7 @@ namespace VivaldiUpdater
                 EnableVivaldiUpdate = true,
                 ShowUpdateProcessBar = Visibility.Hidden,
             };
+            ThemeManager.ApplyTheme(Resources, model.SelectedTheme);
             DataContext = model;
         }
 
