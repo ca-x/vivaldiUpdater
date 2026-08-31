@@ -2,31 +2,33 @@
     <Geometry x:Key="UpdateIconGeometry">M512 0C230.4 0 0 230.4 0 512s230.4 512 512 512 512-230.4 512-512-230.4-512-512-512z m41.344 849.728H488.128c-20.096 0-40.128-20.48-40.128-40.896S468.032 768 488.128 768h65.216c20.032 0 40.128 20.48 40.128 40.832 0 20.48-20.096 40.896-40.128 40.896z m173.952-325.952h-128v148.096c0 23.68-17.472 41.472-40.768 41.472H477.12a40.128 40.128 0 0 1-40.768-41.472V523.776H296.704c-23.232 0-40.704-17.792-40.704-35.584 0-17.728 0-41.472 17.472-53.312l197.76-225.088a55.552 55.552 0 0 1 81.472 0l197.824 225.088c11.648 11.84 17.472 35.584 17.472 53.312-5.76 17.792-23.296 35.584-40.704 35.584z</Geometry>
 
     <!--  Theme palette defaults to the original vivid pink style; ThemeManager can switch it at runtime.  -->
-    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#3D2F36" />
-    <SolidColorBrush x:Key="TextMutedBrush" Color="#8C5F72" />
-    <SolidColorBrush x:Key="TextSubtleBrush" Color="#8A7480" />
-    <SolidColorBrush x:Key="AccentBrush" Color="#F5798B" />
-    <SolidColorBrush x:Key="AccentHoverBrush" Color="#FF69B4" />
-    <SolidColorBrush x:Key="AccentPressedBrush" Color="#FF1493" />
-    <SolidColorBrush x:Key="AccentSoftBrush" Color="#FFE6EF" />
-    <SolidColorBrush x:Key="SuccessBrush" Color="#2F9B68" />
-    <SolidColorBrush x:Key="InfoBrush" Color="#6856C9" />
-    <SolidColorBrush x:Key="WarningBrush" Color="#FF5722" />
-    <SolidColorBrush x:Key="SurfaceBrush" Color="#FAFFFFFF" />
-    <SolidColorBrush x:Key="SurfaceBorderBrush" Color="#88FFFFFF" />
-    <SolidColorBrush x:Key="TrackOffBrush" Color="#E8DDE4" />
-    <SolidColorBrush x:Key="TrackOnBrush" Color="#F5798B" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#342A30" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="#6F4A5C" />
+    <SolidColorBrush x:Key="TextSubtleBrush" Color="#75606B" />
+    <SolidColorBrush x:Key="AccentBrush" Color="#D84F72" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="#C93D64" />
+    <SolidColorBrush x:Key="AccentPressedBrush" Color="#AC2F54" />
+    <SolidColorBrush x:Key="AccentSoftBrush" Color="#FBE4EC" />
+    <SolidColorBrush x:Key="SuccessBrush" Color="#23845A" />
+    <SolidColorBrush x:Key="InfoBrush" Color="#5C55B8" />
+    <SolidColorBrush x:Key="WarningBrush" Color="#C56A1A" />
+    <SolidColorBrush x:Key="ErrorBrush" Color="#C5424F" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#FCFFFFFF" />
+    <SolidColorBrush x:Key="SurfaceSecondaryBrush" Color="#F7EDF2" />
+    <SolidColorBrush x:Key="SurfaceBorderBrush" Color="#D9C3CD" />
+    <SolidColorBrush x:Key="TrackOffBrush" Color="#E9DCE2" />
+    <SolidColorBrush x:Key="TrackOnBrush" Color="#D84F72" />
 
     <LinearGradientBrush x:Key="AppWindowBackgroundBrush" StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Color="#FFFFFCFE" Offset="0" />
-        <GradientStop Color="#FFFFEEF6" Offset="0.45" />
-        <GradientStop Color="#FFEFD6F3" Offset="1" />
+        <GradientStop Color="#FFFDFBFC" Offset="0" />
+        <GradientStop Color="#FFF7EDF2" Offset="0.45" />
+        <GradientStop Color="#FFF0E3EA" Offset="1" />
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="AccentGradientBrush" StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Color="#FFFF86A8" Offset="0" />
-        <GradientStop Color="#FFF5798B" Offset="0.58" />
-        <GradientStop Color="#FFFF1493" Offset="1" />
+        <GradientStop Color="#FFE16A89" Offset="0" />
+        <GradientStop Color="#FFD84F72" Offset="0.58" />
+        <GradientStop Color="#FFAC2F54" Offset="1" />
     </LinearGradientBrush>
 
     <Style x:Key="AppleButtonStyle" TargetType="{x:Type Button}">
@@ -79,6 +81,7 @@
                 <ControlTemplate TargetType="Button">
                     <Grid>
                         <Border
+                            x:Name="PrimaryButtonBorder"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
@@ -101,6 +104,13 @@
                         <Trigger Property="IsPressed" Value="True">
                             <Setter Property="Background" Value="{DynamicResource AccentPressedBrush}" />
                             <!--  更深的粉色  -->
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="PrimaryButtonBorder" Property="BorderBrush" Value="{DynamicResource SurfaceBrush}" />
+                            <Setter TargetName="PrimaryButtonBorder" Property="BorderThickness" Value="2" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.55" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -143,6 +153,12 @@
                         </Ellipse>
                         <!--  On/Off Text  -->
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border
+                            x:Name="FocusBorder"
+                            BorderBrush="Transparent"
+                            BorderThickness="2"
+                            CornerRadius="16"
+                            IsHitTestVisible="False" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CheckStates">
                                 <VisualState x:Name="Checked">
@@ -176,12 +192,17 @@
                             <Setter TargetName="BackgroundBorder" Property="Background" Value="{DynamicResource TrackOffBrush}" />
                             <Setter TargetName="Thumb" Property="Margin" Value="2,2,32,2" />
                         </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="FocusBorder" Property="BorderBrush" Value="{DynamicResource AccentPressedBrush}" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
     <Style x:Key="MacOSProgressBarStyle" TargetType="{x:Type ProgressBar}">
+        <Setter Property="Background" Value="{DynamicResource TrackOffBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ProgressBar}">
@@ -207,10 +228,7 @@
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="10">
                             <Border.Background>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                    <GradientStop Offset="0" Color="#FFFFB7DD" />
-                                    <GradientStop Offset="1" Color="#FFFF8CC6" />
-                                </LinearGradientBrush>
+                                <DynamicResource ResourceKey="AccentGradientBrush" />
                             </Border.Background>
                         </Border>
                         <Grid x:Name="PART_GlowGrid" ClipToBounds="True">
@@ -222,6 +240,9 @@
                                 Background="White"
                                 CornerRadius="10"
                                 Opacity="0">
+                                <Border.RenderTransform>
+                                    <TranslateTransform />
+                                </Border.RenderTransform>
                                 <Border.Effect>
                                     <BlurEffect Radius="10" />
                                 </Border.Effect>
@@ -254,10 +275,10 @@
 
     <!--  Apple ComboBox Style - Fixed version for ItemsSource binding  -->
     <Style x:Key="AppleComboBoxStyle" TargetType="ComboBox">
-        <Setter Property="Background" Value="White" />
-        <Setter Property="BorderBrush" Value="#E0E0E0" />
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource SurfaceBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Foreground" Value="#333333" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="Padding" Value="8,5" />
         <Setter Property="Margin" Value="5" />
@@ -329,8 +350,8 @@
                             <Border
                                 MinWidth="{TemplateBinding ActualWidth}"
                                 MaxHeight="{TemplateBinding MaxDropDownHeight}"
-                                Background="White"
-                                BorderBrush="#E0E0E0"
+                                Background="{DynamicResource SurfaceBrush}"
+                                BorderBrush="{DynamicResource SurfaceBorderBrush}"
                                 BorderThickness="1"
                                 CornerRadius="8">
                                 <Border.Effect>
@@ -354,7 +375,7 @@
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                         </Trigger>
-                        <Trigger Property="IsFocused" Value="True">
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
                             <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                             <Setter TargetName="Border" Property="BorderThickness" Value="2" />
                         </Trigger>
@@ -367,7 +388,7 @@
     <!--  Apple ComboBoxItem Style  -->
     <Style x:Key="AppleComboBoxItemStyle" TargetType="ComboBoxItem">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="#333333" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="Padding" Value="10,8" />
         <Setter Property="Template">
             <Setter.Value>
@@ -381,7 +402,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="#FFF0F0F0" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource AccentSoftBrush}" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Border" Property="Background" Value="{DynamicResource AccentBrush}" />
@@ -395,10 +416,10 @@
 
     <!--  Apple TextBox Style  -->
     <Style x:Key="AppleTextBoxStyle" TargetType="TextBox">
-        <Setter Property="Background" Value="White" />
-        <Setter Property="BorderBrush" Value="#E0E0E0" />
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource SurfaceBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Foreground" Value="#333333" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="Padding" Value="8,5" />
         <Setter Property="Margin" Value="5" />
@@ -430,7 +451,7 @@
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                         </Trigger>
-                        <Trigger Property="IsFocused" Value="True">
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
                             <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                             <Setter TargetName="Border" Property="BorderThickness" Value="2" />
                         </Trigger>
@@ -478,7 +499,7 @@
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                         </Trigger>
-                        <Trigger Property="IsFocused" Value="True">
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
                             <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                             <Setter TargetName="Border" Property="BorderThickness" Value="2" />
                         </Trigger>

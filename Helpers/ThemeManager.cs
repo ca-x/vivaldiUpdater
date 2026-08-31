@@ -33,44 +33,48 @@ namespace VivaldiUpdater.Helpers
 
         private static void ApplyPinkTheme(ResourceDictionary resources)
         {
-            SetBrush(resources, "TextPrimaryBrush", "#3D2F36");
-            SetBrush(resources, "TextMutedBrush", "#8C5F72");
-            SetBrush(resources, "TextSubtleBrush", "#8A7480");
-            SetBrush(resources, "AccentBrush", "#F5798B");
-            SetBrush(resources, "AccentHoverBrush", "#FF69B4");
-            SetBrush(resources, "AccentPressedBrush", "#FF1493");
-            SetBrush(resources, "AccentSoftBrush", "#FFE6EF");
-            SetBrush(resources, "SuccessBrush", "#2F9B68");
-            SetBrush(resources, "InfoBrush", "#6856C9");
-            SetBrush(resources, "WarningBrush", "#FF5722");
-            SetBrush(resources, "SurfaceBrush", "#FAFFFFFF");
-            SetBrush(resources, "SurfaceBorderBrush", "#88FFFFFF");
-            SetBrush(resources, "TrackOffBrush", "#E8DDE4");
-            SetBrush(resources, "TrackOnBrush", "#F5798B");
+            SetBrush(resources, "TextPrimaryBrush", "#342A30");
+            SetBrush(resources, "TextMutedBrush", "#6F4A5C");
+            SetBrush(resources, "TextSubtleBrush", "#75606B");
+            SetBrush(resources, "AccentBrush", "#D84F72");
+            SetBrush(resources, "AccentHoverBrush", "#C93D64");
+            SetBrush(resources, "AccentPressedBrush", "#AC2F54");
+            SetBrush(resources, "AccentSoftBrush", "#FBE4EC");
+            SetBrush(resources, "SuccessBrush", "#23845A");
+            SetBrush(resources, "InfoBrush", "#5C55B8");
+            SetBrush(resources, "WarningBrush", "#C56A1A");
+            SetBrush(resources, "ErrorBrush", "#C5424F");
+            SetBrush(resources, "SurfaceBrush", "#FCFFFFFF");
+            SetBrush(resources, "SurfaceSecondaryBrush", "#F7EDF2");
+            SetBrush(resources, "SurfaceBorderBrush", "#D9C3CD");
+            SetBrush(resources, "TrackOffBrush", "#E9DCE2");
+            SetBrush(resources, "TrackOnBrush", "#D84F72");
 
-            SetGradient(resources, "AppWindowBackgroundBrush", "#FFFFFCFE", "#FFFFEEF6", "#FFEFD6F3");
-            SetGradient(resources, "AccentGradientBrush", "#FFFF86A8", "#FFF5798B", "#FFFF1493");
+            SetGradient(resources, "AppWindowBackgroundBrush", "#FFFDFBFC", "#FFF7EDF2", "#FFF0E3EA");
+            SetGradient(resources, "AccentGradientBrush", "#FFE16A89", "#FFD84F72", "#FFAC2F54");
         }
 
         private static void ApplyNintendoTheme(ResourceDictionary resources)
         {
             SetBrush(resources, "TextPrimaryBrush", "#202124");
             SetBrush(resources, "TextMutedBrush", "#4B5563");
-            SetBrush(resources, "TextSubtleBrush", "#6B7280");
+            SetBrush(resources, "TextSubtleBrush", "#606A78");
             SetBrush(resources, "AccentBrush", "#E60012");
-            SetBrush(resources, "AccentHoverBrush", "#FF2D2D");
-            SetBrush(resources, "AccentPressedBrush", "#B8000E");
+            SetBrush(resources, "AccentHoverBrush", "#CC0010");
+            SetBrush(resources, "AccentPressedBrush", "#A8000D");
             SetBrush(resources, "AccentSoftBrush", "#FFE8EA");
-            SetBrush(resources, "SuccessBrush", "#00A650");
-            SetBrush(resources, "InfoBrush", "#00A3E0");
-            SetBrush(resources, "WarningBrush", "#FF6B00");
-            SetBrush(resources, "SurfaceBrush", "#FAFFFFFF");
-            SetBrush(resources, "SurfaceBorderBrush", "#88FFFFFF");
+            SetBrush(resources, "SuccessBrush", "#008C45");
+            SetBrush(resources, "InfoBrush", "#007AA8");
+            SetBrush(resources, "WarningBrush", "#C65300");
+            SetBrush(resources, "ErrorBrush", "#B3261E");
+            SetBrush(resources, "SurfaceBrush", "#FCFFFFFF");
+            SetBrush(resources, "SurfaceSecondaryBrush", "#F4F4F5");
+            SetBrush(resources, "SurfaceBorderBrush", "#D1D5DB");
             SetBrush(resources, "TrackOffBrush", "#E5E7EB");
             SetBrush(resources, "TrackOnBrush", "#E60012");
 
-            SetGradient(resources, "AppWindowBackgroundBrush", "#FFFFFFFF", "#FFF7F7F7", "#FFFFE6E8");
-            SetGradient(resources, "AccentGradientBrush", "#FFFF3434", "#FFE60012", "#FFB8000E");
+            SetGradient(resources, "AppWindowBackgroundBrush", "#FFFDFDFD", "#FFF5F5F5", "#FFFFECEE");
+            SetGradient(resources, "AccentGradientBrush", "#FFFF2635", "#FFE60012", "#FFA8000D");
         }
 
         private static void SetBrush(ResourceDictionary resources, string key, string color)

@@ -57,6 +57,15 @@
     </ApplicationDefinition>
     <Compile Include="CustomMessageBox.xaml.cs" />
     <Compile Include="Helpers\Copier.cs" />
+    <Compile Include="Helpers\DownloadEvents.cs" />
+    <Compile Include="Helpers\DownloadFileState.cs" />
+    <Compile Include="Helpers\DownloadHttpClientFactory.cs" />
+    <Compile Include="Helpers\DownloadProtocol.cs" />
+    <Compile Include="Helpers\DownloadResumeStore.cs" />
+    <Compile Include="Helpers\DownloadRetryPolicy.cs" />
+    <Compile Include="Helpers\DownloadStreamWriter.cs" />
+    <Compile Include="Helpers\DownloadTransfer.cs" />
+    <Compile Include="Helpers\DownloadUriPolicy.cs" />
     <Compile Include="Helpers\VivaldiInstaller.cs" />
     <Compile Include="Model\GithubRelease.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

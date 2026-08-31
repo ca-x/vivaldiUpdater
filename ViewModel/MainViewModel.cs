@@ -82,13 +82,16 @@ namespace VivaldiUpdater.ViewModel
                     }
                 }
                 
-                // 清理系统临时目录中的更新文件夹
                 var tempUpdateDir = Path.Combine(Path.GetTempPath(), "VivaldiUpdaterUpdate");
                 if (Directory.Exists(tempUpdateDir))
                 {
                     try
                     {
-                        Directory.Delete(tempUpdateDir, true);
+                        var extractedDirectory = Path.Combine(tempUpdateDir, "Extracted");
+                        if (Directory.Exists(extractedDirectory))
+                        {
+                            Directory.Delete(extractedDirectory, true);
+                        }
                     }
                     catch
                     {
@@ -129,9 +132,21 @@ namespace VivaldiUpdater.ViewModel
         {
             _themeOptions = new ObservableCollection<LanguageOption>
             {
-                new LanguageOption { DisplayName = "粉色", Tag = ThemeManager.PinkTheme },
-                new LanguageOption { DisplayName = "任天堂", Tag = ThemeManager.NintendoTheme }
+                new LanguageOption { DisplayName = GetDownloadText("text_theme_pink", "粉色"), Tag = ThemeManager.PinkTheme },
+                new LanguageOption { DisplayName = GetDownloadText("text_theme_nintendo", "任天堂"), Tag = ThemeManager.NintendoTheme }
             };
+            OnPropertyChanged(nameof(ThemeOptions));
+        }
+
+        private void RefreshThemeOptions()
+        {
+            if (_themeOptions == null)
+            {
+                return;
+            }
+
+            _themeOptions[0].DisplayName = GetDownloadText("text_theme_pink", "粉色");
+            _themeOptions[1].DisplayName = GetDownloadText("text_theme_nintendo", "任天堂");
             OnPropertyChanged(nameof(ThemeOptions));
         }
 
@@ -185,7 +200,7 @@ namespace VivaldiUpdater.ViewModel
         public string LocalizedCleanBackupAfterUpdateLabel => Properties.Resources.text_clean_backup_after_update;
         public string LocalizedVivaldiUpdaterLabel => Properties.Resources.text_vivaldi_updater ?? "Vivaldi Updater";
         public string LocalizedEnableAppUpdateLabel => Properties.Resources.text_enable_app_update ?? "Auto Update Vivaldi Updater";
-        public string LocalizedThemeLabel => "主题 / Theme";
+        public string LocalizedThemeLabel => GetDownloadText("text_theme", "主题");
 
         private string _selectedTheme = ThemeManager.PinkTheme;
         public string SelectedTheme
@@ -248,6 +263,7 @@ namespace VivaldiUpdater.ViewModel
 
                 // Refresh language options with new resource strings
                 RefreshLanguageOptions();
+                RefreshThemeOptions();
 
                 // Notify all localized labels to refresh
                 OnPropertyChanged(nameof(LocalizedLanguageLabel));
@@ -573,7 +589,7 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
         }
 
 
-        private Visibility _showUpdateProcessBar;
+        private Visibility _showUpdateProcessBar = Visibility.Collapsed;
 
         /// <summary>
         /// show update process bar
@@ -633,6 +649,30 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
             set
             {
                 _processBarNotifyText = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _downloadDetailText;
+
+        public string DownloadDetailText
+        {
+            get => _downloadDetailText;
+            set
+            {
+                _downloadDetailText = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isDownloadIndeterminate;
+
+        public bool IsDownloadIndeterminate
+        {
+            get => _isDownloadIndeterminate;
+            set
+            {
+                _isDownloadIndeterminate = value;
                 OnPropertyChanged();
             }
         }
@@ -851,7 +891,7 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
             }
             finally
             {
-                ShowUpdateProcessBar = Visibility.Hidden;
+                IsDownloadIndeterminate = false;
                 CanApplyChanges = true; // 重新启用按钮
             }
         }
@@ -916,6 +956,126 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
             }
         }
 
+        private ResumeableDownloader CreateDownloader(string downloadTitle, int progressOffset = 0, int progressRange = 100)
+        {
+            var downloader = new ResumeableDownloader();
+            downloader.DownloadProgressChanged += (sender, args) =>
+            {
+                DownloadProgress = Math.Min(100, progressOffset + args.ProgressPercentage * progressRange / 100);
+                IsDownloadIndeterminate = !args.TotalBytes.HasValue && args.ProgressPercentage < 100;
+                ProcessBarNotifyText = string.Format("{0} {1}%", downloadTitle, args.ProgressPercentage);
+
+                var sizeText = args.TotalBytes.HasValue
+                    ? string.Format("{0} / {1}", FormatBytes(args.BytesReceived), FormatBytes(args.TotalBytes.Value))
+                    : FormatBytes(args.BytesReceived);
+                DownloadDetailText = args.BytesPerSecond > 0
+                    ? string.Format("{0} · {1}/s", sizeText, FormatBytes(args.BytesPerSecond))
+                    : sizeText;
+            };
+            downloader.DownloadStatusChanged += (sender, args) => UpdateDownloadStatus(downloadTitle, args);
+            return downloader;
+        }
+
+        private void UpdateDownloadStatus(string downloadTitle, DownloadStatusEventArgs args)
+        {
+            switch (args.State)
+            {
+                case DownloadState.Starting:
+                    ProcessBarNotifyText = downloadTitle;
+                    DownloadDetailText = GetDownloadText("text_download_connecting", "正在建立连接...");
+                    IsDownloadIndeterminate = true;
+                    break;
+                case DownloadState.Resuming:
+                    ProcessBarNotifyText = downloadTitle;
+                    DownloadDetailText = string.Format(
+                        GetDownloadText("text_download_resuming", "从 {0} 继续下载"),
+                        FormatBytes(args.ResumeOffset));
+                    IsDownloadIndeterminate = false;
+                    break;
+                case DownloadState.Retrying:
+                    ProcessBarNotifyText = GetDownloadText("text_download_retrying_title", "网络不稳定，正在重试");
+                    DownloadDetailText = string.Format(
+                        GetDownloadText("text_download_retrying", "{0} 秒后重试（{1}/{2}）"),
+                        Math.Ceiling(args.RetryDelay.TotalSeconds),
+                        args.Attempt,
+                        args.MaxAttempts);
+                    IsDownloadIndeterminate = true;
+                    break;
+                case DownloadState.SwitchingSource:
+                    ProcessBarNotifyText = GetDownloadText("text_download_switching_source", "镜像不可用，正在切换下载源");
+                    DownloadDetailText = args.SourceUri.Host;
+                    IsDownloadIndeterminate = true;
+                    break;
+                case DownloadState.Completed:
+                    DownloadDetailText = string.Format(
+                        GetDownloadText("text_download_completed_detail", "下载完成，共 {0}"),
+                        FormatBytes(args.ResumeOffset));
+                    IsDownloadIndeterminate = false;
+                    break;
+                case DownloadState.Failed:
+                    DownloadDetailText = string.Format(
+                        GetDownloadText("text_download_failed_detail", "下载中断，已保留 {0} 供下次续传"),
+                        FormatBytes(args.ResumeOffset));
+                    IsDownloadIndeterminate = false;
+                    break;
+            }
+        }
+
+        private static string GetDownloadText(string key, string fallback)
+        {
+            return Properties.Resources.ResourceManager.GetString(key, Properties.Resources.Culture) ?? fallback;
+        }
+
+        private static string FormatBytes(long bytes)
+        {
+            if (bytes >= 1024L * 1024L * 1024L)
+            {
+                return string.Format("{0:F1} GB", bytes / (1024d * 1024d * 1024d));
+            }
+
+            if (bytes >= 1024L * 1024L)
+            {
+                return string.Format("{0:F1} MB", bytes / (1024d * 1024d));
+            }
+
+            if (bytes >= 1024L)
+            {
+                return string.Format("{0:F1} KB", bytes / 1024d);
+            }
+
+            return string.Format("{0} B", bytes);
+        }
+
+        private static void DeleteDownloadArtifacts(string path)
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            var metadataPath = path + ".resume";
+            if (File.Exists(metadataPath))
+            {
+                File.Delete(metadataPath);
+            }
+        }
+
+        private static string GetSafeDownloadPath(string directory, string assetName)
+        {
+            if (string.IsNullOrWhiteSpace(assetName) || Path.IsPathRooted(assetName))
+            {
+                throw new InvalidOperationException("The download asset name is invalid.");
+            }
+
+            var fileName = Path.GetFileName(assetName);
+            if (!string.Equals(fileName, assetName, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException("The download asset name is invalid.");
+            }
+
+            return Path.Combine(directory, fileName);
+        }
+
         private async Task PerformSelfUpdate()
         {
             try
@@ -928,26 +1088,25 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
                 var downloadUrl = asset.BrowserDownloadUrl;
 
                 var tempDir = Path.Combine(Path.GetTempPath(), "VivaldiUpdaterUpdate");
-                if (Directory.Exists(tempDir)) Directory.Delete(tempDir, true);
                 Directory.CreateDirectory(tempDir);
 
                 var zipPath = Path.Combine(tempDir, "Release.zip");
-                var downloader = new ResumeableDownloader();
-                downloader.DownloadProgressChanged += (s, e) =>
+                using (var downloader = CreateDownloader(
+                           Properties.Resources.text_downloading_new_version ?? "正在下载新版本..."))
                 {
-                    DownloadProgress = e.ProgressPercentage;
-                    ProcessBarNotifyText = string.Format(Properties.Resources.text_downloading_update_package ?? "正在下载更新包 {0}%", e.ProgressPercentage);
-                };
-
-                await downloader.DownloadFileAsync(downloadUrl, zipPath);
+                    await downloader.DownloadFileAsync(downloadUrl, zipPath);
+                }
 
                 ProcessBarNotifyText = Properties.Resources.text_extracting_update ?? "正在解压更新...";
-                ZipFile.ExtractToDirectory(zipPath, tempDir);
+                var extractDir = Path.Combine(tempDir, "Extracted");
+                if (Directory.Exists(extractDir))
+                {
+                    Directory.Delete(extractDir, true);
+                }
+                Directory.CreateDirectory(extractDir);
+                ZipFile.ExtractToDirectory(zipPath, extractDir);
 
-                var extractDir = Path.Combine(tempDir, "Release" /* Assuming zip contains a 'Release' folder based on user input, or just root? User said 'Release.zip', contents listing shows 'Release' folder? No, list shows contents inside Release dir? 'PS ...\Desktop\Release> ls'. It implies zip content might be the files directly or inside a folder. Usually github releases zip the folder. Let's assume flat or check.*/);
-                
-                // Check if extracted content is in a subdir
-                var extractedFiles = Directory.GetFiles(tempDir, "VivaldiUpdater.exe", SearchOption.AllDirectories);
+                var extractedFiles = Directory.GetFiles(extractDir, "VivaldiUpdater.exe", SearchOption.AllDirectories);
                 if (extractedFiles.Length == 0) throw new Exception("Update package corrupted");
                 var sourceDir = Path.GetDirectoryName(extractedFiles[0]);
 
@@ -1030,35 +1189,27 @@ ProcessBarNotifyText = Properties.Resources.text_update_complete_restart ?? "更
                 var urls = await VivaldiInfoEx.GetVivaldiDistUrls(installArch);
                 if (urls != null && urls.Count > 0)
                 {
-                    var installerFullPath = Path.Combine(
+                    var installerFullPath = GetSafeDownloadPath(
                         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                         $"Vivaldi.{latestVersion.Version}.exe");
 
-                    // 检查安装文件是否已存在
-                    bool fileExists = File.Exists(installerFullPath);
-                    if (fileExists)
-                    {
-                        var fileInfo = new FileInfo(installerFullPath);
-                        ProcessBarNotifyText = string.Format(Properties.Resources.text_file_exists_using ?? "发现已有安装文件 ({0}MB)，使用现有文件进行安装...", (fileInfo.Length / (1024 * 1024)).ToString("F1"));
-                        DownloadProgress = 100; // 显示完成状态
-                    }
-                    else
-                    {
-                        ProcessBarNotifyText = Properties.Resources.text_downloading_vivaldi ?? "正在下载Vivaldi...";
-                        DownloadProgress = 0;
+                    ProcessBarNotifyText = Properties.Resources.text_downloading_vivaldi ?? "正在下载Vivaldi...";
+                    DownloadProgress = 0;
 
-                        var downloader = new ResumeableDownloader();
-                        downloader.DownloadProgressChanged += (sender, args) =>
+                    using (var downloader = CreateDownloader(
+                               Properties.Resources.text_downloading_vivaldi ?? "正在下载Vivaldi..."))
+                    {
+                        if (UseMirrorAddress && !string.IsNullOrWhiteSpace(urls[0].UrlMirror))
                         {
-                            // Update progress bar
-                            DownloadProgress = args.ProgressPercentage;
-                            var speed = args.BytesPerSecond > 0 ? $" ({(args.BytesPerSecond / (1024 * 1024)):F1}MB/s)" : "";
-                            ProcessBarNotifyText = $"{Properties.Resources.text_downloading_vivaldi} {DownloadProgress}%{speed}";
-                        };
-
-                        // Choose URL based on UseMirrorAddress setting
-                        var downloadUrl = UseMirrorAddress ? urls[0].UrlMirror : urls[0].Url;
-                        await downloader.DownloadFileAsync(downloadUrl, installerFullPath);
+                            await downloader.DownloadFileWithFallbackAsync(
+                                urls[0].UrlMirror,
+                                urls[0].Url,
+                                installerFullPath);
+                        }
+                        else
+                        {
+                            await downloader.DownloadFileAsync(urls[0].Url, installerFullPath);
+                        }
                     }
                     ProcessBarNotifyText = Properties.Resources.text_extracting_installer ?? "正在解压安装程序...";
                     DownloadProgress = 0; // 重置进度条用于显示解压进度
@@ -1151,7 +1302,7 @@ ProcessBarNotifyText = Properties.Resources.text_update_complete_restart ?? "更
                         // Delete installer if requested
                         if (DeleteFullInstallerAfterUpdate && File.Exists(installerFullPath))
                         {
-                            File.Delete(installerFullPath);
+                            DeleteDownloadArtifacts(installerFullPath);
                         }
 
                         ProcessBarNotifyText = Properties.Resources.text_installation_complete_cleanup ?? "安装完成，临时文件已清理。";
@@ -1192,34 +1343,28 @@ else
                 ProcessBarNotifyText = Properties.Resources.text_preparing_download_vpp ?? "正在准备下载Vivaldi++...";
                 DownloadProgress = 0;
 
-                // Update Vivaldi++
-                var downloader = new Helpers.ResumeableDownloader();
-                downloader.DownloadProgressChanged += (sender, args) =>
-                {
-                    // Update progress bar
-                    DownloadProgress = args.ProgressPercentage;
-                    var speed = args.BytesPerSecond > 0 ? $" ({(args.BytesPerSecond / (1024 * 1024)):F1}MB/s)" : "";
-                    ProcessBarNotifyText = $"{Properties.Resources.text_downloading_vivaldi_plus ?? "正在下载Vivaldi++"} {DownloadProgress}%{speed}";
-                };
-
-                var downloadPath = Path.Combine(
+                var downloadPath = GetSafeDownloadPath(
                     Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                     latestRelease.AssetName);
 
-                // 使用回退机制下载Vivaldi++文件
-                // 如果UseMirrorAddress为true，优先使用镜像地址，否则使用GitHub原始地址
-                if (UseMirrorAddress && !string.IsNullOrEmpty(latestRelease.FastgitMirrorUrl))
+                using (var downloader = CreateDownloader(
+                           Properties.Resources.text_downloading_vivaldi_plus ?? "正在下载Vivaldi++"))
                 {
-                    await downloader.DownloadFileWithFallbackAsync(latestRelease.FastgitMirrorUrl, latestRelease.GithubOriginUrl, downloadPath);
-                }
-                else if (!string.IsNullOrEmpty(latestRelease.GithubOriginUrl))
-                {
-                    await downloader.DownloadFileAsync(latestRelease.GithubOriginUrl, downloadPath);
-                }
-                else
-                {
-                    // 如果没有可用的URL，抛出异常
-                    throw new InvalidOperationException("No valid download URL available for Vivaldi++");
+                    if (UseMirrorAddress && !string.IsNullOrEmpty(latestRelease.FastgitMirrorUrl))
+                    {
+                        await downloader.DownloadFileWithFallbackAsync(
+                            latestRelease.FastgitMirrorUrl,
+                            latestRelease.GithubOriginUrl,
+                            downloadPath);
+                    }
+                    else if (!string.IsNullOrEmpty(latestRelease.GithubOriginUrl))
+                    {
+                        await downloader.DownloadFileAsync(latestRelease.GithubOriginUrl, downloadPath);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("No valid download URL available for Vivaldi++");
+                    }
                 }
 
                 ProcessBarNotifyText = Properties.Resources.text_installing_version_dll ?? "正在安装version.dll...";
@@ -1250,7 +1395,7 @@ else
                 {
                     if (DeleteFullInstallerAfterUpdate && File.Exists(downloadPath))
                     {
-                        File.Delete(downloadPath);
+                        DeleteDownloadArtifacts(downloadPath);
                     }
                 }
                 catch { }
@@ -1268,19 +1413,31 @@ else
                     ProcessBarNotifyText = Properties.Resources.text_version_consistent_dll_missing ?? "版本一致但version.dll不存在，正在重新下载...";
                     DownloadProgress = 20;
 
-                    var downloader = new Helpers.ResumeableDownloader();
-                    downloader.DownloadProgressChanged += (sender, args) =>
-                    {
-                        DownloadProgress = (int)(20 + (args.ProgressPercentage * 0.6)); // 20-80%
-                        var speed = args.BytesPerSecond > 0 ? $" ({(args.BytesPerSecond / (1024 * 1024)):F1}MB/s)" : "";
-                        ProcessBarNotifyText = $"{Properties.Resources.text_downloading_vivaldi_plus ?? "正在下载Vivaldi++"} {args.ProgressPercentage}%{speed}";
-                    };
-
-                    var downloadPath = Path.Combine(
+                    var downloadPath = GetSafeDownloadPath(
                         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                         latestRelease.AssetName);
 
-                    await downloader.DownloadFileAsync(latestRelease.FastgitMirrorUrl, downloadPath);
+                    using (var downloader = CreateDownloader(
+                               Properties.Resources.text_downloading_vivaldi_plus ?? "正在下载Vivaldi++",
+                               20,
+                               60))
+                    {
+                        if (UseMirrorAddress && !string.IsNullOrEmpty(latestRelease.FastgitMirrorUrl))
+                        {
+                            await downloader.DownloadFileWithFallbackAsync(
+                                latestRelease.FastgitMirrorUrl,
+                                latestRelease.GithubOriginUrl,
+                                downloadPath);
+                        }
+                        else if (!string.IsNullOrEmpty(latestRelease.GithubOriginUrl))
+                        {
+                            await downloader.DownloadFileAsync(latestRelease.GithubOriginUrl, downloadPath);
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException("No valid download URL available for Vivaldi++");
+                        }
+                    }
 
                     ProcessBarNotifyText = Properties.Resources.text_installing_version_dll ?? "正在安装version.dll...";
                     DownloadProgress = 85;
@@ -1306,7 +1463,7 @@ else
                     {
                         if (DeleteFullInstallerAfterUpdate && File.Exists(downloadPath))
                         {
-                            File.Delete(downloadPath);
+                            DeleteDownloadArtifacts(downloadPath);
                         }
                     }
                     catch { }
@@ -1352,7 +1509,7 @@ else
                 }
                 finally
                 {
-                    ShowUpdateProcessBar = Visibility.Hidden;
+                    IsDownloadIndeterminate = false;
                     CanApplyChanges = true;
                 }
                 return;
@@ -1379,7 +1536,7 @@ else
                 }
                 finally
                 {
-                    ShowUpdateProcessBar = Visibility.Hidden;
+                    IsDownloadIndeterminate = false;
                     CanApplyChanges = true;
                 }
             }

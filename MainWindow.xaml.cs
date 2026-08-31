@@ -24,7 +24,7 @@ namespace VivaldiUpdater
                 EnableVivaldiPlus = true,
                 EnableVivaldiPlusUpdate = true,
                 EnableVivaldiUpdate = true,
-                ShowUpdateProcessBar = Visibility.Hidden,
+                ShowUpdateProcessBar = Visibility.Collapsed,
             };
             ThemeManager.ApplyTheme(Resources, model.SelectedTheme);
             DataContext = model;
@@ -40,28 +40,35 @@ namespace VivaldiUpdater
             Application.Current.Shutdown();
         }
 
+        private void MinimizeButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
         private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
             if (DataContext is MainViewModel mm)
             {
-                // Show progress bar during initial loading
                 mm.ShowUpdateProcessBar = Visibility.Visible;
                 mm.ProcessBarNotifyText = "正在初始化... / Initializing...";
+                mm.DownloadDetailText = "正在读取本地版本与远程版本 / Checking installed and available versions";
+                mm.IsDownloadIndeterminate = true;
                 
                 try
                 {
                     await mm.UpdateContext();
-                    // Clear the initialization message after successful loading
                     mm.ProcessBarNotifyText = "";
+                    mm.DownloadDetailText = "";
+                    mm.ShowUpdateProcessBar = Visibility.Collapsed;
                 }
                 catch (System.Exception ex)
                 {
                     mm.ProcessBarNotifyText = string.Format("初始化失败 / Initialization failed: {0}", ex.Message);
+                    mm.DownloadDetailText = "请检查网络或代理设置 / Check network or proxy settings";
                 }
                 finally
                 {
-                    // Hide progress bar after loading is complete
-                    mm.ShowUpdateProcessBar = Visibility.Hidden;
+                    mm.IsDownloadIndeterminate = false;
                 }
             }
         }

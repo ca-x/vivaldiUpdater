@@ -154,16 +154,16 @@
     <value>安装</value>
   </data>
   <data name="text_update_avaliable" xml:space="preserve">
-    <value>⬆️ </value>
+    <value>有新版本</value>
   </data>
   <data name="text_no_update_avaliable" xml:space="preserve">
-    <value>🎉已是最新版本</value>
+    <value>已是最新版本</value>
   </data>
   <data name="text_service_not_avaliable" xml:space="preserve">
-    <value>💔</value>
+    <value>服务不可用</value>
   </data>
   <data name="text_not_installed" xml:space="preserve">
-    <value>❎未安装</value>
+    <value>未安装</value>
   </data>
   <data name="text_use_mirror_address" xml:space="preserve">
     <value>使用镜像地址</value>
@@ -359,5 +359,35 @@
   </data>
   <data name="text_vivaldi_updater" xml:space="preserve">
     <value>Vivaldi更新器</value>
+  </data>
+  <data name="text_download_connecting" xml:space="preserve">
+    <value>正在建立连接...</value>
+  </data>
+  <data name="text_download_resuming" xml:space="preserve">
+    <value>从 {0} 继续下载</value>
+  </data>
+  <data name="text_download_retrying_title" xml:space="preserve">
+    <value>网络不稳定，正在重试</value>
+  </data>
+  <data name="text_download_retrying" xml:space="preserve">
+    <value>{0} 秒后重试（{1}/{2}）</value>
+  </data>
+  <data name="text_download_switching_source" xml:space="preserve">
+    <value>镜像不可用，正在切换下载源</value>
+  </data>
+  <data name="text_download_completed_detail" xml:space="preserve">
+    <value>下载完成，共 {0}</value>
+  </data>
+  <data name="text_download_failed_detail" xml:space="preserve">
+    <value>下载中断，已保留 {0} 供下次续传</value>
+  </data>
+  <data name="text_theme" xml:space="preserve">
+    <value>主题</value>
+  </data>
+  <data name="text_theme_pink" xml:space="preserve">
+    <value>粉色</value>
+  </data>
+  <data name="text_theme_nintendo" xml:space="preserve">
+    <value>任天堂</value>
   </data>
 </root>

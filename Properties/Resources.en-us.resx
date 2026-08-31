@@ -51,16 +51,16 @@
         <value>Install</value>
     </data>
     <data name="text_update_avaliable" xml:space="preserve">
-        <value>⬆️ </value>
+        <value>Update available</value>
     </data>
     <data name="text_no_update_avaliable" xml:space="preserve">
-        <value>🎉Already Latest</value>
+        <value>Up to date</value>
     </data>
     <data name="text_service_not_avaliable" xml:space="preserve">
-        <value>💔</value>
+        <value>Service unavailable</value>
     </data>
     <data name="text_not_installed" xml:space="preserve">
-        <value>❎Not Installed</value>
+        <value>Not installed</value>
     </data>
     <data name="text_use_mirror_address" xml:space="preserve">
         <value>Use Mirror Address</value>
@@ -256,5 +256,35 @@
     </data>
     <data name="text_vivaldi_updater" xml:space="preserve">
         <value>Vivaldi Updater</value>
+    </data>
+    <data name="text_download_connecting" xml:space="preserve">
+        <value>Connecting...</value>
+    </data>
+    <data name="text_download_resuming" xml:space="preserve">
+        <value>Resuming from {0}</value>
+    </data>
+    <data name="text_download_retrying_title" xml:space="preserve">
+        <value>Network interrupted, retrying</value>
+    </data>
+    <data name="text_download_retrying" xml:space="preserve">
+        <value>Retrying in {0} seconds ({1}/{2})</value>
+    </data>
+    <data name="text_download_switching_source" xml:space="preserve">
+        <value>Mirror unavailable, switching source</value>
+    </data>
+    <data name="text_download_completed_detail" xml:space="preserve">
+        <value>Download complete, {0}</value>
+    </data>
+    <data name="text_download_failed_detail" xml:space="preserve">
+        <value>Download paused; {0} kept for the next attempt</value>
+    </data>
+    <data name="text_theme" xml:space="preserve">
+        <value>Theme</value>
+    </data>
+    <data name="text_theme_pink" xml:space="preserve">
+        <value>Pink</value>
+    </data>
+    <data name="text_theme_nintendo" xml:space="preserve">
+        <value>Nintendo</value>
     </data>
 </root>
