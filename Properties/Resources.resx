@@ -390,4 +390,10 @@
   <data name="text_theme_nintendo" xml:space="preserve">
     <value>任天堂</value>
   </data>
+  <data name="text_update_check_failed" xml:space="preserve">
+    <value>检查失败</value>
+  </data>
+  <data name="text_retry_check" xml:space="preserve">
+    <value>重新检查</value>
+  </data>
 </root>

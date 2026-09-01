@@ -63,6 +63,7 @@ Status and settings rows use grids rather than positional margins so Chinese and
 - Structure: component title, installed/latest version line, text status.
 - Variants: Vivaldi and Vivaldi++.
 - States: current, update available, not installed, unavailable.
+- Status badge: update available uses warning, unavailable uses error, current uses success, and not installed uses muted neutral; all four are solid fills with white semibold text.
 - Accessibility: status text accompanies semantic color.
 
 ### Setting row

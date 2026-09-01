@@ -52,6 +52,7 @@
         <Compile Include="Helpers\DownloaderTestFixture.cs" />
         <Compile Include="Helpers\DownloaderTestDoubles.cs" />
         <Compile Include="Helpers\MainWindowSmokeTest.cs" />
+        <Compile Include="Helpers\MainViewModelStatusTest.cs" />
         <Compile Include="Helpers\VivaldiInfoExTest.cs" />
         <Compile Include="Helpers\VivaldiInstallerTest.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />

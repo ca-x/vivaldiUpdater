@@ -244,28 +244,20 @@
                         </Grid>
                         
                          <!-- Update Status -->
-                        <Grid Margin="20,0,0,0">
-                            <!-- Icon for Update Available -->
-                            <Path Data="{StaticResource UpdateIconGeometry}" Fill="{DynamicResource WarningBrush}" Width="16" Height="16" HorizontalAlignment="Left" Stretch="Uniform" VerticalAlignment="Center">
-                                 <Path.Style>
-                                     <Style TargetType="Path">
-                                         <Setter Property="Visibility" Value="Collapsed"/>
-                                         <Style.Triggers>
-                                             <DataTrigger Binding="{Binding IsVivaldiUpdateAvailable}" Value="True">
-                                                 <Setter Property="Visibility" Value="Visible"/>
-                                             </DataTrigger>
-                                         </Style.Triggers>
-                                     </Style>
-                                 </Path.Style>
-                            </Path>
-                            <!-- Text for No Update -->
-                            <TextBlock
-                                Margin="22,0,0,0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Foreground="{DynamicResource InfoBrush}"
-                                Text="{Binding VivaldiUpdateNotifyText}" />
-                        </Grid>
+                        <Border
+                            Margin="12,0,0,0"
+                            Style="{StaticResource ComponentStatusBadgeStyle}"
+                            Tag="{Binding VivaldiStatus}">
+                            <DockPanel LastChildFill="True">
+                                <Path
+                                    Data="{StaticResource UpdateIconGeometry}"
+                                    DockPanel.Dock="Left"
+                                    Style="{StaticResource ComponentStatusIconStyle}" />
+                                <TextBlock
+                                    Style="{StaticResource ComponentStatusTextStyle}"
+                                    Text="{Binding VivaldiUpdateNotifyText}" />
+                            </DockPanel>
+                        </Border>
                     </StackPanel>
 
                     <!--  vivaldi++ info  -->
@@ -303,26 +295,20 @@
                         </Grid>
                         
                          <!-- Update Status -->
-                         <Grid Margin="20,0,0,0">
-                            <Path Data="{StaticResource UpdateIconGeometry}" Fill="{DynamicResource WarningBrush}" Width="16" Height="16" HorizontalAlignment="Left" Stretch="Uniform" VerticalAlignment="Center">
-                                 <Path.Style>
-                                     <Style TargetType="Path">
-                                         <Setter Property="Visibility" Value="Collapsed"/>
-                                         <Style.Triggers>
-                                             <DataTrigger Binding="{Binding IsVivaldiPlusUpdateAvailable}" Value="True">
-                                                 <Setter Property="Visibility" Value="Visible"/>
-                                             </DataTrigger>
-                                         </Style.Triggers>
-                                     </Style>
-                                 </Path.Style>
-                            </Path>
-                            <TextBlock
-                                Margin="22,0,0,0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Foreground="{DynamicResource InfoBrush}"
-                                Text="{Binding VivaldiPlusUpdateNotifyText}" />
-                        </Grid>
+                        <Border
+                            Margin="12,0,0,0"
+                            Style="{StaticResource ComponentStatusBadgeStyle}"
+                            Tag="{Binding VivaldiPlusStatus}">
+                            <DockPanel LastChildFill="True">
+                                <Path
+                                    Data="{StaticResource UpdateIconGeometry}"
+                                    DockPanel.Dock="Left"
+                                    Style="{StaticResource ComponentStatusIconStyle}" />
+                                <TextBlock
+                                    Style="{StaticResource ComponentStatusTextStyle}"
+                                    Text="{Binding VivaldiPlusUpdateNotifyText}" />
+                            </DockPanel>
+                        </Border>
                     </StackPanel>
                     
 

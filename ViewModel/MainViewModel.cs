@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -15,6 +16,15 @@ using System.Diagnostics;
 
 namespace VivaldiUpdater.ViewModel
 {
+    public enum ComponentUpdateState
+    {
+        Unknown,
+        UpdateAvailable,
+        Current,
+        NotInstalled,
+        Unavailable
+    }
+
     public class LanguageOption : INotifyPropertyChanged
     {
         private string _displayName;
@@ -311,10 +321,10 @@ namespace VivaldiUpdater.ViewModel
         private async Task UpdateVersionInfo()
         {
             var vivaldiVersionInfo = await Helpers.VivaldiInfoEx.GetVivaldiVersionInfo();
-            VivaldiLatestVersion = vivaldiVersionInfo.Version;
+            VivaldiLatestVersion = vivaldiVersionInfo?.Version;
 
             var vivaldiPlusInfo = await Helpers.VivaldiInfoEx.GetVivaldiPlusPlusRelease();
-            VivaldiPlusLatestVersion = vivaldiPlusInfo.FirstOrDefault().Version.TrimStart('v');
+            VivaldiPlusLatestVersion = GetLatestVivaldiPlusVersion(vivaldiPlusInfo);
 
             var appRelease = await Helpers.VivaldiInfoEx.GetAppLatestRelease();
             if (appRelease != null)
@@ -373,6 +383,12 @@ private void UpdateUIBasedOnVersionComparison(
                 Operation = Properties.Resources.text_install;
                 CanApplyChanges = true;
             }
+            else if (VivaldiStatus == ComponentUpdateState.Unavailable ||
+                     VivaldiPlusStatus == ComponentUpdateState.Unavailable)
+            {
+                Operation = GetDownloadText("text_retry_check", "重新检查");
+                CanApplyChanges = true;
+            }
             // 如果所有组件都已安装且都是最新版，按钮显示"已是最新版"并禁用
             else if (vivaldiHasNoUpdate && vivaldiPlusHasNoUpdate)
             {
@@ -393,6 +409,15 @@ private bool UpdateVivaldiUI(string installedVersion)
             {
                 VivaldiUpdateNotifyText = Properties.Resources.text_not_installed;
                 IsVivaldiUpdateAvailable = false;
+                VivaldiStatus = ComponentUpdateState.NotInstalled;
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(VivaldiLatestVersion))
+            {
+                VivaldiUpdateNotifyText = GetDownloadText("text_update_check_failed", "检查失败");
+                IsVivaldiUpdateAvailable = false;
+                VivaldiStatus = ComponentUpdateState.Unavailable;
                 return false;
             }
 
@@ -402,6 +427,7 @@ private bool UpdateVivaldiUI(string installedVersion)
             {
                 VivaldiUpdateNotifyText = Properties.Resources.text_update_avaliable;
                 IsVivaldiUpdateAvailable = true;
+                VivaldiStatus = ComponentUpdateState.UpdateAvailable;
                 return false;
             }
 
@@ -409,11 +435,14 @@ private bool UpdateVivaldiUI(string installedVersion)
             {
                 VivaldiUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
                 IsVivaldiUpdateAvailable = false;
+                VivaldiStatus = ComponentUpdateState.Current;
                 return true;
             }
 
+            VivaldiUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
             IsVivaldiUpdateAvailable = false;
-            return false;
+            VivaldiStatus = ComponentUpdateState.Current;
+            return true;
         }
 
 private bool UpdateVivaldiPlusUI(string installedVersion)
@@ -422,6 +451,15 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
             {
                 VivaldiPlusUpdateNotifyText = Properties.Resources.text_not_installed;
                 IsVivaldiPlusUpdateAvailable = false;
+                VivaldiPlusStatus = ComponentUpdateState.NotInstalled;
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(VivaldiPlusLatestVersion))
+            {
+                VivaldiPlusUpdateNotifyText = GetDownloadText("text_update_check_failed", "检查失败");
+                IsVivaldiPlusUpdateAvailable = false;
+                VivaldiPlusStatus = ComponentUpdateState.Unavailable;
                 return false;
             }
 
@@ -430,6 +468,7 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
             {
                 VivaldiPlusUpdateNotifyText = Properties.Resources.text_update_avaliable;
                 IsVivaldiPlusUpdateAvailable = true;
+                VivaldiPlusStatus = ComponentUpdateState.UpdateAvailable;
                 return false;
             }
 
@@ -437,16 +476,27 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
             {
                 VivaldiPlusUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
                 IsVivaldiPlusUpdateAvailable = false;
+                VivaldiPlusStatus = ComponentUpdateState.Current;
                 return true;
             }
 
+            VivaldiPlusUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
             IsVivaldiPlusUpdateAvailable = false;
-            return false;
+            VivaldiPlusStatus = ComponentUpdateState.Current;
+            return true;
         }
 
         #region flag display
 
         private bool _isVivaldiUpdateAvailable;
+        private ComponentUpdateState _vivaldiStatus = ComponentUpdateState.Unknown;
+
+        public ComponentUpdateState VivaldiStatus
+        {
+            get => _vivaldiStatus;
+            set { _vivaldiStatus = value; OnPropertyChanged(); }
+        }
+
         public bool IsVivaldiUpdateAvailable
         {
             get => _isVivaldiUpdateAvailable;
@@ -454,6 +504,14 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
         }
 
         private bool _isVivaldiPlusUpdateAvailable;
+        private ComponentUpdateState _vivaldiPlusStatus = ComponentUpdateState.Unknown;
+
+        public ComponentUpdateState VivaldiPlusStatus
+        {
+            get => _vivaldiPlusStatus;
+            set { _vivaldiPlusStatus = value; OnPropertyChanged(); }
+        }
+
         public bool IsVivaldiPlusUpdateAvailable
         {
             get => _isVivaldiPlusUpdateAvailable;
@@ -663,6 +721,12 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
                 _downloadDetailText = value;
                 OnPropertyChanged();
             }
+        }
+
+        internal static string GetLatestVivaldiPlusVersion(IEnumerable<VivaldiPlusPlusRelease> releases)
+        {
+            var release = releases?.FirstOrDefault(item => !string.IsNullOrWhiteSpace(item?.Version));
+            return release?.Version.TrimStart('v');
         }
 
         private bool _isDownloadIndeterminate;
