@@ -51,7 +51,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $zip = Join-Path $env:RUNNER_TEMP 'Release.zip'
+          $upgradeNote = 'Upgrading from v1.0.3.9 or earlier with the English interface: close the updater and extract the full Release.zip into its existing directory. Keep your settings.json and App folder.'
           # The self-updater downloads assets[0], so upload only this ZIP.
           gh release create $env:GITHUB_REF_NAME $zip --repo $env:GITHUB_REPOSITORY `
-            --verify-tag --generate-notes --latest --title $env:GITHUB_REF_NAME
+            --verify-tag --generate-notes --notes $upgradeNote --latest --title $env:GITHUB_REF_NAME
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
