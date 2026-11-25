@@ -93,6 +93,9 @@ namespace VivaldiUpdater
                     EnableProxyCheckBox.Checked += EnableProxyCheckBox_Checked;
                     EnableProxyCheckBox.Unchecked += EnableProxyCheckBox_Unchecked;
                 }
+
+                UseProxyForVersionChecksCheckBox.IsChecked = ProxySettings.UseProxyForVersionChecks;
+                UseProxyForDownloadsCheckBox.IsChecked = ProxySettings.UseProxyForDownloads;
                 
                 // 设置代理类型
                 if (ProxyTypeComboBox != null)
@@ -146,6 +149,8 @@ namespace VivaldiUpdater
                 try
                 {
                     if (EnableProxyCheckBox != null) EnableProxyCheckBox.IsChecked = false;
+                    UseProxyForVersionChecksCheckBox.IsChecked = false;
+                    UseProxyForDownloadsCheckBox.IsChecked = true;
                     if (ProxyTypeComboBox != null && ProxyTypeComboBox.Items.Count > 0) ProxyTypeComboBox.SelectedIndex = 0;
                     if (ProxyHostTextBox != null) ProxyHostTextBox.Text = "";
                     if (ProxyPortTextBox != null) ProxyPortTextBox.Text = "";
@@ -213,6 +218,8 @@ namespace VivaldiUpdater
 
                 ProxySettings.ProxyUsername = ProxyUsernameTextBox.Text.Trim();
                 ProxySettings.ProxyPassword = ProxyPasswordTextBox.Password;
+                ProxySettings.UseProxyForVersionChecks = UseProxyForVersionChecksCheckBox.IsChecked == true;
+                ProxySettings.UseProxyForDownloads = UseProxyForDownloadsCheckBox.IsChecked == true;
 
                 // 保存到统一配置文件
                 AppSettings.Save();

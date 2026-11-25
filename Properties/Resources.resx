@@ -192,6 +192,12 @@
   <data name="text_enable_proxy" xml:space="preserve">
     <value>启用代理</value>
   </data>
+  <data name="text_use_proxy_for_version_checks" xml:space="preserve">
+    <value>通过代理获取版本信息</value>
+  </data>
+  <data name="text_use_proxy_for_downloads" xml:space="preserve">
+    <value>通过代理下载更新</value>
+  </data>
   <data name="text_proxy_type" xml:space="preserve">
     <value>代理类型:</value>
   </data>

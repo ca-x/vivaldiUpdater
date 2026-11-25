@@ -20,6 +20,8 @@ namespace VivaldiUpdater.ViewModel
         public string LocalizedProxyConfigTitle { get { return Resources.text_proxy_config_title; } }
         public string LocalizedProxyConfigTitleWithEnglish { get { return string.Format("{0} / Proxy Settings", Resources.text_proxy_config_title); } }
         public string LocalizedEnableProxy { get { return Resources.text_enable_proxy; } }
+        public string LocalizedUseProxyForVersionChecks => Resources.ResourceManager.GetString("text_use_proxy_for_version_checks", Resources.Culture);
+        public string LocalizedUseProxyForDownloads => Resources.ResourceManager.GetString("text_use_proxy_for_downloads", Resources.Culture);
         public string LocalizedProxyType { get { return Resources.text_proxy_type; } }
         public string LocalizedHost { get { return Resources.text_host; } }
         public string LocalizedPort { get { return Resources.text_port; } }
@@ -34,6 +36,8 @@ namespace VivaldiUpdater.ViewModel
             OnPropertyChanged("LocalizedProxyConfigTitle");
             OnPropertyChanged("LocalizedProxyConfigTitleWithEnglish");
             OnPropertyChanged("LocalizedEnableProxy");
+            OnPropertyChanged(nameof(LocalizedUseProxyForVersionChecks));
+            OnPropertyChanged(nameof(LocalizedUseProxyForDownloads));
             OnPropertyChanged("LocalizedProxyType");
             OnPropertyChanged("LocalizedHost");
             OnPropertyChanged("LocalizedPort");

@@ -55,6 +55,7 @@
         <Compile Include="Helpers\DownloaderTestDoubles.cs" />
         <Compile Include="Helpers\MainWindowSmokeTest.cs" />
         <Compile Include="Helpers\MainViewModelStatusTest.cs" />
+        <Compile Include="Helpers\MetadataSocksProxyTest.cs" />
         <Compile Include="Helpers\SelfUpdateFilesTest.cs" />
         <Compile Include="Helpers\VivaldiInfoExTest.cs" />
         <Compile Include="Helpers\UpdaterSiteReleaseTest.cs" />

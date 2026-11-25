@@ -33,16 +33,17 @@ namespace VivaldiUpdater.Helpers
 
         public static async Task<GithubRelease> GetAppLatestRelease(int timeoutSeconds = HttpClientTimeoutSeconds)
         {
-            using (var client = CreateSiteClient(timeoutSeconds))
+            using (var direct = CreateSiteClient(timeoutSeconds))
+            using (var proxy = TryCreateSiteProxyClient(timeoutSeconds))
             {
-                return await GetAppLatestRelease(client).ConfigureAwait(false);
+                return await GetAppLatestRelease(direct, proxy).ConfigureAwait(false);
             }
         }
 
-        internal static async Task<GithubRelease> GetAppLatestRelease(HttpClient client)
+        internal static async Task<GithubRelease> GetAppLatestRelease(HttpClient direct, HttpClient proxy = null)
         {
             // Both release endpoints use the same asset metadata format.
-            var assets = await ReadSiteAsync<List<VivaldiPlusPlusRelease>>(client, "/api/vivaldiupdater").ConfigureAwait(false);
+            var assets = await ReadSiteAsync<List<VivaldiPlusPlusRelease>>(direct, "/api/vivaldiupdater", proxy).ConfigureAwait(false);
             if (assets == null) return null;
 
             foreach (var asset in assets)
@@ -73,24 +74,32 @@ namespace VivaldiUpdater.Helpers
 
         private static HttpClient CreateSiteClient(int timeoutSeconds)
         {
-            var client = DownloadHttpClientFactory.Create(allowAutoRedirect: false);
+            var client = DownloadHttpClientFactory.CreateDirect(forDownloads: false);
             client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+            return client;
+        }
+
+        private static HttpClient TryCreateSiteProxyClient(int timeoutSeconds)
+        {
+            var client = DownloadHttpClientFactory.TryCreateProxy(AppSettings.Load().Proxy, forDownloads: false);
+            if (client != null) client.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
             return client;
         }
 
         private static async Task<T> QuerySiteAsync<T>(string path, int timeoutSeconds) where T : class
         {
-            using (var client = CreateSiteClient(timeoutSeconds))
+            using (var direct = CreateSiteClient(timeoutSeconds))
+            using (var proxy = TryCreateSiteProxyClient(timeoutSeconds))
             {
-                return await ReadSiteAsync<T>(client, path).ConfigureAwait(false);
+                return await ReadSiteAsync<T>(direct, path, proxy).ConfigureAwait(false);
             }
         }
 
-        private static async Task<T> ReadSiteAsync<T>(HttpClient client, string path) where T : class
+        private static async Task<T> ReadSiteAsync<T>(HttpClient direct, string path, HttpClient proxy) where T : class
         {
             try
             {
-                var json = await GetSiteJsonAsync(client, path).ConfigureAwait(false);
+                var json = await GetSiteJsonAsync(direct, path, proxy).ConfigureAwait(false);
                 return SimpleJson.SimpleJson.DeserializeObject<T>(json);
             }
             catch (Exception ex)
@@ -100,15 +109,41 @@ namespace VivaldiUpdater.Helpers
             }
         }
 
-        internal static async Task<string> GetSiteJsonAsync(HttpClient client, string path)
+        internal static async Task<string> GetSiteJsonAsync(HttpClient direct, string path, HttpClient proxy = null)
         {
+            var primary = new Uri(PrimarySite, path);
+            if (proxy != null)
+            {
+                try
+                {
+                    using (var response = await proxy.GetAsync(primary).ConfigureAwait(false))
+                    {
+                        if (response.StatusCode != HttpStatusCode.ProxyAuthenticationRequired &&
+                            response.StatusCode != HttpStatusCode.BadGateway &&
+                            response.StatusCode != HttpStatusCode.GatewayTimeout)
+                        {
+                            response.EnsureSuccessStatusCode();
+                            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        }
+                    }
+                }
+                catch (HttpRequestException ex) when (ex.InnerException != null)
+                {
+                    Debug.WriteLine(ex);
+                }
+                catch (TaskCanceledException ex)
+                {
+                    Debug.WriteLine(ex);
+                }
+            }
+
             try
             {
-                return await client.GetStringAsync(new Uri(PrimarySite, path)).ConfigureAwait(false);
+                return await direct.GetStringAsync(primary).ConfigureAwait(false);
             }
             catch (HttpRequestException ex) when (IsNameResolutionFailure(ex))
             {
-                return await client.GetStringAsync(new Uri(BackupSite, path)).ConfigureAwait(false);
+                return await direct.GetStringAsync(new Uri(BackupSite, path)).ConfigureAwait(false);
             }
         }
 

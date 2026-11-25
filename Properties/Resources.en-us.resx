@@ -89,6 +89,12 @@
     <data name="text_enable_proxy" xml:space="preserve">
         <value>Enable Proxy</value>
     </data>
+    <data name="text_use_proxy_for_version_checks" xml:space="preserve">
+        <value>Use proxy for version checks</value>
+    </data>
+    <data name="text_use_proxy_for_downloads" xml:space="preserve">
+        <value>Use proxy for downloads</value>
+    </data>
     <data name="text_proxy_type" xml:space="preserve">
         <value>Proxy Type:</value>
     </data>

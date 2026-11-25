@@ -156,6 +156,16 @@ namespace VivaldiUpdater.Model
             {
                 proxy.UseProxy = Convert.ToBoolean(proxyObject["UseProxy"]);
             }
+
+            if (proxyObject.TryGetValue(nameof(ProxyConfig.UseProxyForVersionChecks), out var useProxyForVersionChecks) && useProxyForVersionChecks != null)
+            {
+                proxy.UseProxyForVersionChecks = Convert.ToBoolean(useProxyForVersionChecks);
+            }
+
+            if (proxyObject.TryGetValue(nameof(ProxyConfig.UseProxyForDownloads), out var useProxyForDownloads) && useProxyForDownloads != null)
+            {
+                proxy.UseProxyForDownloads = Convert.ToBoolean(useProxyForDownloads);
+            }
             
             if (proxyObject.ContainsKey("ProxyType") && proxyObject["ProxyType"] != null)
             {
@@ -243,6 +253,8 @@ namespace VivaldiUpdater.Model
     public class ProxyConfig
     {
         public bool UseProxy { get; set; }
+        public bool UseProxyForVersionChecks { get; set; }
+        public bool UseProxyForDownloads { get; set; } = true;
         public ProxyType ProxyType { get; set; }
         public string ProxyHost { get; set; }
         public int ProxyPort { get; set; }

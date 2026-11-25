@@ -66,6 +66,7 @@
     <Compile Include="Helpers\DownloadStreamWriter.cs" />
     <Compile Include="Helpers\DownloadTransfer.cs" />
     <Compile Include="Helpers\DownloadUriPolicy.cs" />
+    <Compile Include="Helpers\MetadataSocksProxy.cs" />
     <Compile Include="Helpers\VivaldiInstaller.cs" />
     <Compile Include="Helpers\VivaldiPlusFiles.cs" />
     <Compile Include="Model\GithubRelease.cs" />

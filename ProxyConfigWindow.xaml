@@ -26,7 +26,7 @@
         <!--  Main content card  -->
         <Border
             Width="360"
-            Height="420"
+            MinHeight="420"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Background="#EFD6F3"
@@ -110,15 +110,38 @@
                     <!--  Enable Proxy  -->
                     <StackPanel
                         Grid.Row="0"
-                        Margin="0,5,0,5"
-                        Orientation="Horizontal">
+                        Margin="0,5,0,5">
                         <CheckBox
                             x:Name="EnableProxyCheckBox"
+                            HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             Checked="EnableProxyCheckBox_Checked"
                             Content="{Binding LocalizedEnableProxy}"
                             Style="{StaticResource AppleCheckBoxStyle}"
                             Unchecked="EnableProxyCheckBox_Unchecked" />
+                        <StackPanel
+                            Margin="20,0,0,0"
+                            IsEnabled="{Binding IsChecked, ElementName=EnableProxyCheckBox}">
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter Property="Opacity" Value="0.55" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <CheckBox
+                                x:Name="UseProxyForVersionChecksCheckBox"
+                                HorizontalAlignment="Left"
+                                Content="{Binding LocalizedUseProxyForVersionChecks}"
+                                Style="{StaticResource AppleCheckBoxStyle}" />
+                            <CheckBox
+                                x:Name="UseProxyForDownloadsCheckBox"
+                                HorizontalAlignment="Left"
+                                Content="{Binding LocalizedUseProxyForDownloads}"
+                                Style="{StaticResource AppleCheckBoxStyle}" />
+                        </StackPanel>
                     </StackPanel>
 
                     <!--  Proxy Type  -->

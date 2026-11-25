@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using VivaldiUpdater.Helpers;
+using VivaldiUpdater.Model;
 
 namespace TestCase.Helpers
 {
@@ -16,6 +17,31 @@ namespace TestCase.Helpers
         private const string Download = "https://github.com/ca-x/vivaldiUpdater/releases/download/v1.0.3.12/Release.zip";
         private const string ReleaseJson = "[{\"asset_name\":\"Release.zip\",\"version\":\"v1.0.3.12\"," +
                                            "\"github_origin_url\":\"" + Download + "\"}]";
+
+        [TestCase(true, false, true, false, true)]
+        [TestCase(true, true, false, true, false)]
+        [TestCase(false, true, true, false, false)]
+        public void ProxyScopesAreIndependent(bool enabled, bool versions, bool downloads,
+            bool expectedVersions, bool expectedDownloads)
+        {
+            var config = new ProxyConfig
+            {
+                UseProxy = enabled,
+                UseProxyForVersionChecks = versions,
+                UseProxyForDownloads = downloads
+            };
+
+            Assert.That(DownloadHttpClientFactory.ShouldUseProxy(config, forDownloads: false), Is.EqualTo(expectedVersions));
+            Assert.That(DownloadHttpClientFactory.ShouldUseProxy(config, forDownloads: true), Is.EqualTo(expectedDownloads));
+        }
+
+        [Test]
+        public void LegacyProxySettingsKeepDownloadRoutingOnly()
+        {
+            var config = new ProxyConfig { UseProxy = true };
+            Assert.That(DownloadHttpClientFactory.ShouldUseProxy(config, forDownloads: false), Is.False);
+            Assert.That(DownloadHttpClientFactory.ShouldUseProxy(config, forDownloads: true), Is.True);
+        }
 
         [Test]
         public async Task UpdaterVersionComesFromTheWebsite()
@@ -74,6 +100,64 @@ namespace TestCase.Helpers
             {
                 Assert.That(await VivaldiInfoEx.GetAppLatestRelease(client), Is.Null);
                 Assert.That(handler.CallCount, Is.EqualTo(1));
+            }
+        }
+
+        [Test]
+        public async Task ProxyIsTriedBeforeDirectConnection()
+        {
+            var proxyHandler = new ScriptedHttpMessageHandler(
+                request => Respond(request, Primary + ReleasePath, ReleaseJson));
+            var directHandler = new ScriptedHttpMessageHandler();
+            using (var proxy = new HttpClient(proxyHandler))
+            using (var direct = new HttpClient(directHandler))
+            {
+                Assert.That((await VivaldiInfoEx.GetAppLatestRelease(direct, proxy)).TagName, Is.EqualTo("v1.0.3.12"));
+                Assert.That(proxyHandler.CallCount, Is.EqualTo(1));
+                Assert.That(directHandler.CallCount, Is.Zero);
+            }
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task ProxyFailureRetriesThePrimaryDirectlyBeforeCheckingBackup(bool directDnsFails)
+        {
+            var proxyHandler = new ScriptedHttpMessageHandler(
+                request => throw new HttpRequestException("Proxy DNS",
+                    new WebException("Proxy DNS", WebExceptionStatus.NameResolutionFailure)));
+            var directHandler = new ScriptedHttpMessageHandler(
+                request =>
+                {
+                    Assert.That(request.RequestUri.AbsoluteUri, Is.EqualTo(Primary + ReleasePath));
+                    if (directDnsFails)
+                    {
+                        throw new HttpRequestException("Origin DNS",
+                            new WebException("Origin DNS", WebExceptionStatus.NameResolutionFailure));
+                    }
+                    return Respond(request, Primary + ReleasePath, ReleaseJson);
+                },
+                request => Respond(request, Backup + ReleasePath, ReleaseJson));
+            using (var proxy = new HttpClient(proxyHandler))
+            using (var direct = new HttpClient(directHandler))
+            {
+                Assert.That((await VivaldiInfoEx.GetAppLatestRelease(direct, proxy)).TagName, Is.EqualTo("v1.0.3.12"));
+                Assert.That(proxyHandler.CallCount, Is.EqualTo(1));
+                Assert.That(directHandler.CallCount, Is.EqualTo(directDnsFails ? 2 : 1));
+            }
+        }
+
+        [Test]
+        public async Task UnauthenticatedProxyFallsBackDirectly()
+        {
+            var proxyHandler = new ScriptedHttpMessageHandler(
+                request => new HttpResponseMessage(HttpStatusCode.ProxyAuthenticationRequired));
+            var directHandler = new ScriptedHttpMessageHandler(
+                request => Respond(request, Primary + ReleasePath, ReleaseJson));
+            using (var proxy = new HttpClient(proxyHandler))
+            using (var direct = new HttpClient(directHandler))
+            {
+                Assert.That((await VivaldiInfoEx.GetAppLatestRelease(direct, proxy)).TagName, Is.EqualTo("v1.0.3.12"));
+                Assert.That(directHandler.CallCount, Is.EqualTo(1));
             }
         }
 
