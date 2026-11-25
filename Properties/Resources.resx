@@ -426,4 +426,13 @@
   <data name="text_self_update_recovery" xml:space="preserve">
     <value>未能恢复旧版。备份目录：{0}</value>
   </data>
+  <data name="text_components_up_to_date" xml:space="preserve">
+    <value>组件已是最新</value>
+  </data>
+  <data name="text_updater_update_available" xml:space="preserve">
+    <value>更新器 v{0} 可用</value>
+  </data>
+  <data name="text_updater_check_failed" xml:space="preserve">
+    <value>未能检查更新器版本，点击重试。</value>
+  </data>
 </root>

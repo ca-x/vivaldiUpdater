@@ -66,7 +66,7 @@ namespace VivaldiUpdater.ViewModel
             InitializeLanguageOptions();
             InitializeThemeOptions();
             
-            ManualUpdateAppCommand = new RelayCommand(ManualUpdateApp);
+            ManualUpdateAppCommand = new RelayCommand(async () => await ManualUpdateAppAsync());
             
             // 启动时清理可能残留的临时文件
             CleanupTemporaryFiles();
@@ -269,18 +269,14 @@ namespace VivaldiUpdater.ViewModel
             OnPropertyChanged(nameof(LocalizedProxySettingsLabel));
             OnPropertyChanged(nameof(LocalizedMinimizeLabel));
             OnPropertyChanged(nameof(LocalizedCloseLabel));
-            OnPropertyChanged(nameof(LocalizedNewVersionFoundLabel));
             OnPropertyChanged(nameof(ProcessBarNotifyText));
             OnPropertyChanged(nameof(DownloadDetailText));
             OnPropertyChanged(nameof(Operation));
 
             VivaldiUpdateNotifyText = GetComponentStatusText(VivaldiStatus);
             VivaldiPlusUpdateNotifyText = GetComponentStatusText(VivaldiPlusStatus);
-            if (AppLatestVersion != null)
-            {
-                AppUpdateNotifyText = IsAppUpdateAvailable
-                    ? Properties.Resources.text_update_avaliable : Properties.Resources.text_no_update_avaliable;
-            }
+            OnPropertyChanged(nameof(AppUpdateNotifyText));
+            OnPropertyChanged(nameof(AppUpdateButtonText));
         }
 
         private static string GetComponentStatusText(ComponentUpdateState state)
@@ -297,6 +293,13 @@ namespace VivaldiUpdater.ViewModel
 
         internal async Task InitializeStatusAsync(Func<Task<bool>> refresh)
         {
+            if (_checkingVersions)
+            {
+                return;
+            }
+
+            _checkingVersions = true;
+            CanApplyChanges = false;
             ShowUpdateProcessBar = Visibility.Visible;
             SetProgressText(() => GetText("text_initializing"));
             SetDetailText(() => GetText("text_checking_installed_versions"));
@@ -316,7 +319,9 @@ namespace VivaldiUpdater.ViewModel
             }
             finally
             {
+                _checkingVersions = false;
                 IsDownloadIndeterminate = false;
+                RefreshComponentsAction();
             }
         }
 
@@ -341,27 +346,33 @@ namespace VivaldiUpdater.ViewModel
 
         private async Task UpdateVersionInfo()
         {
-            var vivaldiVersionInfo = await Helpers.VivaldiInfoEx.GetVivaldiVersionInfo();
-            VivaldiLatestVersion = vivaldiVersionInfo?.Version;
+            var appRelease = VivaldiInfoEx.GetAppLatestRelease();
+            var browser = VivaldiInfoEx.GetVivaldiVersionInfo();
+            var plugin = VivaldiInfoEx.GetVivaldiPlusPlusRelease();
+            ApplyAppRelease(await appRelease);
+            VivaldiLatestVersion = (await browser)?.Version;
+            VivaldiPlusLatestVersion = GetLatestVivaldiPlusVersion(await plugin);
+        }
 
-            var vivaldiPlusInfo = await Helpers.VivaldiInfoEx.GetVivaldiPlusPlusRelease();
-            VivaldiPlusLatestVersion = GetLatestVivaldiPlusVersion(vivaldiPlusInfo);
-
-            var appRelease = await Helpers.VivaldiInfoEx.GetAppLatestRelease();
-            if (appRelease != null)
+        internal void ApplyAppRelease(GithubRelease release)
+        {
+            if (Version.TryParse(release?.TagName?.Trim().TrimStart('v', 'V'), out var latest) &&
+                Version.TryParse(AppVersion, out var installed))
             {
-                AppLatestVersion = appRelease.TagName.TrimStart('v');
-                if (Semver.IsBigger(AppLatestVersion, AppVersion) > 0)
-                {
-                    AppUpdateNotifyText = Properties.Resources.text_update_avaliable ?? "有新版本";
-                    IsAppUpdateAvailable = true;
-                }
-                else
-                {
-                    AppUpdateNotifyText = Properties.Resources.text_no_update_avaliable ?? "已是最新";
-                    IsAppUpdateAvailable = false;
-                }
+                AppLatestVersion = latest.ToString();
+                AppUpdateStatus = latest > installed ? ComponentUpdateState.UpdateAvailable : ComponentUpdateState.Current;
             }
+            else
+            {
+                AppLatestVersion = null;
+                AppUpdateStatus = ComponentUpdateState.Unavailable;
+            }
+
+            OnPropertyChanged(nameof(AppUpdateStatus));
+            OnPropertyChanged(nameof(IsAppUpdateAvailable));
+            OnPropertyChanged(nameof(ShowAppUpdateAction));
+            OnPropertyChanged(nameof(AppUpdateNotifyText));
+            OnPropertyChanged(nameof(AppUpdateButtonText));
         }
 
         private (string InstalledVivaldi, string VivaldiArch, string InstalledVivaldiPlus, string VivaldiPlusArch)
@@ -395,33 +406,33 @@ private void UpdateUIBasedOnVersionComparison(
             (string InstalledVivaldi, string VivaldiArch, string InstalledVivaldiPlus, string VivaldiPlusArch)
                 installedInfo)
         {
-            bool vivaldiHasNoUpdate = UpdateVivaldiUI(installedInfo.InstalledVivaldi);
-            bool vivaldiPlusHasNoUpdate = UpdateVivaldiPlusUI(installedInfo.InstalledVivaldiPlus);
+            UpdateVivaldiUI(installedInfo.InstalledVivaldi);
+            UpdateVivaldiPlusUI(installedInfo.InstalledVivaldiPlus);
+            RefreshComponentsAction();
+        }
 
-            // 如果有未安装的组件，按钮显示"安装"
-            if (installedInfo.InstalledVivaldi == null || installedInfo.InstalledVivaldiPlus == null)
+        internal void RefreshComponentsAction()
+        {
+            bool current = VivaldiStatus == ComponentUpdateState.Current &&
+                           VivaldiPlusStatus == ComponentUpdateState.Current;
+            if (VivaldiStatus == ComponentUpdateState.NotInstalled || VivaldiPlusStatus == ComponentUpdateState.NotInstalled)
             {
                 SetOperation(() => Properties.Resources.text_install);
-                CanApplyChanges = true;
             }
-            else if (VivaldiStatus == ComponentUpdateState.Unavailable ||
-                     VivaldiPlusStatus == ComponentUpdateState.Unavailable)
+            else if (VivaldiStatus == ComponentUpdateState.Unavailable || VivaldiPlusStatus == ComponentUpdateState.Unavailable)
             {
                 SetOperation(() => GetText("text_retry_check"));
-                CanApplyChanges = true;
             }
-            // 如果所有组件都已安装且都是最新版，按钮显示"已是最新版"并禁用
-            else if (vivaldiHasNoUpdate && vivaldiPlusHasNoUpdate)
+            else if (current)
             {
-                SetOperation(() => Properties.Resources.text_already_latest_version);
-                CanApplyChanges = false;
+                SetOperation(() => GetText("text_components_up_to_date"));
             }
-            // 其他情况（已安装但需要更新），按钮显示"更新"
             else
             {
                 SetOperation(() => Properties.Resources.text_update);
-                CanApplyChanges = true;
             }
+
+            CanApplyChanges = !_checkingVersions && !_applyingChanges && !_selfUpdateInProgress && !current;
         }
 
 private bool UpdateVivaldiUI(string installedVersion)
@@ -551,12 +562,9 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
             set { _isVivaldiPlusUpdateAvailable = value; OnPropertyChanged(); }
         }
 
-        private bool _isAppUpdateAvailable;
-        public bool IsAppUpdateAvailable
-        {
-            get => _isAppUpdateAvailable;
-            set { _isAppUpdateAvailable = value; OnPropertyChanged(); }
-        }
+        public ComponentUpdateState AppUpdateStatus { get; private set; }
+        public bool IsAppUpdateAvailable => AppUpdateStatus == ComponentUpdateState.UpdateAvailable;
+        public bool ShowAppUpdateAction => IsAppUpdateAvailable || AppUpdateStatus == ComponentUpdateState.Unavailable;
 
 
         private bool _enableVivaldiUpdate;
@@ -873,20 +881,18 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
             }
         }
 
-        private string _appUpdateNotifyText;
-        public string AppUpdateNotifyText
-        {
-            get => _appUpdateNotifyText;
-            set
-            {
-                _appUpdateNotifyText = value;
-                OnPropertyChanged();
-            }
-        }
+        public string AppUpdateNotifyText => IsAppUpdateAvailable
+            ? string.Format(GetText("text_updater_update_available"), AppLatestVersion)
+            : AppUpdateStatus == ComponentUpdateState.Unavailable ? GetText("text_updater_check_failed") : null;
+
+        public string AppUpdateButtonText => IsAppUpdateAvailable ? $"v{AppLatestVersion}" : GetText("text_update_check_failed");
 
         #endregion
 
         #region command
+
+        private bool _checkingVersions;
+        private bool _applyingChanges;
 
         private bool _canApplyChanges = true;
 
@@ -932,6 +938,12 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
 
         private async void ApplyChanges()
         {
+            if (!CanApplyChanges)
+            {
+                return;
+            }
+
+            _applyingChanges = true;
             try
             {
                 CanApplyChanges = false; // 禁用按钮
@@ -961,7 +973,7 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
                 }
 
                 // Check and update App itself if enabled
-                if (EnableAppUpdate && AppLatestVersion != null && Semver.IsBigger(AppLatestVersion, AppVersion) > 0)
+                if (EnableAppUpdate && IsAppUpdateAvailable)
                 {
                      SetProgressText(() => Properties.Resources.text_updating_app);
                      await PerformSelfUpdate();
@@ -1001,8 +1013,9 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
             }
             finally
             {
+                _applyingChanges = false;
                 IsDownloadIndeterminate = false;
-                CanApplyChanges = true; // 重新启用按钮
+                RefreshComponentsAction();
             }
         }
 
@@ -1166,9 +1179,11 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
 
                 SetProgressText(() => Properties.Resources.text_downloading_new_version);
                 var release = await VivaldiInfoEx.GetAppLatestRelease();
-                if (release == null || release.Assets == null || release.Assets.Count == 0)
+                ApplyAppRelease(release);
+                if (!IsAppUpdateAvailable || release.Assets == null || release.Assets.Count == 0)
                 {
-                    SetProgressText(() => GetText("text_update_check_failed"));
+                    SetProgressText(() => AppUpdateStatus == ComponentUpdateState.Current
+                        ? Properties.Resources.text_already_latest_version : GetText("text_update_check_failed"));
                     return;
                 }
 
@@ -1498,14 +1513,21 @@ else
         }
 
 
-        public string LocalizedNewVersionFoundLabel => Properties.Resources.text_new_version_found;
-
         #endregion
         public ICommand ManualUpdateAppCommand { get; }
 
-        private async void ManualUpdateApp()
+        private async Task ManualUpdateAppAsync()
         {
-            if (_selfUpdateInProgress || string.IsNullOrEmpty(AppLatestVersion))
+            if (_selfUpdateInProgress || _checkingVersions || _applyingChanges)
+            {
+                return;
+            }
+            if (AppUpdateStatus == ComponentUpdateState.Unavailable)
+            {
+                await InitializeStatusAsync(UpdateContext);
+                return;
+            }
+            if (!IsAppUpdateAvailable)
             {
                 return;
             }
@@ -1515,7 +1537,6 @@ else
                 return;
             }
 
-            var couldApplyChanges = CanApplyChanges;
             try
             {
                 ShowUpdateProcessBar = Visibility.Visible;
@@ -1525,7 +1546,7 @@ else
             finally
             {
                 IsDownloadIndeterminate = false;
-                CanApplyChanges = couldApplyChanges;
+                RefreshComponentsAction();
             }
         }
     }

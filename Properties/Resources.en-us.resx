@@ -323,4 +323,13 @@
   <data name="text_self_update_recovery" xml:space="preserve">
     <value>Could not restore the previous version. Backup folder: {0}</value>
   </data>
+  <data name="text_components_up_to_date" xml:space="preserve">
+    <value>Components up to date</value>
+  </data>
+  <data name="text_updater_update_available" xml:space="preserve">
+    <value>Updater v{0} is available</value>
+  </data>
+  <data name="text_updater_check_failed" xml:space="preserve">
+    <value>Could not check the updater version. Click to retry.</value>
+  </data>
 </root>

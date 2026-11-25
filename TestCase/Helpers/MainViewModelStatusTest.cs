@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using VivaldiUpdater.Model;
 using VivaldiUpdater.Properties;
 using VivaldiUpdater.ViewModel;
 
@@ -11,6 +12,37 @@ namespace TestCase.Helpers
     [TestFixture]
     public class MainViewModelStatusTest
     {
+        [TestCase("v1.0.3.10", ComponentUpdateState.UpdateAvailable)]
+        [TestCase("v1.0.3.12", ComponentUpdateState.UpdateAvailable)]
+        [TestCase("v1.0.3.9", ComponentUpdateState.Current)]
+        [TestCase("v1.0.3.8", ComponentUpdateState.Current)]
+        [TestCase(null, ComponentUpdateState.Unavailable)]
+        [TestCase("bad-tag", ComponentUpdateState.Unavailable)]
+        public void UpdaterCheckControlsOnlyItsOwnButton(string tag, ComponentUpdateState expected)
+        {
+            var model = new MainViewModel
+            {
+                AppVersion = "1.0.3.9",
+                VivaldiStatus = ComponentUpdateState.Current,
+                VivaldiPlusStatus = ComponentUpdateState.Current
+            };
+
+            model.RefreshComponentsAction();
+            var componentLabel = model.Operation;
+            model.ApplyAppRelease(tag == null ? null : new GithubRelease { TagName = tag });
+
+            Assert.That(model.AppUpdateStatus, Is.EqualTo(expected));
+            Assert.That(model.IsAppUpdateAvailable, Is.EqualTo(expected == ComponentUpdateState.UpdateAvailable));
+            Assert.That(model.ShowAppUpdateAction, Is.EqualTo(expected != ComponentUpdateState.Current));
+            Assert.That(model.ApplyCommand.CanExecute(null), Is.False);
+            Assert.That(model.Operation, Is.EqualTo(componentLabel));
+            Assert.That(string.IsNullOrEmpty(model.AppUpdateNotifyText), Is.EqualTo(expected == ComponentUpdateState.Current));
+            if (expected == ComponentUpdateState.UpdateAvailable)
+            {
+                Assert.That(model.AppUpdateButtonText, Is.EqualTo(tag));
+            }
+        }
+
         [Test]
         [NonParallelizable]
         public async Task StartupNoticeTracksTheSelectedLanguageWhileTheCheckIsRunning()

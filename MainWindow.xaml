@@ -97,21 +97,25 @@
 
             <DockPanel Margin="20,0,12,0" Background="Transparent" MouseLeftButtonDown="HandleDrag">
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button Command="{Binding ManualUpdateAppCommand}"
-                            AutomationProperties.Name="{Binding LocalizedNewVersionFoundLabel}"
-                            ToolTip="{Binding LocalizedNewVersionFoundLabel}">
+                    <Button Width="Auto" MinWidth="32" Command="{Binding ManualUpdateAppCommand}"
+                            AutomationProperties.Name="{Binding AppUpdateNotifyText}"
+                            ToolTip="{Binding AppUpdateNotifyText}">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource TitleButton}">
                                 <Setter Property="Visibility" Value="Collapsed" />
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsAppUpdateAvailable}" Value="True">
+                                    <DataTrigger Binding="{Binding ShowAppUpdateAction}" Value="True">
                                         <Setter Property="Visibility" Value="Visible" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </Button.Style>
-                        <Path Width="14" Height="14" Stretch="Uniform" Data="{StaticResource UpdateIconGeometry}"
-                              Fill="{DynamicResource WarningBrush}" />
+                        <StackPanel Margin="6,0" Orientation="Horizontal">
+                            <Path Width="14" Height="14" Stretch="Uniform" Data="{StaticResource UpdateIconGeometry}"
+                                  Fill="{DynamicResource WarningBrush}" VerticalAlignment="Center" />
+                            <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" FontSize="12"
+                                       AutomationProperties.LiveSetting="Polite" Text="{Binding AppUpdateButtonText}" />
+                        </StackPanel>
                     </Button>
                     <Button Command="{Binding ConfigureProxyCommand}" Style="{StaticResource TitleButton}"
                             AutomationProperties.Name="{Binding LocalizedProxySettingsLabel}"
