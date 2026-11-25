@@ -7,9 +7,9 @@ namespace VivaldiUpdater.Helpers
 {
     internal static class DownloadHttpClientFactory
     {
-        public static HttpClient Create()
+        public static HttpClient Create(bool allowAutoRedirect = true)
         {
-            var handler = new HttpClientHandler();
+            var handler = new HttpClientHandler { AllowAutoRedirect = allowAutoRedirect };
             var proxySettings = AppSettings.Load().Proxy;
 
             if (proxySettings.UseProxy && !string.IsNullOrWhiteSpace(proxySettings.ProxyHost))

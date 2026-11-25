@@ -9,7 +9,7 @@
 1. In `Properties/AssemblyInfo.cs`, bump `AssemblyVersion` and `AssemblyFileVersion` to the same four-part version, higher than the latest stable release. Commit the version bump.
 2. Push the release commit to `main`. Then tag that commit with the matching version (for example, `git tag v1.0.3.10`) and push the tag separately (`git push origin v1.0.3.10`). The **Release VivaldiUpdater** workflow builds on Windows and rejects tags that do not match the executable's `AssemblyVersion`.
 
-The workflow publishes a stable GitHub release marked **Latest**, with `Release.zip` as its only uploaded asset. The self-updater checks the latest release in `ca-x/vivaldiUpdater` and downloads the first asset, so do not add other assets. For a manual install, extract the whole ZIP before running `VivaldiUpdater.exe`.
+The workflow publishes a stable GitHub release marked **Latest**, with `Release.zip` as its only uploaded asset. The self-updater reads the release version from `vivaldi.czyt.tech/api/vivaldiupdater` and downloads the matching GitHub asset. Keep `Release.zip` as the only asset for older clients. For a manual install, extract the whole ZIP before running `VivaldiUpdater.exe`.
 
 If updating from v1.0.3.9 or earlier fails while the English interface is active, close Vivaldi Updater and extract the full `Release.zip` into its existing directory. Keep the existing `settings.json` and `App` folder.
 

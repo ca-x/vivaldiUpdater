@@ -57,6 +57,7 @@
         <Compile Include="Helpers\MainViewModelStatusTest.cs" />
         <Compile Include="Helpers\SelfUpdateFilesTest.cs" />
         <Compile Include="Helpers\VivaldiInfoExTest.cs" />
+        <Compile Include="Helpers\UpdaterSiteReleaseTest.cs" />
         <Compile Include="Helpers\VivaldiInstallerTest.cs" />
         <Compile Include="Helpers\VivaldiPlusFilesTest.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
