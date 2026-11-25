@@ -40,6 +40,7 @@
         </Reference>
         <Reference Include="System" />
         <Reference Include="System.Core" />
+        <Reference Include="System.IO.Compression.FileSystem" />
         <Reference Include="System.Net.Http" />
         <Reference Include="System.Xml" />
         <Reference Include="PresentationCore" />
@@ -53,8 +54,10 @@
         <Compile Include="Helpers\DownloaderTestDoubles.cs" />
         <Compile Include="Helpers\MainWindowSmokeTest.cs" />
         <Compile Include="Helpers\MainViewModelStatusTest.cs" />
+        <Compile Include="Helpers\SelfUpdateFilesTest.cs" />
         <Compile Include="Helpers\VivaldiInfoExTest.cs" />
         <Compile Include="Helpers\VivaldiInstallerTest.cs" />
+        <Compile Include="Helpers\VivaldiPlusFilesTest.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>

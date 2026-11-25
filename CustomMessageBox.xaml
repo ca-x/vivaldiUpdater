@@ -1,112 +1,103 @@
 <Window x:Class="VivaldiUpdater.CustomMessageBox"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        Title="Message" Height="250" Width="400"
+        Width="352" SizeToContent="Height"
         AllowsTransparency="True" Background="Transparent"
-        WindowStyle="None" ResizeMode="NoResize"
-        WindowStartupLocation="CenterScreen"
-        mc:Ignorable="d">
+        Foreground="{DynamicResource TextPrimaryBrush}"
+        FontFamily="Segoe UI" UseLayoutRounding="True"
+        WindowStyle="None" ResizeMode="NoResize" ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        FocusManager.FocusedElement="{Binding ElementName=OkButton}">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="tinyStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="DialogSecondaryButton" TargetType="Button">
+                <Setter Property="Background" Value="{DynamicResource SurfaceSecondaryBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                <Setter Property="Padding" Value="14,0" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="ButtonBorder" CornerRadius="8" BorderThickness="1"
+                                    Background="{TemplateBinding Background}" BorderBrush="Transparent">
+                                <ContentPresenter Margin="{TemplateBinding Padding}"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource SurfaceBorderBrush}" />
+                                </Trigger>
+                                <Trigger Property="IsKeyboardFocused" Value="True">
+                                    <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="{DynamicResource AccentPressedBrush}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Window.Resources>
 
-    <!-- Semi-transparent overlay background -->
-    <Border Background="#80000000" CornerRadius="20">
-        <!-- Main content card -->
-        <Border MinWidth="380" MaxWidth="600" MinHeight="200" MaxHeight="500"
-                HorizontalAlignment="Center" VerticalAlignment="Center"
-                Background="#EFD6F3" CornerRadius="15">
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="20" Direction="270" ShadowDepth="5" Color="#40000000" />
-            </Border.Effect>
+    <Border Margin="8" Background="{DynamicResource AppWindowBackgroundBrush}"
+            BorderBrush="{DynamicResource SurfaceBorderBrush}" BorderThickness="1" CornerRadius="16">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.18" />
+        </Border.Effect>
+        <Grid Margin="18,14,18,16" KeyboardNavigation.TabNavigation="Cycle">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="40" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="60" />
-                </Grid.RowDefinitions>
-
-                <!-- Title Bar -->
-                <Border Grid.Row="0" Background="#F5798B" CornerRadius="15,15,0,0" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
-                    <Grid>
-                        <TextBlock x:Name="TitleText" 
-                                   HorizontalAlignment="Center" VerticalAlignment="Center"
-                                   FontSize="16" FontWeight="Bold" Foreground="White"
-                                   Text="Title" />
-                        
-                        <Button
-                            Width="30"
-                            Height="30"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Click="CloseButton_Click"
-                            Content="×"
-                            Cursor="Hand"
-                            FontSize="18"
-                            FontWeight="Bold"
-                            Foreground="White"
-                            Margin="0,0,5,0">
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="Button">
-                                                <Border Background="{TemplateBinding Background}" CornerRadius="15">
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Background" Value="#FF1493" />
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-                    </Grid>
+            <DockPanel Background="Transparent" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <Button x:Name="CloseButton" DockPanel.Dock="Right" Width="28" Height="28"
+                        Margin="8,0,0,0" Padding="0" TabIndex="3" Background="Transparent"
+                        AutomationProperties.Name="{Binding ToolTip, RelativeSource={RelativeSource Self}}"
+                        Style="{StaticResource DialogSecondaryButton}" Click="CloseButton_Click">
+                    <Path Data="M0,0 L9,9 M9,0 L0,9"
+                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                </Button>
+                <Border x:Name="UpdateIcon" DockPanel.Dock="Left" Width="28" Height="28" CornerRadius="8"
+                        Margin="0,0,9,0" VerticalAlignment="Center" Visibility="Collapsed"
+                        Background="{DynamicResource AccentSoftBrush}">
+                    <Path Width="15" Height="15" Stretch="Uniform" Data="{StaticResource UpdateIconGeometry}"
+                          Fill="{DynamicResource AccentPressedBrush}" />
                 </Border>
+                <TextBlock x:Name="TitleText" FontSize="17" FontWeight="SemiBold" TextWrapping="Wrap"
+                           VerticalAlignment="Center" />
+            </DockPanel>
 
-                <!-- Content Area -->
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="15,10">
-                    <TextBlock x:Name="MessageText" 
-                               TextWrapping="Wrap" 
-                               FontSize="14" 
-                               Foreground="#333333"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               TextAlignment="Center"/>
-                </ScrollViewer>
+            <ScrollViewer Grid.Row="1" Margin="0,8,0,16" MaxHeight="240"
+                          VerticalScrollBarVisibility="Auto" TabIndex="0">
+                <ScrollViewer.Style>
+                    <Style TargetType="ScrollViewer">
+                        <Setter Property="Focusable" Value="False" />
+                        <Style.Triggers>
+                            <Trigger Property="ComputedVerticalScrollBarVisibility" Value="Visible">
+                                <Setter Property="Focusable" Value="True" />
+                                <Setter Property="IsTabStop" Value="True" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ScrollViewer.Style>
+                <TextBlock x:Name="MessageText" TextWrapping="Wrap" FontSize="14"
+                           Foreground="{DynamicResource TextMutedBrush}" />
+            </ScrollViewer>
 
-                <!-- Buttons Area -->
-                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Button x:Name="OkButton"
-                            Width="100" Height="40"
-                            Content="OK"
-                            Click="OkButton_Click"
-                            Style="{StaticResource ApplePriButtonStyle}"
-                            Margin="10,0" 
-                            Visibility="Visible"/>
-                    
-                    <Button x:Name="CancelButton"
-                            Width="100" Height="40"
-                            Content="Cancel"
-                            Click="CancelButton_Click"
-                            Style="{StaticResource ApplePriButtonStyle}"
-                            Margin="10,0"
-                            Visibility="Collapsed"/> <!-- Hidden by default -->
-                </StackPanel>
-            </Grid>
-        </Border>
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="CancelButton" MinWidth="78" Height="34" Margin="0,0,8,0" TabIndex="1"
+                        FontSize="14" IsCancel="True" Click="CancelButton_Click"
+                        Style="{StaticResource DialogSecondaryButton}" />
+                <Button x:Name="OkButton" MinWidth="78" Height="34" Margin="0" TabIndex="2"
+                        FontSize="14" IsDefault="True" Click="OkButton_Click"
+                        Style="{StaticResource ApplePriButtonStyle}" />
+            </StackPanel>
+        </Grid>
     </Border>
 </Window>

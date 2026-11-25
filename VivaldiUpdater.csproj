@@ -67,6 +67,7 @@
     <Compile Include="Helpers\DownloadTransfer.cs" />
     <Compile Include="Helpers\DownloadUriPolicy.cs" />
     <Compile Include="Helpers\VivaldiInstaller.cs" />
+    <Compile Include="Helpers\VivaldiPlusFiles.cs" />
     <Compile Include="Model\GithubRelease.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -88,6 +89,7 @@
     </Compile>
     <Compile Include="Helpers\BinaryDetection.cs" />
     <Compile Include="Helpers\ResumeableDownloader.cs" />
+    <Compile Include="Helpers\SelfUpdateFiles.cs" />
     <Compile Include="Helpers\Semver.cs" />
     <Compile Include="Helpers\SimpleJson.cs" />
     <Compile Include="Helpers\ThemeManager.cs" />

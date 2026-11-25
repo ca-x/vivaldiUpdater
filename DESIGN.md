@@ -60,7 +60,7 @@ Status and settings rows use grids rather than positional margins so Chinese and
 
 ### Component status card
 
-- Structure: aligned component title, installed version, available version, and status columns.
+- Structure: aligned component title, version, and status columns. Show the installed and available versions joined by an arrow only when an upgrade is available. Otherwise show a single known version.
 - Variants: Vivaldi and Vivaldi++.
 - States: current, update available, not installed, unavailable.
 - Current and not-installed states use neutral text. Update availability uses an accent tint, and errors use semantic text on the surface.

@@ -147,20 +147,15 @@
                     <Grid Style="{StaticResource ComponentRow}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="88" />
-                            <ColumnDefinition Width="22" />
-                            <ColumnDefinition Width="88" />
+                            <ColumnDefinition Width="198" />
                             <ColumnDefinition Width="126" />
                         </Grid.ColumnDefinitions>
                         <TextBlock FontWeight="SemiBold" VerticalAlignment="Center" TextWrapping="Wrap"
                                    Text="{Binding LocalizedVivaldiBrowserLabel}" />
-                        <TextBlock Grid.Column="1" Style="{StaticResource VersionText}"
-                                   Text="{Binding VivaldiInstalledVersion, TargetNullValue=--}" />
-                        <TextBlock Grid.Column="2" Style="{StaticResource VersionText}" Text="&#x2192;" />
-                        <TextBlock Grid.Column="3" Style="{StaticResource VersionText}" FontWeight="SemiBold"
+                        <TextBlock Grid.Column="1" Style="{StaticResource VersionText}" FontWeight="SemiBold"
                                    Foreground="{DynamicResource TextPrimaryBrush}"
-                                   Text="{Binding VivaldiLatestVersion, TargetNullValue=--}" />
-                        <Border Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                   TextAlignment="Right" Margin="0,0,10,0" Text="{Binding VivaldiVersionDisplay}" />
+                        <Border Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center"
                                 Style="{StaticResource ComponentStatusBadgeStyle}" Tag="{Binding VivaldiStatus}">
                             <TextBlock Text="{Binding VivaldiUpdateNotifyText}" Style="{StaticResource ComponentStatusTextStyle}" />
                         </Border>
@@ -169,20 +164,15 @@
                     <Grid Style="{StaticResource ComponentRow}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="88" />
-                            <ColumnDefinition Width="22" />
-                            <ColumnDefinition Width="88" />
+                            <ColumnDefinition Width="198" />
                             <ColumnDefinition Width="126" />
                         </Grid.ColumnDefinitions>
                         <TextBlock FontWeight="SemiBold" VerticalAlignment="Center" TextWrapping="Wrap"
                                    Text="{Binding LocalizedVivaldiPlusPluginLabel}" />
-                        <TextBlock Grid.Column="1" Style="{StaticResource VersionText}"
-                                   Text="{Binding VivaldiPlusInstalledVersion, TargetNullValue=--}" />
-                        <TextBlock Grid.Column="2" Style="{StaticResource VersionText}" Text="&#x2192;" />
-                        <TextBlock Grid.Column="3" Style="{StaticResource VersionText}" FontWeight="SemiBold"
+                        <TextBlock Grid.Column="1" Style="{StaticResource VersionText}" FontWeight="SemiBold"
                                    Foreground="{DynamicResource TextPrimaryBrush}"
-                                   Text="{Binding VivaldiPlusLatestVersion, TargetNullValue=--}" />
-                        <Border Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                   TextAlignment="Right" Margin="0,0,10,0" Text="{Binding VivaldiPlusVersionDisplay}" />
+                        <Border Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center"
                                 Style="{StaticResource ComponentStatusBadgeStyle}" Tag="{Binding VivaldiPlusStatus}">
                             <TextBlock Text="{Binding VivaldiPlusUpdateNotifyText}" Style="{StaticResource ComponentStatusTextStyle}" />
                         </Border>
