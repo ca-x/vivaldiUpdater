@@ -34,65 +34,40 @@
         <GradientStop Color="#FFAC2F54" Offset="1" />
     </LinearGradientBrush>
 
-    <Style x:Key="ComponentStatusBadgeStyle" TargetType="{x:Type Border}">
-        <Setter Property="MinWidth" Value="82" />
-        <Setter Property="Padding" Value="8,4" />
-        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource SurfaceBorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="8" />
-        <Style.Triggers>
-            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="{x:Static viewModel:ComponentUpdateState.UpdateAvailable}">
-                <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
-                <Setter Property="BorderBrush" Value="{DynamicResource WarningBrush}" />
-            </DataTrigger>
-            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="{x:Static viewModel:ComponentUpdateState.Current}">
-                <Setter Property="Background" Value="{DynamicResource SuccessBrush}" />
-                <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}" />
-            </DataTrigger>
-            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="{x:Static viewModel:ComponentUpdateState.NotInstalled}">
-                <Setter Property="Background" Value="{DynamicResource TextMutedBrush}" />
-                <Setter Property="BorderBrush" Value="{DynamicResource TextMutedBrush}" />
-            </DataTrigger>
-            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="{x:Static viewModel:ComponentUpdateState.Unavailable}">
-                <Setter Property="Background" Value="{DynamicResource ErrorBrush}" />
-                <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}" />
-            </DataTrigger>
-        </Style.Triggers>
-    </Style>
-
-    <Style x:Key="ComponentStatusTextStyle" TargetType="{x:Type TextBlock}">
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="FontSize" Value="12" />
-        <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
-        <Style.Triggers>
-            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource AncestorType={x:Type Border}}}" Value="{x:Static viewModel:ComponentUpdateState.Current}">
-                <Setter Property="Foreground" Value="White" />
-            </DataTrigger>
-            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource AncestorType={x:Type Border}}}" Value="{x:Static viewModel:ComponentUpdateState.NotInstalled}">
-                <Setter Property="Foreground" Value="White" />
-            </DataTrigger>
-            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource AncestorType={x:Type Border}}}" Value="{x:Static viewModel:ComponentUpdateState.UpdateAvailable}">
-                <Setter Property="Foreground" Value="White" />
-            </DataTrigger>
-            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource AncestorType={x:Type Border}}}" Value="{x:Static viewModel:ComponentUpdateState.Unavailable}">
-                <Setter Property="Foreground" Value="White" />
-            </DataTrigger>
-        </Style.Triggers>
-    </Style>
-
-    <Style x:Key="ComponentStatusIconStyle" TargetType="{x:Type Path}">
-        <Setter Property="Width" Value="14" />
-        <Setter Property="Height" Value="14" />
-        <Setter Property="Margin" Value="0,0,6,0" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="Stretch" Value="Uniform" />
-        <Setter Property="Fill" Value="White" />
+    <Style x:Key="ComponentStatusBadgeStyle" TargetType="Border">
+        <Setter Property="Padding" Value="7,3" />
+        <Setter Property="CornerRadius" Value="5" />
         <Setter Property="Visibility" Value="Collapsed" />
         <Style.Triggers>
-            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource AncestorType={x:Type Border}}}" Value="{x:Static viewModel:ComponentUpdateState.UpdateAvailable}">
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="{x:Static viewModel:ComponentUpdateState.Current}">
                 <Setter Property="Visibility" Value="Visible" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="{x:Static viewModel:ComponentUpdateState.NotInstalled}">
+                <Setter Property="Visibility" Value="Visible" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="{x:Static viewModel:ComponentUpdateState.UpdateAvailable}">
+                <Setter Property="Visibility" Value="Visible" />
+                <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="{x:Static viewModel:ComponentUpdateState.Unavailable}">
+                <Setter Property="Visibility" Value="Visible" />
+                <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="ComponentStatusTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="TextAlignment" Value="Right" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource AncestorType=Border}}" Value="{x:Static viewModel:ComponentUpdateState.UpdateAvailable}">
+                <Setter Property="Foreground" Value="{DynamicResource AccentPressedBrush}" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource AncestorType=Border}}" Value="{x:Static viewModel:ComponentUpdateState.Unavailable}">
+                <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}" />
             </DataTrigger>
         </Style.Triggers>
     </Style>
@@ -134,11 +109,10 @@
         </Setter>
     </Style>
     <Style x:Key="ApplePriButtonStyle" TargetType="Button">
-        <Setter Property="Background" Value="{DynamicResource AccentGradientBrush}" />
-        <!--  Original vivid pink primary action gradient  -->
+        <Setter Property="Background" Value="{DynamicResource AccentPressedBrush}" />
         <Setter Property="Foreground" Value="White" />
         <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Padding" Value="18,0" />
+        <Setter Property="Padding" Value="16,0" />
         <Setter Property="Margin" Value="1" />
         <Setter Property="FontSize" Value="15" />
         <Setter Property="BorderThickness" Value="0" />
@@ -151,29 +125,58 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="30">
-                            <Border.Effect>
-                                <DropShadowEffect
-                                    BlurRadius="14"
-                                    Opacity="0.18"
-                                    ShadowDepth="4"
-                                    Color="#9E4A6474" />
-                            </Border.Effect>
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            CornerRadius="8">
+                            <ContentPresenter Margin="{TemplateBinding Padding}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}" />
-                            <!--  更深的粉色  -->
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter Property="Background" Value="{DynamicResource AccentPressedBrush}" />
-                            <!--  更深的粉色  -->
+                            <Setter TargetName="PrimaryButtonBorder" Property="RenderTransformOrigin" Value="0.5,0.5" />
+                            <Setter TargetName="PrimaryButtonBorder" Property="RenderTransform">
+                                <Setter.Value>
+                                    <ScaleTransform ScaleX="0.97" ScaleY="0.97" />
+                                </Setter.Value>
+                            </Setter>
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
                             <Setter TargetName="PrimaryButtonBorder" Property="BorderBrush" Value="{DynamicResource SurfaceBrush}" />
                             <Setter TargetName="PrimaryButtonBorder" Property="BorderThickness" Value="2" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" Value="{DynamicResource SurfaceSecondaryBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="AppleToggleButtonStyle" TargetType="ToggleButton">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid Background="Transparent">
+                        <Border x:Name="Track" Width="38" Height="22" CornerRadius="11"
+                                Background="{DynamicResource TrackOffBrush}"
+                                BorderBrush="{DynamicResource SurfaceBorderBrush}" BorderThickness="1" />
+                        <Ellipse x:Name="Thumb" Width="14" Height="14" HorizontalAlignment="Left"
+                                 VerticalAlignment="Center" Margin="8,0,0,0" Fill="White" />
+                        <Border x:Name="FocusBorder" Width="44" Height="28" CornerRadius="14"
+                                BorderThickness="1" IsHitTestVisible="False" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Track" Property="Background" Value="{DynamicResource AccentBrush}" />
+                            <Setter TargetName="Track" Property="BorderBrush" Value="Transparent" />
+                            <Setter TargetName="Thumb" Property="Margin" Value="24,0,0,0" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="FocusBorder" Property="BorderBrush" Value="{DynamicResource AccentPressedBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.55" />
@@ -183,89 +186,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <Style x:Key="AppleToggleButtonStyle" TargetType="ToggleButton">
-        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="ToggleButton">
-                    <Grid Width="60" Height="30">
-                        <!--  Background  -->
-                        <Border
-                            x:Name="BackgroundBorder"
-                            Background="{DynamicResource TrackOffBrush}"
-                            CornerRadius="15" />
 
-                        <!--  Thumb  -->
-                        <Ellipse
-                            x:Name="Thumb"
-                            Width="26"
-                            Height="26"
-                            Margin="2">
-                            <Ellipse.Fill>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                    <GradientStop Offset="0.0" Color="White" />
-                                    <GradientStop Offset="1.0" Color="#CCCCCC" />
-                                </LinearGradientBrush>
-                            </Ellipse.Fill>
-                            <Ellipse.Effect>
-                                <DropShadowEffect
-                                    BlurRadius="5"
-                                    ShadowDepth="3"
-                                    Color="Black" />
-                            </Ellipse.Effect>
-                        </Ellipse>
-                        <!--  On/Off Text  -->
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        <Border
-                            x:Name="FocusBorder"
-                            BorderBrush="Transparent"
-                            BorderThickness="2"
-                            CornerRadius="16"
-                            IsHitTestVisible="False" />
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CheckStates">
-                                <VisualState x:Name="Checked">
-                                    <Storyboard>
-                                        <ThicknessAnimation
-                                            Storyboard.TargetName="Thumb"
-                                            Storyboard.TargetProperty="Margin"
-                                            To="32,2,2,2"
-                                            Duration="0:0:0.2" />
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Unchecked">
-                                    <Storyboard>
-                                        <ThicknessAnimation
-                                            Storyboard.TargetName="Thumb"
-                                            Storyboard.TargetProperty="Margin"
-                                            To="2,2,32,2"
-                                            Duration="0:0:0.2" />
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <!--  Theme-aware checked state fallback  -->
-                        <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="BackgroundBorder" Property="Background" Value="{DynamicResource AccentBrush}" />
-                            <Setter TargetName="Thumb" Property="Margin" Value="32,2,2,2" />
-                        </Trigger>
-                        <Trigger Property="IsChecked" Value="False">
-                            <Setter TargetName="BackgroundBorder" Property="Background" Value="{DynamicResource TrackOffBrush}" />
-                            <Setter TargetName="Thumb" Property="Margin" Value="2,2,32,2" />
-                        </Trigger>
-                        <Trigger Property="IsKeyboardFocused" Value="True">
-                            <Setter TargetName="FocusBorder" Property="BorderBrush" Value="{DynamicResource AccentPressedBrush}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
     <Style x:Key="MacOSProgressBarStyle" TargetType="{x:Type ProgressBar}">
         <Setter Property="Background" Value="{DynamicResource TrackOffBrush}" />
         <Setter Property="BorderThickness" Value="0" />
@@ -278,23 +199,15 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="10">
-                            <Border.Effect>
-                                <DropShadowEffect
-                                    BlurRadius="10"
-                                    Direction="0"
-                                    ShadowDepth="0"
-                                    Color="#FFE0E0E0" />
-                            </Border.Effect>
-                        </Border>
+                            CornerRadius="3" />
                         <Border
                             x:Name="PART_Indicator"
                             HorizontalAlignment="Left"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="10">
+                            CornerRadius="3">
                             <Border.Background>
-                                <DynamicResource ResourceKey="AccentGradientBrush" />
+                                <DynamicResource ResourceKey="AccentBrush" />
                             </Border.Background>
                         </Border>
                         <Grid x:Name="PART_GlowGrid" ClipToBounds="True">
@@ -318,7 +231,7 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsIndeterminate" Value="True">
                             <Trigger.EnterActions>
-                                <BeginStoryboard>
+                                <BeginStoryboard x:Name="IndeterminateProgress">
                                     <Storyboard RepeatBehavior="Forever">
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_GlowIndicator" Storyboard.TargetProperty="(UIElement.Opacity)">
                                             <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
@@ -327,11 +240,14 @@
                                         </DoubleAnimationUsingKeyFrames>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PART_GlowIndicator" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
                                             <DiscreteDoubleKeyFrame KeyTime="0" Value="-25" />
-                                            <DiscreteDoubleKeyFrame KeyTime="0:0:2.5" Value="325" />
+                                            <LinearDoubleKeyFrame KeyTime="0:0:2.5" Value="500" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <RemoveStoryboard BeginStoryboardName="IndeterminateProgress" />
+                            </Trigger.ExitActions>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -357,15 +273,7 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="8">
-                            <Border.Effect>
-                                <DropShadowEffect
-                                    BlurRadius="5"
-                                    Direction="270"
-                                    ShadowDepth="2"
-                                    Color="#20000000" />
-                            </Border.Effect>
-                        </Border>
+                            CornerRadius="8" />
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -384,9 +292,7 @@
                                 IsHitTestVisible="False" />
 
                             <ToggleButton
-                                Grid.Column="1"
-                                Width="30"
-                                Height="{TemplateBinding Height}"
+                                Grid.ColumnSpan="2"
                                 Margin="0"
                                 ClickMode="Press"
                                 Focusable="False"
@@ -395,10 +301,9 @@
                                     <ControlTemplate TargetType="ToggleButton">
                                         <Border Background="Transparent" SnapsToDevicePixels="True">
                                             <Path
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                Data="M 0 0 L 4 4 L 8 0 Z"
-                                                Fill="{DynamicResource AccentBrush}" />
+                                                HorizontalAlignment="Right" Margin="0,0,11,0"
+                                                VerticalAlignment="Center" Data="M0,0 L4,4 8,0"
+                                                Stroke="{DynamicResource TextMutedBrush}" />
                                         </Border>
                                     </ControlTemplate>
                                 </ToggleButton.Template>
@@ -420,13 +325,6 @@
                                 BorderBrush="{DynamicResource SurfaceBorderBrush}"
                                 BorderThickness="1"
                                 CornerRadius="8">
-                                <Border.Effect>
-                                    <DropShadowEffect
-                                        BlurRadius="10"
-                                        Direction="270"
-                                        ShadowDepth="3"
-                                        Color="#30000000" />
-                                </Border.Effect>
                                 <!--  Critical: Use ScrollViewer with proper setup  -->
                                 <ScrollViewer x:Name="DropDownScrollViewer">
                                     <ItemsPresenter
@@ -471,8 +369,9 @@
                             <Setter TargetName="Border" Property="Background" Value="{DynamicResource AccentSoftBrush}" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource AccentBrush}" />
-                            <Setter Property="Foreground" Value="White" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -663,15 +562,15 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                            <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource AccentPressedBrush}" />
                             <Setter Property="FontWeight" Value="SemiBold" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="False">
                             <Setter TargetName="Border" Property="BorderBrush" Value="Transparent" />
-                            <Setter Property="Foreground" Value="Gray" />
+                            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="{DynamicResource AccentHoverBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource AccentPressedBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

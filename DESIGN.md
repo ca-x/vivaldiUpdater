@@ -2,7 +2,7 @@
 
 ## 1. Atmosphere & Identity
 
-The application is a compact desktop control panel: calm at rest, explicit while updating, and reassuring after a network interruption. Its signature is a full-width update rail that keeps progress, resume, retry, and source-switch information visible without modal interruption. Pink remains the warm default; Nintendo remains the high-contrast alternative.
+The application is a compact desktop control panel: calm at rest, explicit while updating, and reassuring after a network interruption. Its signature is a compact update rail that keeps progress, resume, retry, and source-switch information visible without modal interruption. Pink remains the warm default; Nintendo keeps its red accent.
 
 ## 2. Color
 
@@ -44,7 +44,7 @@ Version and progress numbers use tabular alignment through stable grid columns.
 
 ## 4. Spacing & Layout
 
-The base unit is 4 device-independent pixels. Primary spacing tokens are 4, 8, 12, 16, 20, and 24. The fixed desktop window keeps a 560-pixel width, uses 20-pixel content padding, and follows this hierarchy:
+The base unit is 4 device-independent pixels. Primary spacing tokens are 4, 8, 12, 16, 20, and 24. The desktop window uses a 560 DIP width and 20 DIP content insets. The primary work area caps its height. The settings pane scrolls independently while status and the primary action remain in place:
 
 `Header -> component status cards -> settings tabs -> update rail -> primary action`
 
@@ -54,21 +54,22 @@ Status and settings rows use grids rather than positional margins so Chinese and
 
 ### Window surface
 
-- Structure: rounded outer surface, title bar, content grid.
+- Structure: a single rounded surface, a title bar with monochrome actions, and a shared content grid.
 - States: active and inactive window retain readable contrast.
 - Accessibility: native text rendering and keyboard-reachable controls.
 
 ### Component status card
 
-- Structure: component title, installed/latest version line, text status.
+- Structure: aligned component title, installed version, available version, and status columns.
 - Variants: Vivaldi and Vivaldi++.
 - States: current, update available, not installed, unavailable.
-- Status badge: update available uses warning, unavailable uses error, current uses success, and not installed uses muted neutral; all four are solid fills with white semibold text.
+- Current and not-installed states use neutral text. Update availability uses an accent tint, and errors use semantic text on the surface.
+- Checking/unknown state does not render an empty badge; the status area appears only after a concrete result exists.
 - Accessibility: status text accompanies semantic color.
 
 ### Setting row
 
-- Structure: flexible label column and fixed control column.
+- Structure: wrapping label with a trailing control. Thin dividers separate rows, and settings tabs share the same insets.
 - States: default, hover, focus, disabled.
 - Accessibility: visible focus boundary and minimum 32-pixel control height.
 
@@ -85,11 +86,11 @@ Status and settings rows use grids rather than positional margins so Chinese and
 
 ## 6. Motion & Interaction
 
-Only existing WPF control-state transitions are used. Toggle and hover feedback complete within 200 milliseconds. Progress may animate while total length is unknown; no decorative motion is added. Keyboard focus is persistent and visually distinct.
+Toggle and hover feedback is immediate. Indeterminate progress animates while the total is unknown. Keyboard focus is visually distinct.
 
 ## 7. Depth & Surface
 
-The depth strategy is mixed but restrained: one tinted outer shadow for the window, one subtle shadow for the main surface, and borders or tonal shifts for inner components. Inner controls do not stack multiple shadows. Pink shadows use a warm plum tint; Nintendo shadows use a neutral charcoal tint.
+One subtle outer shadow separates the window from the desktop. Tonal surfaces separate component status and update progress. Controls use borders and state colors to define their edges.
 
 ## 8. Accessibility Constraints & Accepted Debt
 
@@ -100,4 +101,4 @@ The depth strategy is mixed but restrained: one tinted outer shadow for the wind
 - Download states remain understandable without relying on color.
 - Chinese and English labels must fit at the current window width.
 
-Accepted debt: the custom frameless window retains non-native minimize/maximize/close controls. They remain keyboard reachable and receive automation names in this change; replacing the window chrome is outside this task.
+The custom title bar retains keyboard-reachable minimize and close buttons with automation names and tooltips.
