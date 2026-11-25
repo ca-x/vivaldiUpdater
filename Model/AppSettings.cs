@@ -1,7 +1,6 @@
 ﻿﻿using System;
 using System.IO;
 using System.Globalization;
-using System.Threading;
 using VivaldiUpdater.Helpers;
 using System.Collections.Generic;
 
@@ -21,9 +20,18 @@ namespace VivaldiUpdater.Model
         public ProxyConfig Proxy { get; set; }
 
         private static readonly string ConfigFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
+        private static readonly CultureInfo SystemCulture;
+        private static readonly CultureInfo SystemUiCulture;
         
         // 代理设置更改事件
         public static event Action ProxySettingsChanged;
+
+        static AppSettings()
+        {
+            // Startup loads settings before applying any language override.
+            SystemCulture = CultureInfo.CurrentCulture;
+            SystemUiCulture = CultureInfo.CurrentUICulture;
+        }
 
         public AppSettings()
         {
@@ -198,8 +206,8 @@ namespace VivaldiUpdater.Model
         {
             try
             {
-                CultureInfo culture;
-                switch (Language.ToLower())
+                CultureInfo culture = null;
+                switch (Language?.ToLowerInvariant())
                 {
                     case "en":
                     case "en-us":
@@ -209,16 +217,15 @@ namespace VivaldiUpdater.Model
                     case "zh-cn":
                         culture = new CultureInfo("zh-CN");
                         break;
-                    case "auto":
-                    default:
-                        culture = CultureInfo.CurrentCulture;
-                        break;
                 }
 
-                Thread.CurrentThread.CurrentCulture = culture;
-                Thread.CurrentThread.CurrentUICulture = culture;
-                CultureInfo.DefaultThreadCurrentCulture = culture;
-                CultureInfo.DefaultThreadCurrentUICulture = culture;
+                var formattingCulture = culture ?? SystemCulture;
+                var uiCulture = culture ?? SystemUiCulture;
+                CultureInfo.CurrentCulture = formattingCulture;
+                CultureInfo.CurrentUICulture = uiCulture;
+                CultureInfo.DefaultThreadCurrentCulture = formattingCulture;
+                CultureInfo.DefaultThreadCurrentUICulture = uiCulture;
+                Properties.Resources.Culture = uiCulture;
             }
             catch (Exception)
             {

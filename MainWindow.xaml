@@ -114,18 +114,18 @@
                               Fill="{DynamicResource WarningBrush}" />
                     </Button>
                     <Button Command="{Binding ConfigureProxyCommand}" Style="{StaticResource TitleButton}"
-                            AutomationProperties.Name="&#x4EE3;&#x7406;&#x8BBE;&#x7F6E; / Proxy settings"
-                            ToolTip="&#x4EE3;&#x7406;&#x8BBE;&#x7F6E; / Proxy settings">
+                            AutomationProperties.Name="{Binding LocalizedProxySettingsLabel}"
+                            ToolTip="{Binding LocalizedProxySettingsLabel}">
                         <Path Data="M1,8 A7,7 0 1 1 15,8 A7,7 0 1 1 1,8 M1,8 H15 M8,1 C4,4 4,12 8,15 M8,1 C12,4 12,12 8,15"
                               Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
                     </Button>
                     <Button Click="MinimizeButton_OnClick" Style="{StaticResource TitleButton}"
-                            AutomationProperties.Name="&#x6700;&#x5C0F;&#x5316; / Minimize"
-                            ToolTip="&#x6700;&#x5C0F;&#x5316; / Minimize">
+                            AutomationProperties.Name="{Binding LocalizedMinimizeLabel}"
+                            ToolTip="{Binding LocalizedMinimizeLabel}">
                         <Path Data="M0,0 H10" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
                     </Button>
                     <Button Click="CloseButton_OnClick" Style="{StaticResource TitleButton}"
-                            AutomationProperties.Name="&#x5173;&#x95ED; / Close" ToolTip="&#x5173;&#x95ED; / Close">
+                            AutomationProperties.Name="{Binding LocalizedCloseLabel}" ToolTip="{Binding LocalizedCloseLabel}">
                         <Path Data="M0,0 L9,9 M9,0 L0,9" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
                     </Button>
                 </StackPanel>

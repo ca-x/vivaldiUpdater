@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -126,8 +126,8 @@ namespace VivaldiUpdater.ViewModel
         {
             _themeOptions = new ObservableCollection<LanguageOption>
             {
-                new LanguageOption { DisplayName = GetDownloadText("text_theme_pink", "粉色"), Tag = ThemeManager.PinkTheme },
-                new LanguageOption { DisplayName = GetDownloadText("text_theme_nintendo", "任天堂"), Tag = ThemeManager.NintendoTheme }
+                new LanguageOption { DisplayName = GetText("text_theme_pink"), Tag = ThemeManager.PinkTheme },
+                new LanguageOption { DisplayName = GetText("text_theme_nintendo"), Tag = ThemeManager.NintendoTheme }
             };
             OnPropertyChanged(nameof(ThemeOptions));
         }
@@ -139,8 +139,8 @@ namespace VivaldiUpdater.ViewModel
                 return;
             }
 
-            _themeOptions[0].DisplayName = GetDownloadText("text_theme_pink", "粉色");
-            _themeOptions[1].DisplayName = GetDownloadText("text_theme_nintendo", "任天堂");
+            _themeOptions[0].DisplayName = GetText("text_theme_pink");
+            _themeOptions[1].DisplayName = GetText("text_theme_nintendo");
             OnPropertyChanged(nameof(ThemeOptions));
         }
 
@@ -149,9 +149,9 @@ namespace VivaldiUpdater.ViewModel
             // Create the options immediately, not in RefreshLanguageOptions
             _languageOptions = new ObservableCollection<LanguageOption>
             {
-                new LanguageOption { DisplayName = "自动", Tag = "auto" },
-                new LanguageOption { DisplayName = "中文", Tag = "zh-cn" },
-                new LanguageOption { DisplayName = "English", Tag = "en-us" }
+                new LanguageOption { DisplayName = Properties.Resources.text_auto, Tag = "auto" },
+                new LanguageOption { DisplayName = Properties.Resources.text_chinese, Tag = "zh-cn" },
+                new LanguageOption { DisplayName = Properties.Resources.text_english, Tag = "en-us" }
             };
             OnPropertyChanged(nameof(LanguageOptions));
         }
@@ -165,17 +165,7 @@ namespace VivaldiUpdater.ViewModel
                 _languageOptions[1].DisplayName = Properties.Resources.text_chinese;
                 _languageOptions[2].DisplayName = Properties.Resources.text_english;
 
-                // Force ComboBox to refresh by temporarily storing and resetting the selected value
-                var selectedValue = _selectedLanguage;
-                _selectedLanguage = null;
-                OnPropertyChanged(nameof(SelectedLanguage));
-
-                // Force UI refresh of the collection
                 OnPropertyChanged(nameof(LanguageOptions));
-
-                // Restore the selected value to force ComboBox to re-evaluate display
-                _selectedLanguage = selectedValue;
-                OnPropertyChanged(nameof(SelectedLanguage));
             }
         }
 
@@ -194,7 +184,10 @@ namespace VivaldiUpdater.ViewModel
         public string LocalizedCleanBackupAfterUpdateLabel => Properties.Resources.text_clean_backup_after_update;
         public string LocalizedVivaldiUpdaterLabel => Properties.Resources.text_vivaldi_updater ?? "Vivaldi Updater";
         public string LocalizedEnableAppUpdateLabel => Properties.Resources.text_enable_app_update ?? "Auto Update Vivaldi Updater";
-        public string LocalizedThemeLabel => GetDownloadText("text_theme", "主题");
+        public string LocalizedThemeLabel => GetText("text_theme");
+        public string LocalizedProxySettingsLabel => Properties.Resources.text_proxy_settings;
+        public string LocalizedMinimizeLabel => GetText("text_minimize");
+        public string LocalizedCloseLabel => GetText("text_close");
 
         private string _selectedTheme = ThemeManager.PinkTheme;
         public string SelectedTheme
@@ -227,6 +220,11 @@ namespace VivaldiUpdater.ViewModel
             get => _selectedLanguage;
             set
             {
+                if (string.IsNullOrEmpty(value) || _selectedLanguage == value)
+                {
+                    return;
+                }
+
                 _selectedLanguage = value;
                 _appSettings.Language = value;
                 _appSettings.Save();
@@ -247,46 +245,82 @@ namespace VivaldiUpdater.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private async void RefreshAllUIText()
+        internal void RefreshAllUIText()
         {
-            // Clear and refresh the resource manager to reflect new culture
-            try
+            RefreshLanguageOptions();
+            RefreshThemeOptions();
+
+            // Notify all localized labels to refresh
+            OnPropertyChanged(nameof(LocalizedLanguageLabel));
+            OnPropertyChanged(nameof(LocalizedVivaldiBrowserLabel));
+            OnPropertyChanged(nameof(LocalizedVivaldiPlusPluginLabel));
+            OnPropertyChanged(nameof(LocalizedAutoUpdateVivaldiLabel));
+            OnPropertyChanged(nameof(LocalizedEnableVivaldiPlusLabel));
+            OnPropertyChanged(nameof(LocalizedAutoUpdateVivaldiPlusLabel));
+            OnPropertyChanged(nameof(LocalizedUseMirrorAddressLabel));
+
+            OnPropertyChanged(nameof(LocalizedBasicSettingsLabel));
+            OnPropertyChanged(nameof(LocalizedUpdateSettingsLabel));
+            OnPropertyChanged(nameof(LocalizedDeleteInstallerAfterUpdateLabel));
+            OnPropertyChanged(nameof(LocalizedCleanBackupAfterUpdateLabel));
+            OnPropertyChanged(nameof(LocalizedVivaldiUpdaterLabel));
+            OnPropertyChanged(nameof(LocalizedEnableAppUpdateLabel));
+            OnPropertyChanged(nameof(LocalizedThemeLabel));
+            OnPropertyChanged(nameof(LocalizedProxySettingsLabel));
+            OnPropertyChanged(nameof(LocalizedMinimizeLabel));
+            OnPropertyChanged(nameof(LocalizedCloseLabel));
+            OnPropertyChanged(nameof(LocalizedNewVersionFoundLabel));
+            OnPropertyChanged(nameof(ProcessBarNotifyText));
+            OnPropertyChanged(nameof(DownloadDetailText));
+            OnPropertyChanged(nameof(Operation));
+
+            VivaldiUpdateNotifyText = GetComponentStatusText(VivaldiStatus);
+            VivaldiPlusUpdateNotifyText = GetComponentStatusText(VivaldiPlusStatus);
+            if (AppLatestVersion != null)
             {
-                // Force the resource manager to reload with new culture
-                Properties.Resources.ResourceManager.ReleaseAllResources();
-
-                // Refresh language options with new resource strings
-                RefreshLanguageOptions();
-                RefreshThemeOptions();
-
-                // Notify all localized labels to refresh
-                OnPropertyChanged(nameof(LocalizedLanguageLabel));
-                OnPropertyChanged(nameof(LocalizedVivaldiBrowserLabel));
-                OnPropertyChanged(nameof(LocalizedVivaldiPlusPluginLabel));
-                OnPropertyChanged(nameof(LocalizedAutoUpdateVivaldiLabel));
-                OnPropertyChanged(nameof(LocalizedEnableVivaldiPlusLabel));
-                OnPropertyChanged(nameof(LocalizedAutoUpdateVivaldiPlusLabel));
-                OnPropertyChanged(nameof(LocalizedUseMirrorAddressLabel));
-
-                OnPropertyChanged(nameof(LocalizedBasicSettingsLabel));
-                OnPropertyChanged(nameof(LocalizedUpdateSettingsLabel));
-                OnPropertyChanged(nameof(LocalizedDeleteInstallerAfterUpdateLabel));
-                OnPropertyChanged(nameof(LocalizedCleanBackupAfterUpdateLabel));
-                OnPropertyChanged(nameof(LocalizedVivaldiUpdaterLabel));
-                OnPropertyChanged(nameof(LocalizedEnableAppUpdateLabel));
-                OnPropertyChanged(nameof(LocalizedThemeLabel));
-
-                // Re-run the context update to refresh all resource strings with new language
-                await UpdateContext();
-            }
-            catch
-            {
-                // If refresh fails, just clear the status message
-                ProcessBarNotifyText = "";
+                AppUpdateNotifyText = IsAppUpdateAvailable
+                    ? Properties.Resources.text_update_avaliable : Properties.Resources.text_no_update_avaliable;
             }
         }
 
-        public async Task UpdateContext()
+        private static string GetComponentStatusText(ComponentUpdateState state)
+        {
+            switch (state)
+            {
+                case ComponentUpdateState.Current: return Properties.Resources.text_no_update_avaliable;
+                case ComponentUpdateState.NotInstalled: return Properties.Resources.text_not_installed;
+                case ComponentUpdateState.UpdateAvailable: return Properties.Resources.text_update_avaliable;
+                case ComponentUpdateState.Unavailable: return GetText("text_update_check_failed");
+                default: return null;
+            }
+        }
+
+        internal async Task InitializeStatusAsync(Func<Task<bool>> refresh)
+        {
+            ShowUpdateProcessBar = Visibility.Visible;
+            SetProgressText(() => GetText("text_initializing"));
+            SetDetailText(() => GetText("text_checking_installed_versions"));
+            IsDownloadIndeterminate = true;
+
+            try
+            {
+                if (await refresh())
+                {
+                    SetProgressText(null);
+                    SetDetailText(null);
+                    ShowUpdateProcessBar = Visibility.Collapsed;
+                    return;
+                }
+                SetProgressText(() => GetText("text_initialization_failed"));
+                SetDetailText(() => GetText("text_check_network_or_proxy"));
+            }
+            finally
+            {
+                IsDownloadIndeterminate = false;
+            }
+        }
+
+        public async Task<bool> UpdateContext()
         {
             try
             {
@@ -295,10 +329,13 @@ namespace VivaldiUpdater.ViewModel
                 var installedInfo = GetInstalledInfo();
                 UpdateUIBasedOnInstalledInfo(installedInfo);
                 UpdateUIBasedOnVersionComparison(installedInfo);
+                return true;
             }
             catch (Exception e)
             {
-                ProcessBarNotifyText = $"{Properties.Resources.text_service_not_avaliable}:{e.Message}";
+                SetProgressText(() => Properties.Resources.text_service_not_avaliable);
+                Debug.WriteLine(e);
+                return false;
             }
         }
 
@@ -364,25 +401,25 @@ private void UpdateUIBasedOnVersionComparison(
             // 如果有未安装的组件，按钮显示"安装"
             if (installedInfo.InstalledVivaldi == null || installedInfo.InstalledVivaldiPlus == null)
             {
-                Operation = Properties.Resources.text_install;
+                SetOperation(() => Properties.Resources.text_install);
                 CanApplyChanges = true;
             }
             else if (VivaldiStatus == ComponentUpdateState.Unavailable ||
                      VivaldiPlusStatus == ComponentUpdateState.Unavailable)
             {
-                Operation = GetDownloadText("text_retry_check", "重新检查");
+                SetOperation(() => GetText("text_retry_check"));
                 CanApplyChanges = true;
             }
             // 如果所有组件都已安装且都是最新版，按钮显示"已是最新版"并禁用
             else if (vivaldiHasNoUpdate && vivaldiPlusHasNoUpdate)
             {
-                Operation = Properties.Resources.text_already_latest_version;
+                SetOperation(() => Properties.Resources.text_already_latest_version);
                 CanApplyChanges = false;
             }
             // 其他情况（已安装但需要更新），按钮显示"更新"
             else
             {
-                Operation = Properties.Resources.text_update;
+                SetOperation(() => Properties.Resources.text_update);
                 CanApplyChanges = true;
             }
         }
@@ -400,7 +437,7 @@ private bool UpdateVivaldiUI(string installedVersion)
 
             if (string.IsNullOrWhiteSpace(VivaldiLatestVersion))
             {
-                VivaldiUpdateNotifyText = GetDownloadText("text_update_check_failed", "检查失败");
+                VivaldiUpdateNotifyText = GetText("text_update_check_failed");
                 IsVivaldiUpdateAvailable = false;
                 VivaldiStatus = ComponentUpdateState.Unavailable;
                 return false;
@@ -443,7 +480,7 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
 
             if (string.IsNullOrWhiteSpace(VivaldiPlusLatestVersion))
             {
-                VivaldiPlusUpdateNotifyText = GetDownloadText("text_update_check_failed", "检查失败");
+                VivaldiPlusUpdateNotifyText = GetText("text_update_check_failed");
                 IsVivaldiPlusUpdateAvailable = false;
                 VivaldiPlusStatus = ComponentUpdateState.Unavailable;
                 return false;
@@ -692,31 +729,22 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
             }
         }
 
-        private string _processBarNotifyText;
+        private Func<string> _progressText;
+        public string ProcessBarNotifyText => _progressText?.Invoke();
 
-        /// <summary>
-        /// Notify message
-        /// </summary>
-        public string ProcessBarNotifyText
+        private void SetProgressText(Func<string> text)
         {
-            get => _processBarNotifyText;
-            set
-            {
-                _processBarNotifyText = value;
-                OnPropertyChanged();
-            }
+            _progressText = text;
+            OnPropertyChanged(nameof(ProcessBarNotifyText));
         }
 
-        private string _downloadDetailText;
+        private Func<string> _detailText;
+        public string DownloadDetailText => _detailText?.Invoke();
 
-        public string DownloadDetailText
+        private void SetDetailText(Func<string> text)
         {
-            get => _downloadDetailText;
-            set
-            {
-                _downloadDetailText = value;
-                OnPropertyChanged();
-            }
+            _detailText = text;
+            OnPropertyChanged(nameof(DownloadDetailText));
         }
 
         internal static string GetLatestVivaldiPlusVersion(IEnumerable<VivaldiPlusPlusRelease> releases)
@@ -737,19 +765,13 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
             }
         }
 
-        private string _operation;
+        private Func<string> _operation = () => Properties.Resources.text_install;
+        public string Operation => _operation();
 
-        /// <summary>
-        /// Operation
-        /// </summary>
-        public string Operation
+        private void SetOperation(Func<string> text)
         {
-            get => _operation;
-            set
-            {
-                _operation = value;
-                OnPropertyChanged();
-            }
+            _operation = text;
+            OnPropertyChanged(nameof(Operation));
         }
 
 
@@ -925,7 +947,7 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
 
                 if (EnableVivaldiUpdate)
                 {
-                    ProcessBarNotifyText = Properties.Resources.text_checking_vivaldi_update ?? "正在检查Vivaldi更新...";
+                    SetProgressText(() => Properties.Resources.text_checking_vivaldi_update);
                     var browserInfo = VivaldiInstaller.GetVivaldiInfoFromInstallDir(AppDir);
                     var browserArch = browserInfo.arch ?? (Win32Api.Is64BitOperatingSystem ? "win64" : "win32");
                     await CheckAndUpdateVivaldi(AppDir, browserInfo.version, browserArch);
@@ -934,14 +956,14 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
 
                 if (EnableVivaldiPlus)
                 {
-                    ProcessBarNotifyText = Properties.Resources.text_checking_vpp_update ?? "正在检查Vivaldi++更新...";
+                    SetProgressText(() => Properties.Resources.text_checking_vpp_update);
                     vivaldiPlusReleaseUnavailable = !await CheckAndUpdateVivaldiPlus(AppDir);
                 }
 
                 // Check and update App itself if enabled
                 if (EnableAppUpdate && AppLatestVersion != null && Semver.IsBigger(AppLatestVersion, AppVersion) > 0)
                 {
-                     ProcessBarNotifyText = Properties.Resources.text_updating_app ?? "正在更新程序...";
+                     SetProgressText(() => Properties.Resources.text_updating_app);
                      await PerformSelfUpdate();
                      return; // Restarting, so stop here
                 }
@@ -951,7 +973,7 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
                 {
                     if (!vivaldiPlusReleaseUnavailable)
                     {
-                        ProcessBarNotifyText = Properties.Resources.text_all_updates_completed ?? "所有更新已完成！";
+                        SetProgressText(() => Properties.Resources.text_all_updates_completed);
                     }
                     DownloadProgress = 100;
 
@@ -960,21 +982,22 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
                     await UpdateContext(); // 重新检查状态
                     if (vivaldiPlusReleaseUnavailable)
                     {
-                        var message = GetDownloadText("text_update_check_failed", "Update check failed");
+                        var message = GetText("text_update_check_failed");
                         VivaldiPlusUpdateNotifyText = message;
                         IsVivaldiPlusUpdateAvailable = false;
                         VivaldiPlusStatus = ComponentUpdateState.Unavailable;
-                        ProcessBarNotifyText = $"Vivaldi++: {message}";
+                        SetProgressText(() => $"Vivaldi++: {GetText("text_update_check_failed")}");
                     }
                 }
                 else
                 {
-                    ProcessBarNotifyText = Properties.Resources.text_already_latest_version;
+                    SetProgressText(() => Properties.Resources.text_already_latest_version);
                 }
             }
             catch (Exception e)
             {
-                ProcessBarNotifyText = $"{Properties.Resources.text_service_not_avaliable}:{e.Message}";
+                SetProgressText(() => Properties.Resources.text_service_not_avaliable);
+                Debug.WriteLine(e);
             }
             finally
             {
@@ -990,85 +1013,86 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
                 if (VivaldiPlusFiles.RestoreFromBackup(backupCreatedThisInstall, targetAppDir,
                         VivaldiPlusFiles.GetPluginArchitecture(browserArchitecture), CleanBackupAfterUpdate))
                 {
-                    ProcessBarNotifyText = "Vivaldi++文件已成功复制到新版本目录。";
+                    SetProgressText(() => GetText("text_vpp_files_reused"));
                     DownloadProgress = 95;
                 }
             }
             catch (Exception ex)
             {
                 // 复制失败不影响主要功能，只记录错误
-                ProcessBarNotifyText = $"复制Vivaldi++文件时出错: {ex.Message}";
+                SetProgressText(() => GetText("text_vpp_files_reuse_failed"));
+                Debug.WriteLine(ex);
             }
         }
 
-        private ResumeableDownloader CreateDownloader(string downloadTitle, int progressOffset = 0, int progressRange = 100)
+        private ResumeableDownloader CreateDownloader(Func<string> downloadTitle, int progressOffset = 0, int progressRange = 100)
         {
             var downloader = new ResumeableDownloader();
             downloader.DownloadProgressChanged += (sender, args) =>
             {
                 DownloadProgress = Math.Min(100, progressOffset + args.ProgressPercentage * progressRange / 100);
                 IsDownloadIndeterminate = !args.TotalBytes.HasValue && args.ProgressPercentage < 100;
-                ProcessBarNotifyText = string.Format("{0} {1}%", downloadTitle, args.ProgressPercentage);
+                SetProgressText(() => string.Format("{0} {1}%", downloadTitle(), args.ProgressPercentage));
 
                 var sizeText = args.TotalBytes.HasValue
                     ? string.Format("{0} / {1}", FormatBytes(args.BytesReceived), FormatBytes(args.TotalBytes.Value))
                     : FormatBytes(args.BytesReceived);
-                DownloadDetailText = args.BytesPerSecond > 0
+                SetDetailText(() => args.BytesPerSecond > 0
                     ? string.Format("{0} · {1}/s", sizeText, FormatBytes(args.BytesPerSecond))
-                    : sizeText;
+                    : sizeText);
             };
             downloader.DownloadStatusChanged += (sender, args) => UpdateDownloadStatus(downloadTitle, args);
             return downloader;
         }
 
-        private void UpdateDownloadStatus(string downloadTitle, DownloadStatusEventArgs args)
+        private void UpdateDownloadStatus(Func<string> downloadTitle, DownloadStatusEventArgs args)
         {
             switch (args.State)
             {
                 case DownloadState.Starting:
-                    ProcessBarNotifyText = downloadTitle;
-                    DownloadDetailText = GetDownloadText("text_download_connecting", "正在建立连接...");
+                    SetProgressText(downloadTitle);
+                    SetDetailText(() => GetText("text_download_connecting"));
                     IsDownloadIndeterminate = true;
                     break;
                 case DownloadState.Resuming:
-                    ProcessBarNotifyText = downloadTitle;
-                    DownloadDetailText = string.Format(
-                        GetDownloadText("text_download_resuming", "从 {0} 继续下载"),
-                        FormatBytes(args.ResumeOffset));
+                    SetProgressText(downloadTitle);
+                    SetDetailText(() => string.Format(
+                        GetText("text_download_resuming"),
+                        FormatBytes(args.ResumeOffset)));
                     IsDownloadIndeterminate = false;
                     break;
                 case DownloadState.Retrying:
-                    ProcessBarNotifyText = GetDownloadText("text_download_retrying_title", "网络不稳定，正在重试");
-                    DownloadDetailText = string.Format(
-                        GetDownloadText("text_download_retrying", "{0} 秒后重试（{1}/{2}）"),
+                    SetProgressText(() => GetText("text_download_retrying_title"));
+                    SetDetailText(() => string.Format(
+                        GetText("text_download_retrying"),
                         Math.Ceiling(args.RetryDelay.TotalSeconds),
                         args.Attempt,
-                        args.MaxAttempts);
+                        args.MaxAttempts));
                     IsDownloadIndeterminate = true;
                     break;
                 case DownloadState.SwitchingSource:
-                    ProcessBarNotifyText = GetDownloadText("text_download_switching_source", "镜像不可用，正在切换下载源");
-                    DownloadDetailText = args.SourceUri.Host;
+                    SetProgressText(() => GetText("text_download_switching_source"));
+                    SetDetailText(() => args.SourceUri.Host);
                     IsDownloadIndeterminate = true;
                     break;
                 case DownloadState.Completed:
-                    DownloadDetailText = string.Format(
-                        GetDownloadText("text_download_completed_detail", "下载完成，共 {0}"),
-                        FormatBytes(args.ResumeOffset));
+                    SetDetailText(() => string.Format(
+                        GetText("text_download_completed_detail"),
+                        FormatBytes(args.ResumeOffset)));
                     IsDownloadIndeterminate = false;
                     break;
                 case DownloadState.Failed:
-                    DownloadDetailText = string.Format(
-                        GetDownloadText("text_download_failed_detail", "下载中断，已保留 {0} 供下次续传"),
-                        FormatBytes(args.ResumeOffset));
+                    SetDetailText(() => string.Format(
+                        GetText("text_download_failed_detail"),
+                        FormatBytes(args.ResumeOffset)));
                     IsDownloadIndeterminate = false;
                     break;
             }
         }
 
-        private static string GetDownloadText(string key, string fallback)
+        private static string GetText(string key)
         {
-            return Properties.Resources.ResourceManager.GetString(key, Properties.Resources.Culture) ?? fallback;
+            return Properties.Resources.ResourceManager.GetString(key, Properties.Resources.Culture);
         }
 
         private static string FormatBytes(long bytes)
@@ -1140,11 +1164,11 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
                 updateLock = new FileStream(Path.Combine(tempDir, "update.lock"), FileMode.OpenOrCreate,
                     FileAccess.ReadWrite, FileShare.None);
 
-                ProcessBarNotifyText = Properties.Resources.text_downloading_new_version ?? "正在下载新版本...";
+                SetProgressText(() => Properties.Resources.text_downloading_new_version);
                 var release = await VivaldiInfoEx.GetAppLatestRelease();
                 if (release == null || release.Assets == null || release.Assets.Count == 0)
                 {
-                    ProcessBarNotifyText = GetDownloadText("text_update_check_failed", "Update check failed");
+                    SetProgressText(() => GetText("text_update_check_failed"));
                     return;
                 }
 
@@ -1153,12 +1177,12 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
 
                 var zipPath = Path.Combine(tempDir, "Release.zip");
                 using (var downloader = CreateDownloader(
-                           Properties.Resources.text_downloading_new_version ?? "正在下载新版本..."))
+                           () => Properties.Resources.text_downloading_new_version))
                 {
                     await downloader.DownloadFileAsync(downloadUrl, zipPath);
                 }
 
-                ProcessBarNotifyText = Properties.Resources.text_extracting_update ?? "正在解压更新...";
+                SetProgressText(() => Properties.Resources.text_extracting_update);
                 extractDir = Path.Combine(tempDir, "Extracted-" + Guid.NewGuid().ToString("N"));
                 Directory.CreateDirectory(extractDir);
                 ZipFile.ExtractToDirectory(zipPath, extractDir);
@@ -1167,7 +1191,7 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
                 if (extractedFiles.Length == 0) throw new Exception("Update package corrupted");
                 var sourceDir = Path.GetDirectoryName(extractedFiles[0]);
 
-                ProcessBarNotifyText = Properties.Resources.text_applying_update ?? "正在应用更新...";
+                SetProgressText(() => Properties.Resources.text_applying_update);
                 var currentDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 var currentExe = Path.Combine(currentDir, "VivaldiUpdater.exe");
                 SelfUpdateFiles.Apply(sourceDir, currentDir, () =>
@@ -1185,12 +1209,16 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
                     }
                 });
 
-                ProcessBarNotifyText = Properties.Resources.text_update_complete_restart ?? "更新完成，正在重启...";
+                SetProgressText(() => Properties.Resources.text_update_complete_restart);
                 Application.Current.Shutdown();
             }
             catch (Exception ex)
             {
-                ProcessBarNotifyText = string.Format(Properties.Resources.text_update_failed ?? "更新失败: {0}", ex.Message);
+                SetProgressText(() => GetText("text_self_update_failed"));
+                if (ex is AggregateException)
+                {
+                    SetDetailText(() => ex.Message);
+                }
                 Debug.WriteLine(ex);
             }
             finally
@@ -1241,7 +1269,7 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
             if (installedVersion == null ||
                 Semver.IsBigger(latestVersion.Version, installedVersion) > 0)
             {
-                ProcessBarNotifyText = Properties.Resources.text_preparing_update ?? "正在准备更新...";
+                SetProgressText(() => Properties.Resources.text_preparing_update);
 
                 // Update Vivaldi
                 var urls = await VivaldiInfoEx.GetVivaldiDistUrls(installArch);
@@ -1251,11 +1279,11 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
                         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                         $"Vivaldi.{latestVersion.Version}.exe");
 
-                    ProcessBarNotifyText = Properties.Resources.text_downloading_vivaldi ?? "正在下载Vivaldi...";
+                    SetProgressText(() => Properties.Resources.text_downloading_vivaldi);
                     DownloadProgress = 0;
 
                     using (var downloader = CreateDownloader(
-                               Properties.Resources.text_downloading_vivaldi ?? "正在下载Vivaldi..."))
+                               () => Properties.Resources.text_downloading_vivaldi))
                     {
                         if (UseMirrorAddress && !string.IsNullOrWhiteSpace(urls[0].UrlMirror))
                         {
@@ -1269,7 +1297,7 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
                             await downloader.DownloadFileAsync(urls[0].Url, installerFullPath);
                         }
                     }
-                    ProcessBarNotifyText = Properties.Resources.text_extracting_installer ?? "正在解压安装程序...";
+                    SetProgressText(() => Properties.Resources.text_extracting_installer);
                     DownloadProgress = 0; // 重置进度条用于显示解压进度
 
                     // Install Vivaldi
@@ -1282,7 +1310,7 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
                     );
                     if (ExtractResult == 0)
                     {
-                        ProcessBarNotifyText = Properties.Resources.text_installing_to_directory ?? "正在安装到目标目录...";
+                        SetProgressText(() => Properties.Resources.text_installing_to_directory);
                         DownloadProgress = 50;
 
                         // copy to origin App Dir
@@ -1293,7 +1321,7 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
                             if (File.Exists(originVivaldiPath))
                             {
                                 var backupPath = Path.Combine(Path.GetDirectoryName(AppDir), "AppBackup");
-                                ProcessBarNotifyText = Properties.Resources.text_backing_up_existing ?? "正在备份现有版本...";
+                                SetProgressText(() => Properties.Resources.text_backing_up_existing);
                                 if (Directory.Exists(backupPath))
                                 {
                                     Directory.Delete(backupPath, true);
@@ -1306,12 +1334,12 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
                             var ExtractAppPath = Path.Combine(ExtractPath, "App");
                             if (Directory.Exists(ExtractAppPath))
                             {
-                                ProcessBarNotifyText = Properties.Resources.text_copying_files ?? "正在复制文件到安装目录...";
+                                SetProgressText(() => Properties.Resources.text_copying_files);
                                 DownloadProgress = 75;
                                 Copier.CopyDirectory(ExtractAppPath, AppDir);
                             }
 
-                            ProcessBarNotifyText = Properties.Resources.text_verifying_installation ?? "正在验证安装...";
+                            SetProgressText(() => Properties.Resources.text_verifying_installation);
                             DownloadProgress = 90;
 
                             // 验证安装
@@ -1320,14 +1348,14 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
                             {
                                 VivaldiInstalledVersion = installedInfo.version;
                                 VivaldiUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
-                                ProcessBarNotifyText = string.Format(Properties.Resources.text_installation_completed ?? "{0} {1} 安装完成！", "Vivaldi", installedInfo.version);
+                                SetProgressText(() => string.Format(Properties.Resources.text_installation_completed, "Vivaldi", installedInfo.version));
                                 
                                 // 检查并复制现有的Vivaldi++文件
                                 CopyExistingVivaldiPlusFiles(backupCreatedThisInstall, AppDir, installedInfo.arch);
                             }
                             else
                             {
-                                ProcessBarNotifyText = Properties.Resources.text_installation_verification_failed ?? "安装验证失败，请重试。";
+                                SetProgressText(() => Properties.Resources.text_installation_verification_failed);
                                 return;
                             }
 
@@ -1335,7 +1363,7 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
                     }
                     else
                     {
-                        ProcessBarNotifyText = string.Format(Properties.Resources.text_extraction_failed ?? "解压安装程序失败，错误代码: {0}", ExtractResult);
+                        SetProgressText(() => string.Format(Properties.Resources.text_extraction_failed, ExtractResult));
                         return;
                     }
 
@@ -1353,12 +1381,13 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
                             DeleteDownloadArtifacts(installerFullPath);
                         }
 
-                        ProcessBarNotifyText = Properties.Resources.text_installation_complete_cleanup ?? "安装完成，临时文件已清理。";
+                        SetProgressText(() => Properties.Resources.text_installation_complete_cleanup);
                         DownloadProgress = 100;
                     }
                     catch (Exception ex)
                     {
-                        ProcessBarNotifyText = string.Format(Properties.Resources.text_cleanup_error ?? "清理临时文件时出现问题: {0}", ex.Message);
+                        SetProgressText(() => GetText("text_temporary_cleanup_failed"));
+                        Debug.WriteLine(ex);
                     }
                 }
             }
@@ -1366,7 +1395,7 @@ else
             {
                 // Vivaldi已经是最新版，但不要显示弹窗，因为界面已经显示了状态
                 // 用户可以通过界面上的状态信息了解Vivaldi已是最新版
-                ProcessBarNotifyText = Properties.Resources.text_no_update_avaliable ?? "Vivaldi已是最新版本";
+                SetProgressText(() => Properties.Resources.text_no_update_avaliable);
             }
         }
         
@@ -1387,18 +1416,18 @@ else
             var useMirror = UseMirrorAddress && !string.IsNullOrWhiteSpace(latestRelease?.FastgitMirrorUrl);
             if (latestRelease == null || (!useMirror && string.IsNullOrWhiteSpace(latestRelease.GithubOriginUrl)))
             {
-                ProcessBarNotifyText = $"Vivaldi++: {GetDownloadText("text_update_check_failed", "Update check failed")}";
+                SetProgressText(() => $"Vivaldi++: {GetText("text_update_check_failed")}");
                 return false;
             }
 
             if (!VivaldiPlusFiles.ShouldDownload(latestRelease, compatibleVersion))
             {
-                ProcessBarNotifyText = Properties.Resources.text_vpp_latest_and_dll_exists ?? "Vivaldi++已是最新版本且version.dll存在。";
+                SetProgressText(() => Properties.Resources.text_vpp_latest_and_dll_exists);
                 DownloadProgress = 100;
                 return true;
             }
 
-            ProcessBarNotifyText = Properties.Resources.text_preparing_download_vpp ?? "正在准备下载Vivaldi++...";
+            SetProgressText(() => Properties.Resources.text_preparing_download_vpp);
             DownloadProgress = 0;
 
             var downloadPath = GetSafeDownloadPath(
@@ -1406,7 +1435,7 @@ else
                 latestRelease.AssetName);
 
             using (var downloader = CreateDownloader(
-                       Properties.Resources.text_downloading_vivaldi_plus ?? "正在下载Vivaldi++"))
+                       () => Properties.Resources.text_downloading_vivaldi_plus))
             {
                 if (useMirror)
                 {
@@ -1421,13 +1450,13 @@ else
                 }
             }
 
-            ProcessBarNotifyText = Properties.Resources.text_installing_version_dll ?? "正在安装version.dll...";
+            SetProgressText(() => Properties.Resources.text_installing_version_dll);
             DownloadProgress = 85;
 
             VivaldiPlusFiles.InstallArchive(downloadPath, AppDir, architecture, latestRelease.Version.TrimStart('v'));
 
             // 验证安装
-            ProcessBarNotifyText = Properties.Resources.text_verifying_vpp_installation ?? "正在验证Vivaldi++安装...";
+            SetProgressText(() => Properties.Resources.text_verifying_vpp_installation);
             DownloadProgress = 90;
 
             var installedVersion = VivaldiPlusFiles.GetCompatibleVersion(AppDir, architecture);
@@ -1435,7 +1464,7 @@ else
             {
                 VivaldiPlusInstalledVersion = installedVersion;
                 VivaldiPlusUpdateNotifyText = Properties.Resources.text_no_update_avaliable;
-                ProcessBarNotifyText = string.Format(Properties.Resources.text_installation_completed ?? "{0} {1} 安装完成！", "Vivaldi++", installedVersion);
+                SetProgressText(() => string.Format(Properties.Resources.text_installation_completed, "Vivaldi++", installedVersion));
             }
             else
             {

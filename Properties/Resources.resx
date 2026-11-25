@@ -351,9 +351,6 @@
   <data name="text_enable_app_update" xml:space="preserve">
     <value>自动更新程序本身</value>
   </data>
-  <data name="text_update" xml:space="preserve">
-    <value>更新</value>
-  </data>
   <data name="text_no" xml:space="preserve">
     <value>否</value>
   </data>
@@ -395,5 +392,35 @@
   </data>
   <data name="text_retry_check" xml:space="preserve">
     <value>重新检查</value>
+  </data>
+  <data name="text_initializing" xml:space="preserve">
+    <value>正在初始化…</value>
+  </data>
+  <data name="text_checking_installed_versions" xml:space="preserve">
+    <value>正在读取本地版本与远程版本</value>
+  </data>
+  <data name="text_initialization_failed" xml:space="preserve">
+    <value>初始化失败</value>
+  </data>
+  <data name="text_check_network_or_proxy" xml:space="preserve">
+    <value>请检查网络连接或代理设置。</value>
+  </data>
+  <data name="text_minimize" xml:space="preserve">
+    <value>最小化</value>
+  </data>
+  <data name="text_close" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="text_vpp_files_reused" xml:space="preserve">
+    <value>已复用现有的 Vivaldi++ 文件。</value>
+  </data>
+  <data name="text_vpp_files_reuse_failed" xml:space="preserve">
+    <value>无法复用 Vivaldi++，旧文件仍保留在备份目录。</value>
+  </data>
+  <data name="text_self_update_failed" xml:space="preserve">
+    <value>更新失败，请重试。</value>
+  </data>
+  <data name="text_temporary_cleanup_failed" xml:space="preserve">
+    <value>安装已完成，但未能清理临时文件。</value>
   </data>
 </root>

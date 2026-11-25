@@ -1,5 +1,9 @@
+using System.Collections.Generic;
+using System.Globalization;
 using System.Reflection;
+using System.Threading.Tasks;
 using NUnit.Framework;
+using VivaldiUpdater.Properties;
 using VivaldiUpdater.ViewModel;
 
 namespace TestCase.Helpers
@@ -7,6 +11,40 @@ namespace TestCase.Helpers
     [TestFixture]
     public class MainViewModelStatusTest
     {
+        [Test]
+        [NonParallelizable]
+        public async Task StartupNoticeTracksTheSelectedLanguageWhileTheCheckIsRunning()
+        {
+            var original = Resources.Culture;
+            try
+            {
+                Resources.Culture = CultureInfo.GetCultureInfo("zh-CN");
+                var model = new MainViewModel();
+                var refresh = new TaskCompletionSource<bool>();
+                var pending = model.InitializeStatusAsync(() => refresh.Task);
+                Assert.That(model.ProcessBarNotifyText, Is.EqualTo("正在初始化…"));
+                Assert.That(model.DownloadDetailText, Is.EqualTo("正在读取本地版本与远程版本"));
+
+                Resources.Culture = CultureInfo.GetCultureInfo("en-US");
+                var changed = new List<string>();
+                model.PropertyChanged += (sender, args) => changed.Add(args.PropertyName);
+                model.RefreshAllUIText();
+                Assert.That(model.ProcessBarNotifyText, Is.EqualTo("Initializing…"));
+                Assert.That(model.DownloadDetailText, Is.EqualTo("Checking installed and available versions"));
+                Assert.That(model.LocalizedCloseLabel, Is.EqualTo("Close"));
+                Assert.That(changed, Does.Contain(nameof(MainViewModel.ProcessBarNotifyText)).And.Contain(nameof(MainViewModel.DownloadDetailText)));
+
+                refresh.SetResult(false);
+                await pending;
+                Assert.That(model.ProcessBarNotifyText, Is.EqualTo("Initialization failed"));
+                Assert.That(model.DownloadDetailText, Is.EqualTo("Check your network connection or proxy settings."));
+            }
+            finally
+            {
+                Resources.Culture = original;
+            }
+        }
+
         [Test]
         public void GetLatestVivaldiPlusVersion_ReturnsNullWhenServiceHasNoData()
         {

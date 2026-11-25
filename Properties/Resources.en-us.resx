@@ -248,9 +248,6 @@
   <data name="text_enable_app_update" xml:space="preserve">
     <value>Auto Update Vivaldi Updater</value>
   </data>
-  <data name="text_update" xml:space="preserve">
-    <value>Update</value>
-  </data>
     <data name="text_no" xml:space="preserve">
         <value>No</value>
     </data>
@@ -293,4 +290,34 @@
     <data name="text_retry_check" xml:space="preserve">
         <value>Check again</value>
     </data>
+  <data name="text_initializing" xml:space="preserve">
+    <value>Initializing…</value>
+  </data>
+  <data name="text_checking_installed_versions" xml:space="preserve">
+    <value>Checking installed and available versions</value>
+  </data>
+  <data name="text_initialization_failed" xml:space="preserve">
+    <value>Initialization failed</value>
+  </data>
+  <data name="text_check_network_or_proxy" xml:space="preserve">
+    <value>Check your network connection or proxy settings.</value>
+  </data>
+  <data name="text_minimize" xml:space="preserve">
+    <value>Minimize</value>
+  </data>
+  <data name="text_close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="text_vpp_files_reused" xml:space="preserve">
+    <value>Reused the existing Vivaldi++ files.</value>
+  </data>
+  <data name="text_vpp_files_reuse_failed" xml:space="preserve">
+    <value>Could not reuse Vivaldi++. The previous files are still in the backup folder.</value>
+  </data>
+  <data name="text_self_update_failed" xml:space="preserve">
+    <value>Update failed. Try again.</value>
+  </data>
+  <data name="text_temporary_cleanup_failed" xml:space="preserve">
+    <value>Installation finished, but temporary files could not be removed.</value>
+  </data>
 </root>
