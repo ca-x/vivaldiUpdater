@@ -1,0 +1,57 @@
+name: Release VivaldiUpdater
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-2022
+    steps:
+      - name: Check release tag format
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF_NAME -cnotmatch '\Av(?:0|[1-9][0-9]*)(?:\.(?:0|[1-9][0-9]*)){3}\z') {
+            throw 'Expected a release tag in the form vMAJOR.MINOR.BUILD.REVISION.'
+          }
+
+      - name: Check out tagged source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce # v2
+
+      - name: Build and package the updater
+        shell: pwsh
+        run: |
+          $output = Join-Path $env:RUNNER_TEMP 'vivaldi-release/bin'
+          msbuild VivaldiUpdater.csproj /t:Build /p:Configuration=Release /p:Platform=AnyCPU `
+            /p:DebugType=none /p:DebugSymbols=false "/p:OutputPath=$output"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          $exe = Join-Path $output 'VivaldiUpdater.exe'
+          $version = [Reflection.AssemblyName]::GetAssemblyName($exe).Version
+          if ($env:GITHUB_REF_NAME -cne "v$version") {
+            throw "Tag '$env:GITHUB_REF_NAME' does not match the built AssemblyVersion ($version)."
+          }
+
+          # Keep the executable, config, and satellite assemblies together in the ZIP.
+          $zip = Join-Path $env:RUNNER_TEMP 'Release.zip'
+          [IO.Compression.ZipFile]::CreateFromDirectory($output, $zip)
+
+      - name: Publish the stable GitHub release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $zip = Join-Path $env:RUNNER_TEMP 'Release.zip'
+          # The self-updater downloads assets[0], so upload only this ZIP.
+          gh release create $env:GITHUB_REF_NAME $zip --repo $env:GITHUB_REPOSITORY `
+            --verify-tag --generate-notes --latest --title $env:GITHUB_REF_NAME
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

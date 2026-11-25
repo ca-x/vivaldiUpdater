@@ -4,6 +4,13 @@
 
 <img width="841" height="793" alt="image" src="https://github.com/user-attachments/assets/0f09d456-8ce4-4bd9-a3d9-3ecf6efc464c" />
 
+## Publishing a release
+
+1. In `Properties/AssemblyInfo.cs`, bump `AssemblyVersion` and `AssemblyFileVersion` to the same four-part version, higher than the latest stable release. Commit the version bump.
+2. Tag that commit with the matching version (for example, `git tag v1.0.3.9`) and push that single tag (`git push origin v1.0.3.9`). The **Release VivaldiUpdater** workflow builds on Windows and rejects tags that do not match the executable's `AssemblyVersion`.
+
+The workflow publishes a stable GitHub release marked **Latest**, with `Release.zip` as its only uploaded asset. The self-updater checks the latest release in `ca-x/vivaldiUpdater` and downloads the first asset, so do not add other assets. For a manual install, extract the whole ZIP before running `VivaldiUpdater.exe`.
+
 ## roadmap
  - [x] self update
  - [ ] auto install mod scripts
