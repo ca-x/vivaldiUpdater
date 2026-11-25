@@ -1,8 +1,18 @@
 ## vivaldi updater 
  vivaldi updater is an updater for  windows vivaldi browser with vivaldi++ 
-<img width="870" height="814" alt="image" src="https://github.com/user-attachments/assets/1683a193-c477-4167-90a6-598a41b45161" />
+### Screenshots
 
-<img width="841" height="793" alt="image" src="https://github.com/user-attachments/assets/0f09d456-8ce4-4bd9-a3d9-3ecf6efc464c" />
+**Nintendo theme · Chinese · updater release available**
+
+<img width="548" alt="Chinese Nintendo theme with the updater version in its own title-bar button" src="docs/screenshots/updater-nintendo.png" />
+
+**Pink theme · English**
+
+<img width="548" alt="English Pink theme with browser and Vivaldi++ versions and settings" src="docs/screenshots/updater-pink.png" />
+
+### Proxy settings
+
+Version checks and downloads have separate proxy options. With the version-check proxy enabled, the updater tries it first and retries directly if the proxy connection fails.
 
 ## Publishing a release
 
