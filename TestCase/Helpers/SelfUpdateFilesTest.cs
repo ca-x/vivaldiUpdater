@@ -83,6 +83,30 @@ namespace TestCase.Helpers
         }
 
         [Test]
+        public void Apply_ReportsRecoveryDirectoryWhenRollbackIsBlocked()
+        {
+            FileStream opened = null;
+            try
+            {
+                var error = Assert.Throws<SelfUpdateRecoveryException>(() =>
+                    SelfUpdateFiles.Apply(_source, _installed, () =>
+                    {
+                        opened = File.Open(Path.Combine(_installed, "VivaldiUpdater.exe"), FileMode.Open,
+                            FileAccess.Read, FileShare.Read);
+                        throw new InvalidOperationException("restart failed");
+                    }));
+
+                Assert.That(Directory.GetFiles(error.BackupDirectory, "*.old"), Is.Not.Empty);
+                SelfUpdateFiles.CleanCompletedUpdates(_installed);
+                Assert.That(Directory.Exists(error.BackupDirectory), Is.True);
+            }
+            finally
+            {
+                opened?.Dispose();
+            }
+        }
+
+        [Test]
         public void CleanCompletedUpdates_PreservesUnmarkedRecoveryFiles()
         {
             var recovery = Directory.CreateDirectory(Path.Combine(_installed,

@@ -1215,9 +1215,9 @@ private bool UpdateVivaldiPlusUI(string installedVersion)
             catch (Exception ex)
             {
                 SetProgressText(() => GetText("text_self_update_failed"));
-                if (ex is AggregateException)
+                if (ex is SelfUpdateRecoveryException recovery)
                 {
-                    SetDetailText(() => ex.Message);
+                    SetDetailText(() => string.Format(GetText("text_self_update_recovery"), recovery.BackupDirectory));
                 }
                 Debug.WriteLine(ex);
             }

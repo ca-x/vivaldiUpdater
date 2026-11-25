@@ -225,13 +225,16 @@ namespace VivaldiUpdater.Model
                 CultureInfo.CurrentUICulture = uiCulture;
                 CultureInfo.DefaultThreadCurrentCulture = formattingCulture;
                 CultureInfo.DefaultThreadCurrentUICulture = uiCulture;
-                Properties.Resources.Culture = uiCulture;
+                Properties.Resources.Culture = GetResourceCulture(uiCulture);
             }
             catch (Exception)
             {
                 // 语言应用失败时忽略
             }
         }
+
+        internal static CultureInfo GetResourceCulture(CultureInfo uiCulture) =>
+            uiCulture.TwoLetterISOLanguageName == "en" ? CultureInfo.GetCultureInfo("en-US") : uiCulture;
     }
     
     /// <summary>

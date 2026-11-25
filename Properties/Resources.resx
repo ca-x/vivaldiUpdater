@@ -423,4 +423,7 @@
   <data name="text_temporary_cleanup_failed" xml:space="preserve">
     <value>安装已完成，但未能清理临时文件。</value>
   </data>
+  <data name="text_self_update_recovery" xml:space="preserve">
+    <value>未能恢复旧版。备份目录：{0}</value>
+  </data>
 </root>

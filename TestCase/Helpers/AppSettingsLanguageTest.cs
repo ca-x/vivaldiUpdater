@@ -26,6 +26,17 @@ namespace TestCase.Helpers
             _resourceCulture = Resources.Culture;
         }
 
+        [TestCase("en-GB")]
+        [TestCase("en-CA")]
+        public void RegionalEnglishUsesTheAvailableEnglishTranslations(string locale)
+        {
+            var culture = CultureInfo.GetCultureInfo(locale);
+            Resources.Culture = AppSettings.GetResourceCulture(culture);
+
+            Assert.That(Resources.text_install, Is.EqualTo("Install"));
+            Assert.That(culture.Name, Is.EqualTo(locale));
+        }
+
         [TearDown]
         public void RestoreCultures()
         {
@@ -69,7 +80,7 @@ namespace TestCase.Helpers
                 Assert.That(CultureInfo.CurrentUICulture, Is.EqualTo(_uiCulture));
                 Assert.That(CultureInfo.DefaultThreadCurrentCulture, Is.EqualTo(_culture));
                 Assert.That(CultureInfo.DefaultThreadCurrentUICulture, Is.EqualTo(_uiCulture));
-                Assert.That(Resources.Culture, Is.EqualTo(_uiCulture));
+                Assert.That(Resources.Culture, Is.EqualTo(AppSettings.GetResourceCulture(_uiCulture)));
             });
         }
     }

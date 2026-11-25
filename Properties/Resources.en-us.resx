@@ -320,4 +320,7 @@
   <data name="text_temporary_cleanup_failed" xml:space="preserve">
     <value>Installation finished, but temporary files could not be removed.</value>
   </data>
+  <data name="text_self_update_recovery" xml:space="preserve">
+    <value>Could not restore the previous version. Backup folder: {0}</value>
+  </data>
 </root>

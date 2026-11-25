@@ -6,6 +6,17 @@ using System.Linq;
 
 namespace VivaldiUpdater.Helpers
 {
+    internal sealed class SelfUpdateRecoveryException : AggregateException
+    {
+        internal string BackupDirectory { get; }
+
+        internal SelfUpdateRecoveryException(string backupDirectory, IEnumerable<Exception> errors)
+            : base("Could not restore the previous updater. Backups: " + backupDirectory, errors)
+        {
+            BackupDirectory = backupDirectory;
+        }
+    }
+
     internal static class SelfUpdateFiles
     {
         private const string ExecutableName = "VivaldiUpdater.exe";
@@ -73,7 +84,7 @@ namespace VivaldiUpdater.Helpers
 
                 if (errors.Count > 1)
                 {
-                    throw new AggregateException("Could not restore the previous updater. Backups: " + workDirectory, errors);
+                    throw new SelfUpdateRecoveryException(workDirectory, errors);
                 }
 
                 Finish(workDirectory);
